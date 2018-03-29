@@ -17,7 +17,7 @@ class PortfolioPage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         height: 200.0,
         child: new _SparkLine1(),
-      ),
+      )
     );
   }
 }
