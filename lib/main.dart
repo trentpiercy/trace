@@ -9,29 +9,38 @@ void main() {
     title: "Trace",
     home: new Tabs(),
     routes: <String, WidgetBuilder> {},
-    theme: new ThemeData(
-//      primarySwatch: Colors.purple[700],
-      primaryColor: primary,
-      accentColor: accent,
-
-      textSelectionColor: Colors.grey[700],
-
-      dividerColor: darkEnabled ? Colors.grey[900] : Colors.grey[200],
-
-      brightness: darkEnabled ? Brightness.dark : Brightness.light,
-    ),
+    theme: darkEnabled ? darkTheme : lightTheme,
   ));
 }
 
-bool darkEnabled = true;
+bool darkEnabled = false;
 
-Color varDarkAccent = darkEnabled ? Colors.purple[300] : primary;
+final ThemeData lightTheme = new ThemeData(
+  brightness: Brightness.light,
+  accentColor: Colors.purpleAccent[100],
+  primaryColor: Colors.purple[700],
+  textSelectionColor: Colors.grey[200],
+  dividerColor: Colors.grey[200],
+  buttonColor: Colors.purple[700],
+  iconTheme: new IconThemeData(
+    color: Colors.white
+  )
+);
 
-Color primary = Colors.purple[700];
-Color accent = Colors.purpleAccent[100];
+final ThemeData darkTheme = new ThemeData(
+  brightness: Brightness.dark,
+  accentColor: Colors.purpleAccent[100],
+  primaryColor: Colors.purple[700],
+  textSelectionColor: Colors.blueGrey[800],
+  dividerColor: Colors.blueGrey[800],
+  buttonColor: Colors.purple[300],
+  iconTheme: new IconThemeData(
+    color: Colors.white
+  )
+);
 
-const double appBarHeight = 50.0;
-const double appBarElevation = 1.0;
+const double appBarHeight = 48.0;
+const double appBarElevation = 2.0;
 
 class Tabs extends StatelessWidget {
   @override
@@ -42,14 +51,13 @@ class Tabs extends StatelessWidget {
         bottomNavigationBar: new BottomAppBar(
           elevation: 4.0,
           child: new Container(
-//            color: Colors.white,
             height: 34.0,
             child: new TabBar(
-              indicatorColor: varDarkAccent,
-              indicatorPadding: const EdgeInsets.only(left: 60.0, bottom: 2.0, right: 60.0),
+              indicatorColor: Theme.of(context).buttonColor,
+              indicatorPadding: const EdgeInsets.only(left: 70.0, bottom: 2.0, right: 70.0),
               tabs: <Tab>[
-                new Tab(icon: new Icon(Icons.person_outline, color: varDarkAccent)),
-                new Tab(icon: new Icon(Icons.menu, color: varDarkAccent))
+                new Tab(icon: new Icon(Icons.person_outline, color: Theme.of(context).buttonColor)),
+                new Tab(icon: new Icon(Icons.menu, color: Theme.of(context).buttonColor))
               ],
             )
           )
