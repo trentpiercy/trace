@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_sparkline/flutter_sparkline.dart';
 
 import 'portfolio.dart';
 import 'market.dart';
@@ -12,22 +11,27 @@ void main() {
     routes: <String, WidgetBuilder> {},
     theme: new ThemeData(
 //      primarySwatch: Colors.purple[700],
-      primaryColor: Colors.purple[700],
-      accentColor: Colors.purpleAccent[100],
+      primaryColor: primary,
+      accentColor: accent,
 
       textSelectionColor: Colors.grey[700],
 
-      dividerColor: darkEnabled ? Colors.grey[700] : Colors.grey[200],
+      dividerColor: darkEnabled ? Colors.grey[900] : Colors.grey[200],
 
       brightness: darkEnabled ? Brightness.dark : Brightness.light,
     ),
   ));
 }
 
-bool darkEnabled = false;
+bool darkEnabled = true;
+
+Color varDarkAccent = darkEnabled ? Colors.purple[300] : primary;
+
+Color primary = Colors.purple[700];
+Color accent = Colors.purpleAccent[100];
 
 const double appBarHeight = 50.0;
-final double appBarElevation = 0.5;
+const double appBarElevation = 1.0;
 
 class Tabs extends StatelessWidget {
   @override
@@ -41,11 +45,11 @@ class Tabs extends StatelessWidget {
 //            color: Colors.white,
             height: 34.0,
             child: new TabBar(
-              indicatorColor: Theme.of(context).primaryColor,
+              indicatorColor: varDarkAccent,
               indicatorPadding: const EdgeInsets.only(left: 60.0, bottom: 2.0, right: 60.0),
               tabs: <Tab>[
-                new Tab(icon: new Icon(Icons.person_outline, color: Theme.of(context).primaryColor)),
-                new Tab(icon: new Icon(Icons.trending_up, color: Theme.of(context).primaryColor))
+                new Tab(icon: new Icon(Icons.person_outline, color: varDarkAccent)),
+                new Tab(icon: new Icon(Icons.menu, color: varDarkAccent))
               ],
             )
           )

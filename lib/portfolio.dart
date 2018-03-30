@@ -10,6 +10,7 @@ class PortfolioPage extends StatelessWidget {
       appBar: new PreferredSize(
         preferredSize: const Size.fromHeight(appBarHeight),
         child: new AppBar(
+          elevation: appBarElevation,
           title: new Text("Portfolio"),
         ),
       ),
