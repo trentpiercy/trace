@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_sparkline/flutter_sparkline.dart';
+import 'package:charts_flutter/flutter.dart';
 
 import 'main.dart';
+
 
 numCommaParse(numString) {
   return "\$"+ num.parse(numString).round().toString().replaceAllMapped(new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
@@ -14,6 +16,7 @@ timeAgo(sSinceEpoch) {
   int nowInSeconds = int.parse(new DateTime.now().millisecondsSinceEpoch.toString().substring(0, 10));
   return (nowInSeconds-sSinceEpoch).toString()+"s ago";
 }
+
 
 class MarketPage extends StatefulWidget {
   @override
@@ -70,6 +73,9 @@ class MarketPageState extends State<MarketPage> {
         child: new AppBar(
           elevation: appBarElevation,
           title: new Text("Aggregate Market Caps"),
+          actions: <Widget>[
+            new IconButton(icon: new Icon(Icons.short_text), onPressed: null)
+          ],
         ),
       ),
       body: new RefreshIndicator(
@@ -83,32 +89,41 @@ class MarketPageState extends State<MarketPage> {
             children: <Widget>[
               globalData != null ? new Container(
                 padding: const EdgeInsets.all(8.0),
-                child: new Column(
-                  children: <Widget>[
-                    new Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        new Column(
-                          children: <Widget>[
-                            new Text("Total Market Cap", style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).hintColor)),
-                            new Text(numCommaParse(globalData["total_market_cap_usd"].toString()), style: Theme.of(context).textTheme.button),
-                          ],
-                        ),
-                        new Column(
-                          children: <Widget>[
-                            new Text("Total 24h Trade Volume", style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).hintColor)),
-                            new Text(numCommaParse(globalData["total_24h_volume_usd"].toString()), style: Theme.of(context).textTheme.button),
-                          ],
-                        ),
-                      ],
-                    ),
+                child: new GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      new MaterialPageRoute(
+                        builder: (BuildContext context) => new TotalMarketCapDetails()
+                      )
+                    );
+                  },
+                  child: new Column(
+                    children: <Widget>[
+                      new Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          new Column(
+                            children: <Widget>[
+                              new Text("Total Market Cap", style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).hintColor)),
+                              new Text(numCommaParse(globalData["total_market_cap_usd"].toString()), style: Theme.of(context).textTheme.button),
+                            ],
+                          ),
+                          new Column(
+                            children: <Widget>[
+                              new Text("Total 24h Trade Volume", style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).hintColor)),
+                              new Text(numCommaParse(globalData["total_24h_volume_usd"].toString()), style: Theme.of(context).textTheme.button),
+                            ],
+                          ),
+                        ],
+                      ),
 //                    new Padding(padding: const EdgeInsets.only(bottom: 4.0)),
 //                    new Align(
 //                      alignment: Alignment.centerRight,
 //                      child: new Text("Last Published "+timeAgo(globalData["last_updated"]), style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).disabledColor, fontSizeFactor: 0.8)),
 //                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                )
               ) : new Container(),
               new Container(
                 color: Theme.of(context).cardColor,
@@ -148,7 +163,7 @@ class CoinListItem extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           new MaterialPageRoute(
-            builder: (BuildContext context) => new CoinDetails(coinName: snapshot["name"],)
+            builder: (BuildContext context) => new CoinDetails(coinName: snapshot["name"])
           )
         );
       },
@@ -159,13 +174,21 @@ class CoinListItem extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             new Container(
-              width: MediaQuery.of(context).size.width * 0.2,
+              width: MediaQuery.of(context).size.width * 0.25,
               child: new Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   new Text(snapshot["rank"]),
-                  new Padding(padding: const EdgeInsets.only(right: 8.0)),
-                  new Text(snapshot["symbol"])
+                  new Padding(padding: const EdgeInsets.only(right: 6.0)),
+//                  new Image.asset("assets/icons/"+snapshot["symbol"].toString().toLowerCase()+".png", height: 22.0,),
+//                  new Image.network("https://raw.githubusercontent.com/cjdowner/cryptocurrency-icons/master/128/color/"+snapshot["symbol"].toString().toLowerCase()+".png", height: 22.0),
+                  new FadeInImage(
+                    height: 22.0,
+                    placeholder: new AssetImage("assets/loading.png"),
+                    image: new NetworkImage("https://raw.githubusercontent.com/cjdowner/cryptocurrency-icons/master/128/color/"+snapshot["symbol"].toString().toLowerCase()+".png")
+                  ),
+                  new Padding(padding: const EdgeInsets.only(right: 6.0)),
+                  new Text(snapshot["symbol"]),
                 ],
               ),
             ),
@@ -285,6 +308,17 @@ class AggregateStatsState extends State<AggregateStats> {
   }
 }
 
+class TotalMarketCapDetails extends StatelessWidget {
+
+
+  @override
+  Widget build(BuildContext context) {
+    return new Container();
+  }
+}
+
+
+
 class _SparkLine1 extends StatelessWidget {
 
   final List<double> _data = [3.0,7.0,20.0,3.0,5.0,1.0,10.0];
@@ -295,13 +329,29 @@ class _SparkLine1 extends StatelessWidget {
       padding: const EdgeInsets.all(4.0),
       child: new Sparkline(
         data: _data,
-        lineWidth: 5.0,
+        lineWidth: 3.0,
         lineGradient: new LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [Theme.of(context).primaryColor, Theme.of(context).accentColor]
         ),
       )
+    );
+  }
+}
+
+
+
+// pure cancer
+class GoogleChart extends StatelessWidget {
+ final List<Series> _seriesList = [new Series(id: "test", data: [1,5,10], domainFn: null, measureFn: null)];
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return new Container(
+      height: 200.0,
+      child: new LineChart(_seriesList)
     );
   }
 }

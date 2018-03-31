@@ -27,5 +27,4 @@ Specific currency
 
 # To Do
 Marketcap history stats (trendline icon action)/tapping total market cap stats container
-Currency icons
 Abbreviation options (5,000,000 -> 5M)
