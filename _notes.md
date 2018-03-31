@@ -18,6 +18,15 @@ Specific currency
                 - Volume
         - Sparkline
             - History length setting for each graph
+                - 1h = 60 minute
+                - 12h = 720 minute
+                - 24h = 1420 minute
+                - 3d = 72 hour
+                - 1w = 168 hour
+                - 1m = 720 hour
+                - 3m = 90 day
+                - 6m = 180 day
+                - 1y = 365 day
         - OHLC
         - Depth
 - Markets
@@ -26,5 +35,7 @@ Specific currency
 
 
 # To Do
+Sparkline options (time period) use bottomsheet
+
 Marketcap history stats (trendline icon action)/tapping total market cap stats container
 Abbreviation options (5,000,000 -> 5M)

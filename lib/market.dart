@@ -11,6 +11,9 @@ import 'main.dart';
 numCommaParse(numString) {
   return "\$"+ num.parse(numString).round().toString().replaceAllMapped(new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
 }
+numCommaParseNoDollar(numString) {
+  return num.parse(numString).round().toString().replaceAllMapped(new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
+}
 
 timeAgo(sSinceEpoch) {
   int nowInSeconds = int.parse(new DateTime.now().millisecondsSinceEpoch.toString().substring(0, 10));
@@ -157,13 +160,22 @@ class CoinListItem extends StatelessWidget {
   CoinListItem({this.snapshot});
   final snapshot;
 
+  _getImage() {
+    if (num.parse(snapshot["rank"]) <= 50) {
+      return new Image.network("https://raw.githubusercontent.com/cjdowner/cryptocurrency-icons/master/128/color/"+snapshot["symbol"].toString().toLowerCase()+".png", height: 22.0);
+    }
+    else {
+      return new Container();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return new GestureDetector(
       onTap: () {
         Navigator.of(context).push(
           new MaterialPageRoute(
-            builder: (BuildContext context) => new CoinDetails(coinName: snapshot["name"])
+            builder: (BuildContext context) => new CoinDetails(snapshot: snapshot)
           )
         );
       },
@@ -182,11 +194,7 @@ class CoinListItem extends StatelessWidget {
                   new Padding(padding: const EdgeInsets.only(right: 6.0)),
 //                  new Image.asset("assets/icons/"+snapshot["symbol"].toString().toLowerCase()+".png", height: 22.0,),
 //                  new Image.network("https://raw.githubusercontent.com/cjdowner/cryptocurrency-icons/master/128/color/"+snapshot["symbol"].toString().toLowerCase()+".png", height: 22.0),
-                  new FadeInImage(
-                    height: 22.0,
-                    placeholder: new AssetImage("assets/loading.png"),
-                    image: new NetworkImage("https://raw.githubusercontent.com/cjdowner/cryptocurrency-icons/master/128/color/"+snapshot["symbol"].toString().toLowerCase()+".png")
-                  ),
+                  _getImage(),
                   new Padding(padding: const EdgeInsets.only(right: 6.0)),
                   new Text(snapshot["symbol"]),
                 ],
@@ -217,7 +225,7 @@ class CoinListItem extends StatelessWidget {
                     style: Theme.of(context).primaryTextTheme.body1.apply(
                       color: num.parse(snapshot["percent_change_24h"]) >= 0 ? Colors.green : Colors.red
                     )
-                  )
+                  ),
                 ],
               ),
             ),
@@ -229,8 +237,8 @@ class CoinListItem extends StatelessWidget {
 }
 
 class CoinDetails extends StatefulWidget {
-  CoinDetails({this.coinName});
-  final String coinName;
+  CoinDetails({this.snapshot});
+  final snapshot;
 
   @override
   CoinDetailsState createState() => new CoinDetailsState();
@@ -247,7 +255,7 @@ class CoinDetailsState extends State<CoinDetails> {
           child: new AppBar(
             titleSpacing: 0.0,
             elevation: appBarElevation,
-            title: new Text(widget.coinName),
+            title: new Text(widget.snapshot["name"]),
             bottom: new PreferredSize(
               preferredSize: const Size.fromHeight(25.0),
               child: new Container(
@@ -266,7 +274,7 @@ class CoinDetailsState extends State<CoinDetails> {
         ),
         body: new TabBarView(
           children: <Widget>[
-            new AggregateStats(coinName: widget.coinName),
+            new AggregateStats(snapshot: widget.snapshot),
             new Text("xd")
           ],
         )
@@ -276,14 +284,50 @@ class CoinDetailsState extends State<CoinDetails> {
 }
 
 class AggregateStats extends StatefulWidget {
-  AggregateStats({this.coinName});
-  final String coinName;
+  AggregateStats({this.snapshot});
+  final snapshot;
 
   @override
   AggregateStatsState createState() => new AggregateStatsState();
 }
 
 class AggregateStatsState extends State<AggregateStats> {
+  String historyOHLCVType = "minute";
+  String historyOHLCVAmt = "1420";
+
+  List historyOHLCV;
+  Future<Null> getHistoryOHLCV(String type, String amt) async {
+    var response = await http.get(
+      Uri.encodeFull("https://min-api.cryptocompare.com/data/histo"+type+"?fsym="+widget.snapshot["symbol"]+"&tsym=USD&limit="+amt),
+    );
+    setState(() {
+      historyOHLCV = new JsonDecoder().convert(response.body)["Data"];
+    });
+  }
+
+  List sparkLineData;
+  Future<Null> getSparkLineData() async {
+    if (historyOHLCV == null) {
+      await getHistoryOHLCV(historyOHLCVType, historyOHLCVAmt);
+    }
+    List returnData = [];
+    for (var i in historyOHLCV) {
+      if (i["close"] != 0) {
+        returnData.add(i["close"]);
+      }
+    }
+    setState(() {
+      sparkLineData = returnData;
+    });
+  }
+
+  void initState() {
+    super.initState();
+    if (sparkLineData == null) {
+      getSparkLineData();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return new SingleChildScrollView(
@@ -291,67 +335,122 @@ class AggregateStatsState extends State<AggregateStats> {
       child: new Column(
         children: <Widget>[
           new Container(
+            color: Theme.of(context).cardColor,
+            padding: const EdgeInsets.all(4.0),
+            child: new Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                new Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    new Text("Price", style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).hintColor)),
+                    new Text("\$"+widget.snapshot["price_usd"].toString(), style: Theme.of(context).textTheme.button),
+                    new Text("Circulating Supply", style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).hintColor)),
+                    new Text(numCommaParseNoDollar(widget.snapshot["available_supply"].toString()), style: Theme.of(context).textTheme.button),
+                  ],
+                ),
+                new Column(
+                  children: <Widget>[
+                    new Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        new Text("1h", style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).hintColor)),
+                        new Padding(padding: const EdgeInsets.only(right: 3.0)),
+                        new Text(
+                          num.parse(widget.snapshot["percent_change_1h"]) >= 0 ? "+"+widget.snapshot["percent_change_1h"]+"%" : widget.snapshot["percent_change_1h"]+"%",
+                          style: Theme.of(context).primaryTextTheme.body1.apply(
+                              color: num.parse(widget.snapshot["percent_change_1h"]) >= 0 ? Colors.green : Colors.red
+                          )
+                        ),
+                      ],
+                    ),
+                    new Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        new Text("24h", style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).hintColor)),
+                        new Padding(padding: const EdgeInsets.only(right: 3.0)),
+                        new Text(
+                          num.parse(widget.snapshot["percent_change_24h"]) >= 0 ? "+"+widget.snapshot["percent_change_24h"]+"%" : widget.snapshot["percent_change_24h"]+"%",
+                          style: Theme.of(context).primaryTextTheme.body1.apply(
+                              color: num.parse(widget.snapshot["percent_change_24h"]) >= 0 ? Colors.green : Colors.red
+                          )
+                        ),
+                      ],
+                    ),
+                    new Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        new Text("7d", style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).hintColor)),
+                        new Padding(padding: const EdgeInsets.only(right: 3.0)),
+                        new Text(
+                          num.parse(widget.snapshot["percent_change_7d"]) >= 0 ? "+"+widget.snapshot["percent_change_7d"]+"%" : widget.snapshot["percent_change_7d"]+"%",
+                          style: Theme.of(context).primaryTextTheme.body1.apply(
+                              color: num.parse(widget.snapshot["percent_change_7d"]) >= 0 ? Colors.green : Colors.red
+                          )
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+                new Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    new Text("Market Cap", style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).hintColor)),
+                    new Text(numCommaParse(widget.snapshot["market_cap_usd"].toString()), style: Theme.of(context).textTheme.button),
+                    new Text("24h Volume", style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).hintColor)),
+                    new Text(numCommaParse(widget.snapshot["24h_volume_usd"].toString()), style: Theme.of(context).textTheme.button),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          new Padding(padding: const EdgeInsets.only(bottom: 4.0)),
+          new Container(
 //            color: Theme.of(context).cardColor,
             padding: const EdgeInsets.all(4.0),
             child: new Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                new Text("Aggregate Price History", style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).hintColor)),
-                new Text("1M", style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).hintColor)),
+                new Text("Price History", style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).hintColor)),
+                new Text("30d", style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).hintColor)),
               ],
             )
           ),
-          new _SparkLine1(),
+          sparkLineData == null ? new Container() : new _SparkLine(data: sparkLineData),
         ],
       )
     );
   }
 }
 
+class _SparkLine extends StatelessWidget {
+  _SparkLine({this.data});
+  final List data;
+
+  @override
+  Widget build(BuildContext context) {
+    return new Container(
+        padding: const EdgeInsets.all(4.0),
+        child: new Sparkline(
+          data: data,
+          lineWidth: 2.0,
+          lineGradient: new LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Theme.of(context).primaryColor, Theme.of(context).accentColor]
+          ),
+        )
+    );
+  }
+}
+
+
+
+
+// TODO: make this exist
 class TotalMarketCapDetails extends StatelessWidget {
-
-
   @override
   Widget build(BuildContext context) {
     return new Container();
-  }
-}
-
-
-
-class _SparkLine1 extends StatelessWidget {
-
-  final List<double> _data = [3.0,7.0,20.0,3.0,5.0,1.0,10.0];
-
-  @override
-  Widget build(BuildContext context) {
-    return new Container(
-      padding: const EdgeInsets.all(4.0),
-      child: new Sparkline(
-        data: _data,
-        lineWidth: 3.0,
-        lineGradient: new LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Theme.of(context).primaryColor, Theme.of(context).accentColor]
-        ),
-      )
-    );
-  }
-}
-
-
-
-// pure cancer
-class GoogleChart extends StatelessWidget {
- final List<Series> _seriesList = [new Series(id: "test", data: [1,5,10], domainFn: null, measureFn: null)];
-
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return new Container(
-      height: 200.0,
-      child: new LineChart(_seriesList)
-    );
   }
 }
