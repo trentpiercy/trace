@@ -33,31 +33,13 @@ class PortfolioPageState extends State<PortfolioPage> {
       body: new Container(
         padding: const EdgeInsets.all(16.0),
         height: 200.0,
-        child: new _SparkLine1(),
+        child: null,
       ),
       floatingActionButton: new FloatingActionButton(
         onPressed: null,
         elevation: 2.5,
         backgroundColor: Theme.of(context).buttonColor,
         child: new Icon(Icons.add),
-      ),
-    );
-  }
-}
-
-class _SparkLine1 extends StatelessWidget {
-
-  final List<double> _data = [3.0,7.0,20.0,3.0,5.0,1.0,10.0];
-
-  @override
-  Widget build(BuildContext context) {
-    return new Sparkline(
-      data: _data,
-      lineWidth: 5.0,
-      lineGradient: new LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Theme.of(context).primaryColor, Theme.of(context).accentColor]
       ),
     );
   }

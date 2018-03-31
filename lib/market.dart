@@ -175,7 +175,7 @@ class CoinListItem extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
-                  new Text(numCommaParse(snapshot["market_cap_usd"])),
+                  new Text(numCommaParse(snapshot["market_cap_usd"]), style: Theme.of(context).textTheme.button),
                   new Padding(padding: const EdgeInsets.only(bottom: 4.0)),
                   new Text(numCommaParse(snapshot["24h_volume_usd"]))
                 ],
@@ -214,7 +214,6 @@ class CoinDetails extends StatefulWidget {
 }
 
 class CoinDetailsState extends State<CoinDetails> {
-
   @override
   Widget build(BuildContext context) {
     return new DefaultTabController(
@@ -241,6 +240,66 @@ class CoinDetailsState extends State<CoinDetails> {
               )
             ),
           ),
+        ),
+        body: new TabBarView(
+          children: <Widget>[
+            new AggregateStats(coinName: widget.coinName),
+            new Text("xd")
+          ],
+        )
+      )
+    );
+  }
+}
+
+class AggregateStats extends StatefulWidget {
+  AggregateStats({this.coinName});
+  final String coinName;
+
+  @override
+  AggregateStatsState createState() => new AggregateStatsState();
+}
+
+class AggregateStatsState extends State<AggregateStats> {
+  @override
+  Widget build(BuildContext context) {
+    return new SingleChildScrollView(
+      padding: const EdgeInsets.all(4.0),
+      child: new Column(
+        children: <Widget>[
+          new Container(
+//            color: Theme.of(context).cardColor,
+            padding: const EdgeInsets.all(4.0),
+            child: new Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                new Text("Aggregate Price History", style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).hintColor)),
+                new Text("1M", style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).hintColor)),
+              ],
+            )
+          ),
+          new _SparkLine1(),
+        ],
+      )
+    );
+  }
+}
+
+class _SparkLine1 extends StatelessWidget {
+
+  final List<double> _data = [3.0,7.0,20.0,3.0,5.0,1.0,10.0];
+
+  @override
+  Widget build(BuildContext context) {
+    return new Container(
+      padding: const EdgeInsets.all(4.0),
+      child: new Sparkline(
+        data: _data,
+        lineWidth: 5.0,
+        lineGradient: new LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Theme.of(context).primaryColor, Theme.of(context).accentColor]
         ),
       )
     );
