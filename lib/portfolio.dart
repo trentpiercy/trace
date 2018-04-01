@@ -37,7 +37,7 @@ class PortfolioPageState extends State<PortfolioPage> {
       ),
       floatingActionButton: new FloatingActionButton(
         onPressed: null,
-        elevation: 2.5,
+        elevation: appBarElevation,
         backgroundColor: Theme.of(context).buttonColor,
         child: new Icon(Icons.add),
       ),

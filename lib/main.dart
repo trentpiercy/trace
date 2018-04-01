@@ -24,7 +24,9 @@ final ThemeData lightTheme = new ThemeData(
   buttonColor: Colors.purple[700],
   iconTheme: new IconThemeData(
     color: Colors.white
-  )
+  ),
+  splashColor: Colors.purpleAccent[100],
+  highlightColor: Colors.purpleAccent[100],
 );
 
 final ThemeData darkTheme = new ThemeData(
@@ -36,7 +38,9 @@ final ThemeData darkTheme = new ThemeData(
   buttonColor: Colors.purple[300],
   iconTheme: new IconThemeData(
     color: Colors.white
-  )
+  ),
+  splashColor: Colors.purpleAccent[100],
+  highlightColor: Colors.purpleAccent[100],
 );
 
 const double appBarHeight = 48.0;

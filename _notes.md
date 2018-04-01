@@ -1,10 +1,8 @@
 # Future
 Python backend for aggregate market depth stats
+Searching coins
 
 # UI
-Aggregate Marketcap
-- Ability to change btw 1h/24h/7d
-
 Specific currency
 - Aggregate Market Stats
     - Scrollable Column View
@@ -19,10 +17,11 @@ Specific currency
         - Sparkline
             - History length setting for each graph
                 - 1h = 60 minute
+                - 6h = 360 minute
                 - 12h = 720 minute
                 - 24h = 1420 minute
                 - 3d = 72 hour
-                - 1w = 168 hour
+                - 7d = 168 hour
                 - 1m = 720 hour
                 - 3m = 90 day
                 - 6m = 180 day
