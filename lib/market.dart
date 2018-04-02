@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:trace/market/coin_details.dart';
+import 'package:trace/market/coin_aggregate_stats.dart';
 import 'main.dart';
 
 
@@ -190,6 +191,7 @@ class CoinListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return new GestureDetector(
       onTap: () {
+        sparkLineData = null;
         Navigator.of(context).push(
           new MaterialPageRoute(
             builder: (BuildContext context) => new CoinDetails(snapshot: snapshot)

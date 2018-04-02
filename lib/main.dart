@@ -13,7 +13,7 @@ void main() {
   ));
 }
 
-bool darkEnabled = false;
+bool darkEnabled = true;
 
 final ThemeData lightTheme = new ThemeData(
   brightness: Brightness.light,

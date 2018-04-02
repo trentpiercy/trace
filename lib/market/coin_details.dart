@@ -29,7 +29,6 @@ class CoinDetailsState extends State<CoinDetails> {
                     child: new Container(
                         height: 30.0,
                         child: new TabBar(
-//                  indicatorPadding: const EdgeInsets.only(left: 2.0, bottom: 0.0, right: 2.0),
                           indicatorColor: Theme.of(context).iconTheme.color,
                           tabs: <Widget>[
                             new Tab(text: "Aggregate Stats"),
