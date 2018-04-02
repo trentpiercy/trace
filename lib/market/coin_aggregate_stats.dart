@@ -7,8 +7,8 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'package:trace/main.dart';
 import 'package:trace/market.dart';
+import 'package:trace/market/coin_markets_list.dart';
 
 
 class AggregateStats extends StatefulWidget {
@@ -29,7 +29,7 @@ String _high;
 String _low;
 String _change = "0";
 
-void resetAggregateCoinStats() {
+void resetCoinStats() {
   sparkLineData = null;
   historyOHLCV = null;
   historyAmt = "1420";
@@ -39,6 +39,9 @@ void resetAggregateCoinStats() {
   _high = null;
   _low = null;
   _change = "0";
+
+  exchangeData = null;
+  toSym = "USD";
 }
 
 class AggregateStatsState extends State<AggregateStats> {
@@ -108,6 +111,7 @@ class AggregateStatsState extends State<AggregateStats> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+        resizeToAvoidBottomPadding: false,
         body: new SingleChildScrollView(
             child: new Column(
               children: <Widget>[

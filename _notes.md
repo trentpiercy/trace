@@ -26,6 +26,7 @@ Specific currency
                 - 3m = 90 day
                 - 6m = 180 day
                 - 1y = 365 day
+        - Volume
         - OHLC
         - Depth
 - Markets

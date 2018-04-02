@@ -18,21 +18,15 @@ numCommaParseNoDollar(numString) {
   return num.parse(numString).round().toString().replaceAllMapped(new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
 }
 
-timeAgo(sSinceEpoch) {
-  int nowInSeconds = int.parse(new DateTime.now().millisecondsSinceEpoch.toString().substring(0, 10));
-  return (nowInSeconds-sSinceEpoch).toString()+"s ago";
-}
-
-
 class MarketPage extends StatefulWidget {
   @override
   MarketPageState createState() => new MarketPageState();
 }
 
-class MarketPageState extends State<MarketPage> {
-  List marketListData;
-  Map globalData;
+List marketListData;
+Map globalData;
 
+class MarketPageState extends State<MarketPage> {
   ScrollController _scrollController = new ScrollController();
 
   Future<Null> refreshData() async {
@@ -97,43 +91,27 @@ class MarketPageState extends State<MarketPage> {
             children: <Widget>[
               globalData != null ? new Container(
                 padding: const EdgeInsets.all(8.0),
-                child: new GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      new MaterialPageRoute(
-                        builder: (BuildContext context) => new Text("do later") //TODO: total market cap details
-                      )
-                    );
-                  },
-                  child: new Column(
-                    children: <Widget>[
-                      new Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          new Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              new Text("Total Market Cap", style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).hintColor)),
-                              new Text(numCommaParse(globalData["total_market_cap_usd"].toString()), style: Theme.of(context).textTheme.button),
-                            ],
-                          ),
-                          new Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: <Widget>[
-                              new Text("Total 24h Volume", style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).hintColor)),
-                              new Text(numCommaParse(globalData["total_24h_volume_usd"].toString()), style: Theme.of(context).textTheme.button),
-                            ],
-                          ),
-                        ],
-                      ),
-//                    new Padding(padding: const EdgeInsets.only(bottom: 4.0)),
-//                    new Align(
-//                      alignment: Alignment.centerRight,
-//                      child: new Text("Last Published "+timeAgo(globalData["last_updated"]), style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).disabledColor, fontSizeFactor: 0.8)),
-//                    ),
-                    ],
-                  ),
-                )
+                child: new Column(
+                  children: <Widget>[
+                    new Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        new Column(
+                          children: <Widget>[
+                            new Text("Total Market Cap", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
+                            new Text(numCommaParse(globalData["total_market_cap_usd"].toString()), style: Theme.of(context).textTheme.button),
+                          ],
+                        ),
+                        new Column(
+                          children: <Widget>[
+                            new Text("Total 24h Volume", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
+                            new Text(numCommaParse(globalData["total_24h_volume_usd"].toString()), style: Theme.of(context).textTheme.button),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ) : new Container(),
               new Container(
                 color: Theme.of(context).cardColor,
@@ -191,7 +169,7 @@ class CoinListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return new GestureDetector(
       onTap: () {
-        resetAggregateCoinStats();
+        resetCoinStats();
         Navigator.of(context).push(
           new MaterialPageRoute(
             builder: (BuildContext context) => new CoinDetails(snapshot: snapshot)

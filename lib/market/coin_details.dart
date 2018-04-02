@@ -42,7 +42,7 @@ class CoinDetailsState extends State<CoinDetails> {
             body: new TabBarView(
               children: <Widget>[
                 new AggregateStats(snapshot: widget.snapshot),
-                new Text("xd")
+                new MarketList(snapshot: widget.snapshot)
               ],
             )
         )
