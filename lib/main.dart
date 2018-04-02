@@ -35,12 +35,10 @@ final ThemeData darkTheme = new ThemeData(
   primaryColor: Colors.purple[700],
   textSelectionColor: Colors.blueGrey[800],
   dividerColor: Colors.blueGrey[800],
-  buttonColor: Colors.purple[300],
+  buttonColor: Colors.purpleAccent[200],
   iconTheme: new IconThemeData(
     color: Colors.white
   ),
-  splashColor: Colors.purpleAccent[100],
-  highlightColor: Colors.purpleAccent[100],
 );
 
 const double appBarHeight = 48.0;
@@ -57,11 +55,11 @@ class Tabs extends StatelessWidget {
           child: new Container(
             height: 34.0,
             child: new TabBar(
-              indicatorColor: Theme.of(context).buttonColor,
+              indicatorColor: Theme.of(context).accentColor,
               indicatorPadding: const EdgeInsets.only(left: 70.0, bottom: 2.0, right: 70.0),
               tabs: <Tab>[
-                new Tab(icon: new Icon(Icons.person_outline, color: Theme.of(context).buttonColor)),
-                new Tab(icon: new Icon(Icons.menu, color: Theme.of(context).buttonColor))
+                new Tab(icon: new Icon(Icons.person_outline, color: Theme.of(context).accentColor)),
+                new Tab(icon: new Icon(Icons.menu, color: Theme.of(context).accentColor))
               ],
             )
           )

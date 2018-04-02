@@ -191,7 +191,7 @@ class CoinListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return new GestureDetector(
       onTap: () {
-        sparkLineData = null;
+        resetAggregateCoinStats();
         Navigator.of(context).push(
           new MaterialPageRoute(
             builder: (BuildContext context) => new CoinDetails(snapshot: snapshot)
