@@ -23,11 +23,11 @@ Specific currency
                 - 3d = 72 hour
                 - 7d = 168 hour
                 - 1m = 720 hour
-                - 3m = 90 day
+                - 3m = 1420 hour
                 - 6m = 180 day
                 - 1y = 365 day
-        - Volume
         - OHLC
+        - Volume (base on same width of OHLC)
         - Depth
 - Markets
     - Listview of all markets

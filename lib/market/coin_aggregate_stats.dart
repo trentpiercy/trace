@@ -81,9 +81,22 @@ class AggregateStatsState extends State<AggregateStats> {
 
   Future<Null> makeSparkLineData() async {
     List returnData = [];
-    for (var i in historyOHLCV) {
-      returnData.add(double.parse(i["close"].toString()));
+
+    if (historyTotal == "3d") {
+      var count = 0;
+      for (var i in historyOHLCV) {
+        if (count % 3 == 0) {
+          returnData.add(double.parse(i["close"].toString()));
+        }
+        count += 1;
+      }
+
+    } else {
+      for (var i in historyOHLCV) {
+        returnData.add(double.parse(i["close"].toString()));
+      }
     }
+
     setState(() {
       sparkLineData = returnData;
     });
@@ -191,7 +204,7 @@ class AggregateStatsState extends State<AggregateStats> {
                     ],
                   ),
                 ),
-                new Padding(padding: const EdgeInsets.only(bottom: 3.0)),
+                new Padding(padding: const EdgeInsets.only(bottom: 5.0)),
                 new Row(
                   children: <Widget>[
                     new Flexible(
@@ -261,7 +274,7 @@ class AggregateStatsState extends State<AggregateStats> {
                           new PopupMenuItem(child: new Text("3d"), value: ["hour", "72", "3d"]),
                           new PopupMenuItem(child: new Text("7d"), value: ["hour", "168", "7d"]),
                           new PopupMenuItem(child: new Text("1m"), value: ["hour", "720", "1m"]),
-                          new PopupMenuItem(child: new Text("3m"), value: ["day", "90", "3m"]),
+                          new PopupMenuItem(child: new Text("3m"), value: ["hour", "1420", "3m"]),
                           new PopupMenuItem(child: new Text("6m"), value: ["day", "180", "6m"]),
                           new PopupMenuItem(child: new Text("1y"), value: ["day", "365", "1y"]),
                         ],
@@ -270,8 +283,41 @@ class AggregateStatsState extends State<AggregateStats> {
                     ),
                   ],
                 ),
-                new Padding(padding: const EdgeInsets.only(bottom: 2.0)),
-                sparkLineData == null ? new Container() : new _SparkLine(data: sparkLineData),
+                sparkLineData == null ? new Container(height: MediaQuery.of(context).size.height * 0.5) : new _SparkLine(data: sparkLineData), // TODO: loading symbol instead of empty container
+                new Row(
+                  children: <Widget>[
+                    new Flexible(
+                      child: new Container(
+                          color: Theme.of(context).cardColor,
+                          padding: const EdgeInsets.all(6.0),
+                          child: new Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              new Row(
+                                children: <Widget>[
+                                  new Text("Candlestick Width", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
+                                  new Padding(padding: const EdgeInsets.only(right: 3.0)),
+                                  new Text("30 Minutes")
+                                ],
+                              ),
+                            ],
+                          ),
+                      ),
+                    ),
+                    new Container(
+                        child: new PopupMenuButton( // TODO: make exist
+                          tooltip: "Select Width",
+                          icon: new Icon(Icons.swap_horiz, color: Theme.of(context).buttonColor),
+                          itemBuilder: (BuildContext context) => [
+
+                          ],
+                          onSelected: (result) {changeHistory(result[0], result[1], result[2]);},
+                        )
+                    ),
+                  ],
+                ),
+                new Text("OHLC GRAPH", style: Theme.of(context).textTheme.title),
+                new Text("VOLUME BARS", style: Theme.of(context).textTheme.title)
               ],
             )
         )
@@ -290,7 +336,7 @@ class _SparkLine extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: new Sparkline(
           data: data,
-          lineWidth: 2.0,
+          lineWidth: 1.5,
           lineGradient: new LinearGradient(
               begin: Alignment.bottomCenter,
               end: Alignment.topCenter,
