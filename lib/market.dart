@@ -156,7 +156,7 @@ class CoinListItem extends StatelessWidget {
   final snapshot;
 
   _getImage() {
-    if (num.parse(snapshot["rank"]) <= 50) {
+    if (num.parse(snapshot["rank"]) <= 20) {
       return new Image.network("https://raw.githubusercontent.com/cjdowner/cryptocurrency-icons/master/128/color/"+snapshot["symbol"].toString().toLowerCase()+".png", height: 22.0);
     }
     else {
