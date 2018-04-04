@@ -82,7 +82,6 @@ class MarketPageState extends State<MarketPage> {
       ),
       body: new RefreshIndicator(
         color: Theme.of(context).buttonColor,
-        displacement: 10.0,
         onRefresh: () => refreshData(),
         child: new SingleChildScrollView(
           controller: _scrollController,

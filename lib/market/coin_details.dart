@@ -18,19 +18,13 @@ class CoinDetailsState extends State<CoinDetails> {
     return new DefaultTabController(
         length: 2,
         child: new Scaffold(
+            resizeToAvoidBottomPadding: false,
             appBar: new PreferredSize(
               preferredSize: const Size.fromHeight(75.0),
               child: new AppBar(
                 titleSpacing: 0.0,
                 elevation: appBarElevation,
                 title: new Text(widget.snapshot["name"]),
-//                title: new Row(
-//                  children: <Widget>[
-//                    new Text(widget.snapshot["name"]),
-//                    new Padding(padding: const EdgeInsets.only(right: 10.0)),
-//                    new Text("\$"+widget.snapshot["price_usd"], style: Theme.of(context).textTheme.title.apply(color: Theme.of(context).hintColor))
-//                  ],
-//                ),
                 bottom: new PreferredSize(
                     preferredSize: const Size.fromHeight(25.0),
                     child: new Container(

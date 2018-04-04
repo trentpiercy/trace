@@ -1,8 +1,12 @@
 # Future
+Learn drawing for OHLC and Volume
+
 Python backend for aggregate market depth stats
 Searching coins
 
 # Do Soon
+Download Coin Icon assets and display only if in list
+
 Good looking market UI
 - Specific market Page on click
 Abbreviation options (5,000,000 -> 5M)
