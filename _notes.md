@@ -2,6 +2,12 @@
 Python backend for aggregate market depth stats
 Searching coins
 
+# Do Soon
+Good looking market UI
+- Specific market Page on click
+Abbreviation options (5,000,000 -> 5M)
+
+
 # UI
 Specific currency
 - Aggregate Market Stats
@@ -32,10 +38,3 @@ Specific currency
 - Markets
     - Listview of all markets
         - Each item: Market name - Price/24h
-
-
-# To Do
-Sparkline options (time period) use bottomsheet
-
-Marketcap history stats (trendline icon action)/tapping total market cap stats container
-Abbreviation options (5,000,000 -> 5M)

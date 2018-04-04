@@ -26,13 +26,20 @@ class MarketListState extends State<MarketList> {
     var response = await http.get(
       Uri.encodeFull("https://min-api.cryptocompare.com/data/top/exchanges/full?fsym="+widget.snapshot["symbol"]+"&tsym="+toSym+"&limit=50"),
     );
-    setState(() {
-      exchangeData = new JsonDecoder().convert(response.body)["Data"]["Exchanges"];
-    });
+    exchangeData = new JsonDecoder().convert(response.body)["Data"]["Exchanges"];
+    makeExchangeData();
   }
 
-  void sortExchangeData(String sortType) {
-    // TODO: make exist
+  void makeExchangeData() {
+    List sortedExchangeData = [];
+    for (var i in exchangeData) {
+      if (i["VOLUME24HOURTO"] > 1000) {
+        sortedExchangeData.add(i);
+      }
+    }
+    setState((){
+      exchangeData = sortedExchangeData;
+    });
   }
 
   void initState() {
@@ -102,7 +109,6 @@ class ExchangeListItem extends StatelessWidget {
         child: new Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-//              new Text(numCommaParse(exchangeDataSnapshot["HIGH24HOUR"].toString())+"/"+numCommaParse(exchangeDataSnapshot["LOW24HOUR"].toString())),
             new Container(
               width: MediaQuery.of(context).size.width * columnProps[0],
               child: new Text(exchangeDataSnapshot["MARKET"].toString()),
