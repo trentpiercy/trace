@@ -35,7 +35,6 @@ final ThemeData darkTheme = new ThemeData(
   accentColor: Colors.purpleAccent[100],
   primaryColor: Colors.purple[700],
   textSelectionColor: Colors.blueGrey[800],
-  dividerColor: Colors.blueGrey[800],
   buttonColor: Colors.purpleAccent[200],
   iconTheme: new IconThemeData(
     color: Colors.white
@@ -46,7 +45,8 @@ final ThemeData darkTheme = new ThemeData(
 );
 
 const double appBarHeight = 48.0;
-const double appBarElevation = 2.0;
+const double appBarElevation = 1.0;
+const double bottomAppBarElevation = 8.0;
 
 class Tabs extends StatelessWidget {
   @override
@@ -56,8 +56,9 @@ class Tabs extends StatelessWidget {
       child: new Scaffold(
         bottomNavigationBar: new BottomAppBar(
 //          color: Theme.of(context).canvasColor,
-          elevation: 4.0,
+          elevation: bottomAppBarElevation,
           child: new Container(
+            color: Theme.of(context).canvasColor,
             height: 34.0,
             child: new TabBar(
               indicatorColor: Theme.of(context).accentIconTheme.color,

@@ -8,7 +8,7 @@ import 'package:trace/market/coin_aggregate_stats.dart';
 import 'main.dart';
 
 
-final columnProps = [.25,.35,.3];
+final columnProps = [.3,.3,.25];
 
 
 numCommaParse(numString) {
@@ -72,11 +72,17 @@ class MarketPageState extends State<MarketPage> {
         preferredSize: const Size.fromHeight(appBarHeight),
         child: new AppBar(
           elevation: appBarElevation,
-          title: new Text("Aggregate Market Caps"),
+          title: new Text("Aggregate Markets"),
           titleSpacing: 0.0,
-          leading: new IconButton(icon: new Icon(Icons.search), onPressed: null),
-          actions: <Widget>[
-            new IconButton(icon: new Icon(Icons.short_text, color: Colors.white), onPressed: null)
+          leading: new IconButton( // TODO: Searching
+            icon: new Icon(Icons.search),
+            onPressed: null
+          ),
+          actions: <Widget>[ // TODO: Number shortening
+            new IconButton(
+              icon: new Icon(Icons.short_text, color: Theme.of(context).iconTheme.color),
+              onPressed: null
+            )
           ],
         ),
       ),
@@ -98,13 +104,13 @@ class MarketPageState extends State<MarketPage> {
                         new Column(
                           children: <Widget>[
                             new Text("Total Market Cap", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
-                            new Text(numCommaParse(globalData["total_market_cap_usd"].toString()), style: Theme.of(context).textTheme.button),
+                            new Text(numCommaParse(globalData["total_market_cap_usd"].toString()), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1, fontWeightDelta: 2)),
                           ],
                         ),
                         new Column(
                           children: <Widget>[
                             new Text("Total 24h Volume", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
-                            new Text(numCommaParse(globalData["total_24h_volume_usd"].toString()), style: Theme.of(context).textTheme.button),
+                            new Text(numCommaParse(globalData["total_24h_volume_usd"].toString()), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1, fontWeightDelta: 2)),
                           ],
                         ),
                       ],
@@ -113,8 +119,11 @@ class MarketPageState extends State<MarketPage> {
                 ),
               ) : new Container(),
               new Container(
-                color: Theme.of(context).cardColor,
-                padding: const EdgeInsets.all(8.0),
+                margin: const EdgeInsets.only(left: 6.0, right: 6.0, top: 8.0),
+                decoration: new BoxDecoration(
+                  border: new Border(bottom: new BorderSide(color: Theme.of(context).dividerColor, width: 1.0))
+                ),
+                padding: const EdgeInsets.only(bottom: 8.0, left: 2.0, right: 2.0),
                 child: new Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -157,7 +166,7 @@ class CoinListItem extends StatelessWidget {
 
   _getImage() {
     if (num.parse(snapshot["rank"]) <= 20) {
-      return new Image.network("https://raw.githubusercontent.com/cjdowner/cryptocurrency-icons/master/128/color/"+snapshot["symbol"].toString().toLowerCase()+".png", height: 22.0);
+      return new Image.network("https://raw.githubusercontent.com/cjdowner/cryptocurrency-icons/master/128/color/"+snapshot["symbol"].toString().toLowerCase()+".png", height: 28.0);
     }
     else {
       return new Container();
@@ -176,8 +185,8 @@ class CoinListItem extends StatelessWidget {
         );
       },
       child: new Container(
+        decoration: new BoxDecoration(),
         padding: const EdgeInsets.all(8.0),
-        decoration: new BoxDecoration(border: new Border(bottom: new BorderSide(color: Theme.of(context).dividerColor, width: 0.5))),
         child: new Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -186,13 +195,11 @@ class CoinListItem extends StatelessWidget {
               child: new Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  new Text(snapshot["rank"]),
-                  new Padding(padding: const EdgeInsets.only(right: 6.0)),
-//                  new Image.asset("assets/icons/"+snapshot["symbol"].toString().toLowerCase()+".png", height: 22.0,),
-//                  new Image.network("https://raw.githubusercontent.com/cjdowner/cryptocurrency-icons/master/128/color/"+snapshot["symbol"].toString().toLowerCase()+".png", height: 22.0),
+                  new Text(snapshot["rank"], style: Theme.of(context).textTheme.body2),
+                  new Padding(padding: const EdgeInsets.only(right: 7.0)),
                   _getImage(),
-                  new Padding(padding: const EdgeInsets.only(right: 6.0)),
-                  new Text(snapshot["symbol"]),
+                  new Padding(padding: const EdgeInsets.only(right: 7.0)),
+                  new Text(snapshot["symbol"], style: Theme.of(context).textTheme.body2),
                 ],
               ),
             ),
@@ -202,9 +209,9 @@ class CoinListItem extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
-                  new Text(numCommaParse(snapshot["market_cap_usd"]), style: Theme.of(context).textTheme.button),
+                  new Text(numCommaParse(snapshot["market_cap_usd"]), style: Theme.of(context).textTheme.body2),
                   new Padding(padding: const EdgeInsets.only(bottom: 4.0)),
-                  new Text(numCommaParse(snapshot["24h_volume_usd"]))
+                  new Text(numCommaParse(snapshot["24h_volume_usd"]), style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor))
                 ],
               )
             ),

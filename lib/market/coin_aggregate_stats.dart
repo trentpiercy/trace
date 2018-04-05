@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:trace/main.dart';
 import 'package:trace/market.dart';
 import 'package:trace/market/coin_markets_list.dart';
 
@@ -50,6 +51,7 @@ class AggregateStatsState extends State<AggregateStats> {
   Future<Null> getHistoryOHLCV(String type, String amt) async {
     var response = await http.get(
       Uri.encodeFull("https://min-api.cryptocompare.com/data/histo"+type+"?fsym="+widget.snapshot["symbol"]+"&tsym=USD&limit="+(int.parse(amt)-1).toString()),
+      headers: {"Accept": "application/json"}
     );
     setState(() {
       historyOHLCV = new JsonDecoder().convert(response.body)["Data"];
@@ -126,7 +128,7 @@ class AggregateStatsState extends State<AggregateStats> {
           child: new Column(
             children: <Widget>[
               new Container(
-                padding: const EdgeInsets.only(left: 6.0, right: 6.0, top: 5.0),
+                padding: const EdgeInsets.only(left: 6.0, right: 6.0, top: 5.0, bottom: 1.0),
                 child: new Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -280,10 +282,13 @@ class AggregateStatsState extends State<AggregateStats> {
                   ),
                 ),
               ),
-              new QuickPercentChangeBar(snapshot: widget.snapshot, bgColor: Theme.of(context).canvasColor),
             ],
           ),
-        )
+        ),
+      bottomNavigationBar: new BottomAppBar(
+        elevation: bottomAppBarElevation,
+        child: new QuickPercentChangeBar(snapshot: widget.snapshot, bgColor: Theme.of(context).canvasColor),
+      ),
     );
   }
 }

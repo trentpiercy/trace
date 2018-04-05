@@ -25,6 +25,7 @@ class MarketListState extends State<MarketList> {
   Future<Null> getExchangeData(String toSym) async {
     var response = await http.get(
       Uri.encodeFull("https://min-api.cryptocompare.com/data/top/exchanges/full?fsym="+widget.snapshot["symbol"]+"&tsym="+toSym+"&limit=50"),
+      headers: {"Accept": "application/json"}
     );
     exchangeData = new JsonDecoder().convert(response.body)["Data"]["Exchanges"];
     makeExchangeData();
@@ -58,8 +59,13 @@ class MarketListState extends State<MarketList> {
         child: new Column(
           children: <Widget>[
             new Container(
-              color: Theme.of(context).cardColor,
-              padding: const EdgeInsets.all(6.0),
+              margin: const EdgeInsets.only(left: 6.0, right: 6.0, top: 8.0),
+              decoration: new BoxDecoration(
+                  border: new Border(bottom: new BorderSide(color: Theme.of(context).dividerColor, width: 1.0))
+              ),
+              padding: const EdgeInsets.only(bottom: 8.0, left: 2.0, right: 2.0),
+//              color: Theme.of(context).cardColor,
+//              padding: const EdgeInsets.all(6.0),
               child: new Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -105,7 +111,7 @@ class ExchangeListItem extends StatelessWidget {
       onTap: null,
       child: new Container(
         padding: const EdgeInsets.all(10.0),
-        decoration: new BoxDecoration(border: new Border(bottom: new BorderSide(color: Theme.of(context).dividerColor, width: 0.5))),
+        decoration: new BoxDecoration(),
         child: new Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
