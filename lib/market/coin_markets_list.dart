@@ -8,6 +8,22 @@ import 'package:trace/market.dart';
 //import 'coin_aggregate_stats.dart';
 
 
+priceTrim(number) {
+  if (number.toString().length < 7) {
+    return "\$" + number.toString();
+  }
+  return "\$" + number.toString().substring(0,7);
+}
+
+percentTrim(percent) {
+  if (percent >= 0) {
+    return "+"+percent.toStringAsFixed(2)+"%";
+  } else {
+    return percent.toStringAsFixed(2)+"%";
+  }
+}
+
+
 class MarketList extends StatefulWidget {
   MarketList({this.snapshot});
   final snapshot;
@@ -64,8 +80,6 @@ class MarketListState extends State<MarketList> {
                   border: new Border(bottom: new BorderSide(color: Theme.of(context).dividerColor, width: 1.0))
               ),
               padding: const EdgeInsets.only(bottom: 8.0, left: 2.0, right: 2.0),
-//              color: Theme.of(context).cardColor,
-//              padding: const EdgeInsets.all(6.0),
               child: new Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -117,17 +131,25 @@ class ExchangeListItem extends StatelessWidget {
           children: <Widget>[
             new Container(
               width: MediaQuery.of(context).size.width * columnProps[0],
-              child: new Text(exchangeDataSnapshot["MARKET"].toString()),
+              child: new Text(exchangeDataSnapshot["MARKET"], style: Theme.of(context).textTheme.body2),
             ),
             new Container(
               alignment: Alignment.centerRight,
               width: MediaQuery.of(context).size.width * columnProps[1],
-              child: new Text(numCommaParse(exchangeDataSnapshot["VOLUME24HOURTO"].toString())),
+              child: new Text(numCommaParse(exchangeDataSnapshot["VOLUME24HOURTO"].toString()), style: Theme.of(context).textTheme.body2),
             ),
             new Container(
-              alignment: Alignment.centerRight,
               width: MediaQuery.of(context).size.width * columnProps[2],
-              child: new Text(priceTrim(exchangeDataSnapshot["PRICE"])),
+              child: new Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  new Text(priceTrim(exchangeDataSnapshot["PRICE"])),
+                  new Text(
+                      percentTrim(exchangeDataSnapshot["CHANGEPCT24HOUR"]),
+                      style: Theme.of(context).primaryTextTheme.body1.apply(color: exchangeDataSnapshot["CHANGEPCT24HOUR"] >= 0 ? Colors.green : Colors.red)
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -135,18 +157,6 @@ class ExchangeListItem extends StatelessWidget {
     );
   }
 }
-
-priceTrim(number) {
-  if (number.toString().length < 7) {
-    return "\$" + number.toString();
-  }
-  return "\$" + number.toString().substring(0,7);
-}
-
-
-
-
-
 
 
 

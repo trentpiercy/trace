@@ -254,7 +254,7 @@ class AggregateStatsState extends State<AggregateStats> {
                                     children: <Widget>[
                                       new Text("Candlestick Width", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
                                       new Padding(padding: const EdgeInsets.only(right: 3.0)),
-                                      new Text("30 Minutes")
+                                      new Text("5m")
                                     ],
                                   ),
                                 ],
@@ -274,10 +274,18 @@ class AggregateStatsState extends State<AggregateStats> {
                         ],
                       ),
                       new Container(
-                        height: 500.0,
+                        height: 300.0,
+                        child: new Center(
+                          child: new Text("OHLC GRAPH", style: Theme.of(context).textTheme.title),
+                        ),
                       ),
-                      new Text("OHLC GRAPH", style: Theme.of(context).textTheme.title),
-                      new Text("VOLUME BARS", style: Theme.of(context).textTheme.title),
+                      new Container(
+                        height: 300.0,
+                        child: new Center(
+                          child: new Text("VOLUME BARS", style: Theme.of(context).textTheme.title),
+                        ),
+                      ),
+
                     ],
                   ),
                 ),
