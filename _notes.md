@@ -1,13 +1,11 @@
 # Future
 Learn drawing for OHLC and Volume
     - Control total time period (assigned by sparkline time setting)
-        - 1hr, 6hr, 12hr, 24hr, 3d, 7d, 1m, 3m, 6m
-    - Divide into periods
-        - Only show those less than 1/10 total time
-        - 1m, 3m, 5m, 15m, 30m, 1hr, 2hr, 4hr, 6hr, 12hr, 1d, 3d, 1w
+    - Divided into width options specific to total time
 
 Portfolio
     - JSON local storage
+        - path pub
     - Upload to firebase
 
 Python backend for aggregate market depth stats
@@ -59,11 +57,26 @@ Specific currency
                 - 6m = 180 day
                 - 1y = 365 day
         - OHLC
-            - Candlestick width options by total history length
+            - Candlestick width options by total history length 
+                - Info
+                    - Total Periods: 1hr, 6hr, 12hr, 24hr, 3d, 7d, 1m, 3m, 6m, 1y
+                    - Width options: 1m, 3m, 5m, 10m, 15m, 30m, 1hr, 2hr, 4hr, 6hr, 12hr, 1d, 3d, 7d
+
                 - 1h
-                    - 1m, 3m, 5m
+                    - 1m (60), 3m (20), 5m (12)
                 - 6h
-                    - 
+                    - 5m (72), 10m (36), 15m (24), 30m (12)
+                - 12h
+                    - 10m (72), 15m (48), 30m (24), 1h (12)
+                - 24h
+                    - 30m (48), 1h (24), 2hr (12)
+                - 3d
+                - 7d
+                - 1m
+                - 3m
+                - 6m
+                - 1y
+
         - Volume (base on same width of OHLC)
         - Depth
 - Markets
