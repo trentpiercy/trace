@@ -22,18 +22,26 @@ class AggregateStats extends StatefulWidget {
 
 List sparkLineData;
 List historyOHLCV;
-String historyAmt = "1420";
-String historyType = "minute";
-String historyTotal = "24h";
+List historyOHLCVTimeAgg;
+
+String historyOHLCVLimitAmt;
+String historyOHLCVAggAmt;
+
+String historyAmt;
+String historyType;
+String historyTotal;
+String historyAgg;
 
 String _high;
 String _low;
-String _change = "0";
+String _change;
 
 void resetCoinStats() {
   sparkLineData = null;
   historyOHLCV = null;
-  historyAmt = "1420";
+  historyOHLCVTimeAgg = null;
+  historyAmt = "720";
+  historyAgg = "2";
   historyType = "minute";
   historyTotal = "24h";
 
@@ -48,14 +56,39 @@ void resetCoinStats() {
 class AggregateStatsState extends State<AggregateStats> {
   final ScrollController _scrollController = new ScrollController();
 
-  Future<Null> getHistoryOHLCV(String type, String amt) async {
+    Future<Null> getHistorySparkLine() async {
     var response = await http.get(
-      Uri.encodeFull("https://min-api.cryptocompare.com/data/histo"+type+"?fsym="+widget.snapshot["symbol"]+"&tsym=USD&limit="+(int.parse(amt)-1).toString()),
+      Uri.encodeFull("https://min-api.cryptocompare.com/data/histo"+historyType+"?fsym="+widget.snapshot["symbol"]+"&tsym=USD&limit="+(int.parse(historyAmt)-1).toString()+"&aggregate="+historyAgg),
       headers: {"Accept": "application/json"}
     );
     setState(() {
       historyOHLCV = new JsonDecoder().convert(response.body)["Data"];
     });
+  }
+
+
+  Future<Null> getHistoryOHLCV() async {
+    var response = await http.get(
+        Uri.encodeFull(
+            "https://min-api.cryptocompare.com/data/histo"+historyType+
+            "?fsym="+widget.snapshot["symbol"]+
+            "&tsym=USD&limit="+(int.parse(historyOHLCVLimitAmt)-1).toString()+
+            "&aggregate="+historyOHLCVAggAmt
+        ),
+        headers: {"Accept": "application/json"}
+    );
+    setState(() {
+      historyOHLCVTimeAgg = new JsonDecoder().convert(response.body)["Data"];
+    });
+  }
+
+  Future<Null> changeOHLCVWidth(String limit, String aggAmt) async {
+    historyOHLCVLimitAmt = limit;
+    historyOHLCVAggAmt = aggAmt;
+
+    await getHistoryOHLCV();
+
+    //makeOHLCVData();
   }
 
   void _getHL() {
@@ -95,7 +128,7 @@ class AggregateStatsState extends State<AggregateStats> {
     });
   }
 
-  Future<Null> changeHistory(String type, String amt, String total) async {
+  Future<Null> changeHistory(String type, String amt, String total, String agg) async {
     setState((){
       _high = "0";
       _low = "0";
@@ -104,10 +137,11 @@ class AggregateStatsState extends State<AggregateStats> {
       historyAmt = amt;
       historyType = type;
       historyTotal = total;
+      historyAgg = agg;
 
       sparkLineData = null;
     });
-    await getHistoryOHLCV(type, amt);
+    await getHistorySparkLine();
     _getHL();
     makeSparkLineData();
   }
@@ -115,7 +149,7 @@ class AggregateStatsState extends State<AggregateStats> {
   void initState() {
     super.initState();
     if (sparkLineData == null) {
-      changeHistory(historyType, historyAmt, historyTotal);
+      changeHistory(historyType, historyAmt, historyTotal, historyAgg);
     }
   }
 
@@ -124,7 +158,7 @@ class AggregateStatsState extends State<AggregateStats> {
     return new Scaffold(
         resizeToAvoidBottomPadding: false,
         body: new RefreshIndicator(
-          onRefresh: () => changeHistory(historyType, historyAmt, historyTotal),
+          onRefresh: () => changeHistory(historyType, historyAmt, historyTotal, historyAgg),
           child: new Column(
             children: <Widget>[
               new Container(
@@ -219,18 +253,18 @@ class AggregateStatsState extends State<AggregateStats> {
                         tooltip: "Select Period",
                         icon: new Icon(Icons.access_time, color: Theme.of(context).buttonColor),
                         itemBuilder: (BuildContext context) => [
-                          new PopupMenuItem(child: new Text("1h"), value: ["minute", "60", "1h"]),
-                          new PopupMenuItem(child: new Text("6h"), value: ["minute", "360", "6h"]),
-                          new PopupMenuItem(child: new Text("12h"), value: ["minute", "720", "12h"]),
-                          new PopupMenuItem(child: new Text("24h"), value: ["minute", "1420", "24h"]),
-                          new PopupMenuItem(child: new Text("3d"), value: ["hour", "72", "3d"]),
-                          new PopupMenuItem(child: new Text("7d"), value: ["hour", "168", "7d"]),
-                          new PopupMenuItem(child: new Text("1m"), value: ["hour", "720", "1m"]),
-                          new PopupMenuItem(child: new Text("3m"), value: ["hour", "1420", "3m"]),
-                          new PopupMenuItem(child: new Text("6m"), value: ["day", "180", "6m"]),
-                          new PopupMenuItem(child: new Text("1y"), value: ["day", "365", "1y"]),
+                          new PopupMenuItem(child: new Text("1h"), value: ["minute", "60", "1h", "1"]),
+                          new PopupMenuItem(child: new Text("6h"), value: ["minute", "360", "6h", "1"]),
+                          new PopupMenuItem(child: new Text("12h"), value: ["minute", "720", "12h", "1"]),
+                          new PopupMenuItem(child: new Text("24h"), value: ["minute", "720", "24h", "2"]),
+                          new PopupMenuItem(child: new Text("3D"), value: ["hour", "72", "3d", "1"]),
+                          new PopupMenuItem(child: new Text("7D"), value: ["hour", "168", "7d", "1"]),
+                          new PopupMenuItem(child: new Text("1M"), value: ["hour", "720", "1m", "1"]),
+                          new PopupMenuItem(child: new Text("3M"), value: ["day", "90", "3m", "1"]),
+                          new PopupMenuItem(child: new Text("6M"), value: ["day", "180", "6m", "1"]),
+                          new PopupMenuItem(child: new Text("1Y"), value: ["day", "365", "1y", "1"]),
                         ],
-                        onSelected: (result) {changeHistory(result[0], result[1], result[2]);},
+                        onSelected: (result) {changeHistory(result[0], result[1], result[2], result[3]);},
                       )
                   ),
                 ],
@@ -268,7 +302,7 @@ class AggregateStatsState extends State<AggregateStats> {
                                 itemBuilder: (BuildContext context) => [
 
                                 ],
-                                onSelected: (result) {changeHistory(result[0], result[1], result[2]);},
+                                onSelected: (result) {},
                               )
                           ),
                         ],
@@ -372,9 +406,14 @@ class _SparkLine extends StatelessWidget {
           data: data,
           lineWidth: 1.5,
           lineGradient: new LinearGradient(
-              begin: Alignment.bottomCenter,
-              end: Alignment.topCenter,
-              colors: [Theme.of(context).accentColor, Theme.of(context).buttonColor]
+            colors: [Theme.of(context).accentColor, Theme.of(context).buttonColor],
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter
+          ),
+          fillGradient: new LinearGradient(
+            colors: [Theme.of(context).canvasColor, Colors.purpleAccent[50]],
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter
           ),
         )
     );

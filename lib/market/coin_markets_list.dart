@@ -124,7 +124,7 @@ class ExchangeListItem extends StatelessWidget {
     return new GestureDetector(
       onTap: null,
       child: new Container(
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(6.0),
         decoration: new BoxDecoration(),
         child: new Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
