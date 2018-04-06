@@ -95,7 +95,7 @@ class MarketListState extends State<MarketList> {
                   new Container(
                     alignment: Alignment.centerRight,
                     width: MediaQuery.of(context).size.width * columnProps[2],
-                    child: new Text("Price", style: Theme.of(context).textTheme.body2),
+                    child: new Text("Price/24h", style: Theme.of(context).textTheme.body2),
                   ),
                 ],
               ),

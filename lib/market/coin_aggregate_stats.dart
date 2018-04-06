@@ -11,7 +11,6 @@ import 'package:trace/main.dart';
 import 'package:trace/market.dart';
 import 'package:trace/market/coin_markets_list.dart';
 
-
 class AggregateStats extends StatefulWidget {
   AggregateStats({this.snapshot});
   final snapshot;
@@ -168,26 +167,26 @@ class AggregateStatsState extends State<AggregateStats> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     new Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         new Text("Price", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
-                        new Text("\$"+widget.snapshot["price_usd"].toString(), style: Theme.of(context).textTheme.button.apply(fontSizeFactor: 1.3, color: Theme.of(context).accentColor)),
+                        new Text("\$"+widget.snapshot["price_usd"].toString(), style: Theme.of(context).textTheme.button.apply(fontSizeFactor: 1.4, color: Theme.of(context).accentColor)),
                       ],
                     ),
                     new Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        new Text("24h Volume", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
-                        new Text(numCommaParse(widget.snapshot["24h_volume_usd"].toString()), style: Theme.of(context).textTheme.button),
-                      ],
-                    ),
-                    new Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         new Text("Market Cap", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
-                        new Text(numCommaParse(widget.snapshot["market_cap_usd"].toString()), style: Theme.of(context).textTheme.button),
+                        new Text(numCommaParse(widget.snapshot["market_cap_usd"].toString()), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)),
                       ],
-                    )
+                    ),
+                    new Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        new Text("24h Volume", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
+                        new Text(numCommaParse(widget.snapshot["24h_volume_usd"].toString()), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -335,6 +334,10 @@ class AggregateStatsState extends State<AggregateStats> {
   }
 }
 
+
+
+
+
 class QuickPercentChangeBar extends StatelessWidget {
   QuickPercentChangeBar({this.snapshot, this.bgColor});
   final snapshot;
@@ -404,14 +407,9 @@ class _SparkLine extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: new Sparkline(
           data: data,
-          lineWidth: 1.5,
+          lineWidth: 1.8,
           lineGradient: new LinearGradient(
             colors: [Theme.of(context).accentColor, Theme.of(context).buttonColor],
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter
-          ),
-          fillGradient: new LinearGradient(
-            colors: [Theme.of(context).canvasColor, Colors.purpleAccent[50]],
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter
           ),
