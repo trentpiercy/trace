@@ -21,10 +21,10 @@ class AggregateStats extends StatefulWidget {
 
 List sparkLineData;
 List historyOHLCV;
-List historyOHLCVTimeAgg;
+List historyOHLCVTimeAggregated;
 
-String historyOHLCVLimitAmt;
-String historyOHLCVAggAmt;
+String OHLCVLimitAmt;
+String OHLCVAggAmt;
 
 String historyAmt;
 String historyType;
@@ -38,7 +38,11 @@ String _change;
 void resetCoinStats() {
   sparkLineData = null;
   historyOHLCV = null;
-  historyOHLCVTimeAgg = null;
+
+  historyOHLCVTimeAggregated = null;
+  OHLCVLimitAmt = "48";
+  OHLCVAggAmt = "30";
+
   historyAmt = "720";
   historyAgg = "2";
   historyType = "minute";
@@ -71,19 +75,19 @@ class AggregateStatsState extends State<AggregateStats> {
         Uri.encodeFull(
             "https://min-api.cryptocompare.com/data/histo"+historyType+
             "?fsym="+widget.snapshot["symbol"]+
-            "&tsym=USD&limit="+(int.parse(historyOHLCVLimitAmt)-1).toString()+
-            "&aggregate="+historyOHLCVAggAmt
+            "&tsym=USD&limit="+(int.parse(OHLCVLimitAmt)-1).toString()+
+            "&aggregate="+OHLCVAggAmt
         ),
         headers: {"Accept": "application/json"}
     );
     setState(() {
-      historyOHLCVTimeAgg = new JsonDecoder().convert(response.body)["Data"];
+      historyOHLCVTimeAggregated = new JsonDecoder().convert(response.body)["Data"];
     });
   }
 
   Future<Null> changeOHLCVWidth(String limit, String aggAmt) async {
-    historyOHLCVLimitAmt = limit;
-    historyOHLCVAggAmt = aggAmt;
+    OHLCVLimitAmt = limit;
+    OHLCVAggAmt = aggAmt;
 
     await getHistoryOHLCV();
 
@@ -91,7 +95,7 @@ class AggregateStatsState extends State<AggregateStats> {
   }
 
   void _getHL() {
-    var highReturn = 0;
+    num highReturn = 0.0;
     for (var i in historyOHLCV) {
       if (i["high"] > highReturn) {
         highReturn = i["high"];
@@ -99,7 +103,7 @@ class AggregateStatsState extends State<AggregateStats> {
     }
     _high = highReturn.toString();
 
-    var lowReturn = double.infinity;
+    num lowReturn = double.infinity;
     for (var i in historyOHLCV) {
       if (i["low"] < lowReturn) {
         lowReturn = i["low"];
@@ -107,7 +111,7 @@ class AggregateStatsState extends State<AggregateStats> {
     }
     _low = lowReturn.toString();
 
-    var start = historyOHLCV[0]["open"];
+    var start = historyOHLCV[0]["close"];
     var end = historyOHLCV[int.parse(historyAmt)-1]["close"];
 
     var changePercent = (end-start)/start*100;
@@ -116,10 +120,11 @@ class AggregateStatsState extends State<AggregateStats> {
   }
 
   Future<Null> makeSparkLineData() async {
-    List returnData = [];
+    List<double> returnData = [];
 
     for (var i in historyOHLCV) {
-      returnData.add(double.parse(i["close"].toString()));
+      returnData.add(((i["high"]+i["low"])/2));
+//      returnData.add(i["close"]);
     }
 
     setState(() {
@@ -333,9 +338,6 @@ class AggregateStatsState extends State<AggregateStats> {
     );
   }
 }
-
-
-
 
 
 class QuickPercentChangeBar extends StatelessWidget {

@@ -11,6 +11,8 @@ Portfolio
 Python backend for aggregate market depth stats
 Searching coins
 
+Animate everything
+
 # Do Soon
 - Data (Cryptowat.ch)
     - OHLCV: https://api.cryptowat.ch/markets/[exchange]/[pair]/ohlc?period=[periodseconds]
@@ -84,7 +86,7 @@ Specific currency
                 - 1Y
                     - 7d (52)
 
-        - Volume (base on same width of OHLC)
+        - Volume (base same width of OHLC)
         - Depth
 - Markets
     - Listview of all markets
