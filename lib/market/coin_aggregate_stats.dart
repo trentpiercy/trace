@@ -282,7 +282,19 @@ class AggregateStatsState extends State<AggregateStats> {
                   controller: _scrollController,
                   child: new Column(
                     children: <Widget>[
-                      sparkLineData == null ? new Container(height: MediaQuery.of(context).size.height * 0.4) : new _SparkLine(data: sparkLineData), // TODO: loading symbol instead of empty container
+                      sparkLineData != null ? new Container(
+                        height: MediaQuery.of(context).size.height * 0.4,
+                        padding: const EdgeInsets.all(8.0),
+                        child: new Sparkline(
+                          data: sparkLineData,
+                          lineWidth: 1.8,
+                          lineGradient: new LinearGradient(
+                              colors: [Theme.of(context).accentColor, Theme.of(context).buttonColor],
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter
+                          ),
+                        )
+                      ) : new Container(height: MediaQuery.of(context).size.height * 0.4),
                       new Row(
                         children: <Widget>[
                           new Flexible(
@@ -316,12 +328,11 @@ class AggregateStatsState extends State<AggregateStats> {
                         ],
                       ),
 
-                      new Container(
-                        height: 300.0,
-                        width: 300.0,
-                        child: historyOHLCVTimeAggregated != null ?
-                          new OHLCVGraph(data: historyOHLCVTimeAggregated) : new Container()
-                      ),
+                      historyOHLCVTimeAggregated != null ? new Container(
+                          height: MediaQuery.of(context).size.height * 0.4,
+                          padding: const EdgeInsets.all(8.0),
+                          child: new OHLCVGraph(data: historyOHLCVTimeAggregated,),
+                      ) : new Container(height: MediaQuery.of(context).size.height * 0.4),
 
                       new Container(
                         height: 100.0,
