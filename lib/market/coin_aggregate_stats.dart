@@ -11,6 +11,8 @@ import 'package:trace/main.dart';
 import 'package:trace/market.dart';
 import 'package:trace/market/coin_markets_list.dart';
 
+import 'package:trace/graphing.dart';
+
 class AggregateStats extends StatefulWidget {
   AggregateStats({this.snapshot});
   final snapshot;
@@ -96,19 +98,18 @@ class AggregateStatsState extends State<AggregateStats> {
 
   void _getHL() {
     num highReturn = 0.0;
+    num lowReturn = double.infinity;
+
     for (var i in historyOHLCV) {
       if (i["high"] > highReturn) {
         highReturn = i["high"];
       }
-    }
-    _high = highReturn.toString();
-
-    num lowReturn = double.infinity;
-    for (var i in historyOHLCV) {
       if (i["low"] < lowReturn) {
         lowReturn = i["low"];
       }
     }
+
+    _high = highReturn.toString();
     _low = lowReturn.toString();
 
     var start = historyOHLCV[0]["close"];
@@ -154,6 +155,9 @@ class AggregateStatsState extends State<AggregateStats> {
     super.initState();
     if (sparkLineData == null) {
       changeHistory(historyType, historyAmt, historyTotal, historyAgg);
+    }
+    if (historyOHLCVTimeAggregated == null) {
+      getHistoryOHLCV();
     }
   }
 
@@ -311,19 +315,20 @@ class AggregateStatsState extends State<AggregateStats> {
                           ),
                         ],
                       ),
+
                       new Container(
                         height: 300.0,
-                        child: new Center(
-                          child: new Text("OHLC GRAPH", style: Theme.of(context).textTheme.title),
-                        ),
+                        width: 300.0,
+                        child: historyOHLCVTimeAggregated != null ?
+                          new OHLCVGraph(data: historyOHLCVTimeAggregated) : new Container()
                       ),
+
                       new Container(
-                        height: 300.0,
+                        height: 100.0,
                         child: new Center(
                           child: new Text("VOLUME BARS", style: Theme.of(context).textTheme.title),
                         ),
                       ),
-
                     ],
                   ),
                 ),

@@ -13,7 +13,7 @@ class OHLCVGraph extends StatelessWidget {
         assert(lineWidth != null),
         super(key: key);
 
-  final Map data;
+  final List data;
   final double lineWidth;
 
   @override
@@ -33,22 +33,66 @@ class _OHLCVPainter extends CustomPainter {
   _OHLCVPainter(
       this.data, {
         @required this.lineWidth
-      })  : _max = data["high"].reduce(math.max),
-        _min = data["low"].reduce(math.min);
+      });
 
-  final Map data;
+  final List data;
   final double lineWidth;
-
-  final double _max;
-  final double _min;
 
 
   @override
   void paint(Canvas canvas, Size size) {
-    final double width = size.width - lineWidth;
-    final double height = size.height - lineWidth;
-    final double widthNormalizer = width / (data.length - 1);
+
+    double _min = double.infinity;
+    double _max = 0.0;
+
+    for (var i in data) {
+      if (i["high"] > _max) {
+        _max = i["high"];
+      }
+      if (i["low"] < _min) {
+        _min = i["low"];
+      }
+    }
+
+    final double width = size.width;
+    final double height = size.height;
+
     final double heightNormalizer = height / (_max - _min);
+
+    final double rectWidth = width / data.length;
+
+    for (int i = 0; i < data.length; i++) {
+
+      double rectLeft = i * rectWidth;
+      double rectRight = (i+1) * rectWidth;
+
+      double rectTop;
+      double rectBottom;
+
+      Paint rectPaint;
+
+      if (data[i]["open"] > data[i]["close"]) {
+        rectTop = (data[i]["open"] - _min) * heightNormalizer;
+        rectBottom = (data[i]["close"] - _min) * heightNormalizer;
+        rectPaint = new Paint() ..color=Colors.red;
+      } else {
+        rectTop = (data[i]["close"] - _min) * heightNormalizer;
+        rectBottom = (data[i]["open"] - _min) * heightNormalizer;
+        rectPaint = new Paint() ..color=Colors.green;
+      }
+
+      print(data.length);
+      print("L: " + rectLeft.toString());
+      print("T: " + rectTop.toString());
+      print("R: " + rectRight.toString());
+      print("B: " + rectBottom.toString());
+      print("");
+
+      Rect ocRect = new Rect.fromLTRB(rectLeft, rectTop, rectRight, rectBottom);
+
+      canvas.drawRect(ocRect, rectPaint);
+
+    }
 
 
 
