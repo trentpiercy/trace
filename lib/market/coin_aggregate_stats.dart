@@ -27,6 +27,7 @@ List historyOHLCVTimeAggregated;
 
 String OHLCVLimitAmt;
 String OHLCVAggAmt;
+List OHLCVWidthOptions;
 
 String historyAmt;
 String historyType;
@@ -44,6 +45,7 @@ void resetCoinStats() {
   historyOHLCVTimeAggregated = null;
   OHLCVLimitAmt = "48";
   OHLCVAggAmt = "30";
+  OHLCVWidthOptions = ["15m", "30m", "1h"];
 
   historyAmt = "720";
   historyAgg = "2";
@@ -91,9 +93,7 @@ class AggregateStatsState extends State<AggregateStats> {
     OHLCVLimitAmt = limit;
     OHLCVAggAmt = aggAmt;
 
-    await getHistoryOHLCV();
-
-    //makeOHLCVData();
+    getHistoryOHLCV();
   }
 
   void _getHL() {
@@ -125,7 +125,6 @@ class AggregateStatsState extends State<AggregateStats> {
 
     for (var i in historyOHLCV) {
       returnData.add(((i["high"]+i["low"])/2));
-//      returnData.add(i["close"]);
     }
 
     setState(() {
@@ -145,6 +144,19 @@ class AggregateStatsState extends State<AggregateStats> {
       historyAgg = agg;
 
       sparkLineData = null;
+
+//      switch (total) {
+//        case "1h":
+//          OHLCVWidthOptions = [["1m", 1, 60], ["2m", 2, 30], ["3m", 3, 20]];
+//          break;
+//        case "6h":
+//          OHLCVWidthOptions = [["5m", 5, 72], ["10m", 10, 36], ["15m", 15, 24]];
+//          break;
+//
+//        case "24h":
+//          OHLCVWidthOptions = [["15m", 15, 96], ["30m", 2, 30], ["1h", 3, 24]];
+//      }
+
     });
     await getHistorySparkLine();
     _getHL();
@@ -308,7 +320,7 @@ class AggregateStatsState extends State<AggregateStats> {
                                     children: <Widget>[
                                       new Text("Candlestick Width", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
                                       new Padding(padding: const EdgeInsets.only(right: 3.0)),
-                                      new Text("5m")
+                                      new Text(OHLCVAggAmt.toString() + historyType.substring(0, 1))
                                     ],
                                   ),
                                 ],
@@ -319,9 +331,7 @@ class AggregateStatsState extends State<AggregateStats> {
                               child: new PopupMenuButton( // TODO: make exist
                                 tooltip: "Select Width",
                                 icon: new Icon(Icons.swap_horiz, color: Theme.of(context).buttonColor),
-                                itemBuilder: (BuildContext context) => [
-
-                                ],
+                                itemBuilder: (BuildContext context) {},
                                 onSelected: (result) {},
                               )
                           ),

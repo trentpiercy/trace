@@ -13,7 +13,7 @@ void main() {
   ));
 }
 
-bool darkEnabled = false; //TODO: in app switch
+bool darkEnabled = true; //TODO: in app switch
 
 final ThemeData lightTheme = new ThemeData(
   brightness: Brightness.light,
