@@ -97,7 +97,7 @@ class AggregateStatsState extends State<AggregateStats> {
   }
 
   void _getHL() {
-    num highReturn = 0.0;
+    num highReturn = -double.infinity;
     num lowReturn = double.infinity;
 
     for (var i in historyOHLCV) {
@@ -295,7 +295,7 @@ class AggregateStatsState extends State<AggregateStats> {
                   child: new Column(
                     children: <Widget>[
                       sparkLineData != null ? new Container(
-                        height: MediaQuery.of(context).size.height * 0.4,
+                        height: MediaQuery.of(context).size.height * 0.3,
                         padding: const EdgeInsets.all(8.0),
                         child: new Sparkline(
                           data: sparkLineData,
@@ -306,7 +306,7 @@ class AggregateStatsState extends State<AggregateStats> {
                               end: Alignment.topCenter
                           ),
                         )
-                      ) : new Container(height: MediaQuery.of(context).size.height * 0.4),
+                      ) : new Container(height: MediaQuery.of(context).size.height * 0.3),
                       new Row(
                         children: <Widget>[
                           new Flexible(
@@ -339,17 +339,11 @@ class AggregateStatsState extends State<AggregateStats> {
                       ),
 
                       historyOHLCVTimeAggregated != null ? new Container(
-                          height: MediaQuery.of(context).size.height * 0.4,
+                          height: MediaQuery.of(context).size.height * 0.6,
                           padding: const EdgeInsets.all(8.0),
-                          child: new OHLCVGraph(data: historyOHLCVTimeAggregated,),
-                      ) : new Container(height: MediaQuery.of(context).size.height * 0.4),
+                          child: new OHLCGraph(data: historyOHLCVTimeAggregated, gridLineColor: Theme.of(context).dividerColor),
+                      ) : new Container(height: MediaQuery.of(context).size.height * 0.6),
 
-                      new Container(
-                        height: 100.0,
-                        child: new Center(
-                          child: new Text("VOLUME BARS", style: Theme.of(context).textTheme.title),
-                        ),
-                      ),
                     ],
                   ),
                 ),
