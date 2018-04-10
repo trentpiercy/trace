@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_sparkline/flutter_sparkline.dart';
-import 'package:charts_flutter/flutter.dart';
+import 'package:flutter_candlesticks/flutter_candlesticks.dart';
 
 import 'dart:async';
 import 'package:http/http.dart' as http;
@@ -10,8 +10,6 @@ import 'dart:convert';
 import 'package:trace/main.dart';
 import 'package:trace/market.dart';
 import 'package:trace/market/coin_markets_list.dart';
-
-import 'package:trace/graphing.dart';
 
 class AggregateStats extends StatefulWidget {
   AggregateStats({this.snapshot});
