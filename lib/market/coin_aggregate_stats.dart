@@ -25,9 +25,19 @@ List sparkLineData;
 List historyOHLCV;
 List historyOHLCVTimeAggregated;
 
-String OHLCVLimitAmt;
-String OHLCVAggAmt;
-List OHLCVWidthOptions;
+Map OHLCVWidthOptions = {
+  "1h":[["1m", 60, 1, "minute"], ["2m", 30, 2, "minute"], ["3m", 20, 3, "minute"]],
+  "6h":[["5m", 72, 5, "minute"], ["10m", 36, 10, "minute"], ["15m", 24, 15, "minute"]],
+  "12h":[["10m", 72, 10, "minute"], ["15m", 48, 15, "minute"], ["30m", 24, 30, "minute"]],
+  "24h":[["15m", 96, 15, "minute"], ["30m", 48, 30, "minute"], ["1h", 24, 1, "hour"]],
+  "3D":[["1h", 72, 1, "hour"], ["2h", 36, 2, "hour"], ["4h", 18, 4, "hour"]],
+  "7D":[["2h", 86, 2, "hour"], ["4h", 42, 4, "hour"], ["6h", 28, 6, "hour"]],
+  "1M":[["12h", 60, 12, "hour"], ["1D", 30, 1, "day"]],
+  "3M":[["1D", 90, 1, "day"], ["2D", 45, 2, "day"], ["3D", 30, 3, "day"]],
+  "6M":[["2D", 90, 2, "day"], ["3D", 60, 3, "day"], ["7D", 26, 7, "day"]],
+  "1Y":[["7D", 52, 7, "day"], ["14D", 26, 14, "day"]],
+};
+int currentOHLCVWidthSetting;
 
 String historyAmt;
 String historyType;
@@ -43,9 +53,7 @@ void resetCoinStats() {
   historyOHLCV = null;
 
   historyOHLCVTimeAggregated = null;
-  OHLCVLimitAmt = "48";
-  OHLCVAggAmt = "30";
-  OHLCVWidthOptions = ["15m", "30m", "1h"];
+  currentOHLCVWidthSetting = 1;
 
   historyAmt = "720";
   historyAgg = "2";
@@ -77,10 +85,10 @@ class AggregateStatsState extends State<AggregateStats> {
   Future<Null> getHistoryOHLCV() async {
     var response = await http.get(
         Uri.encodeFull(
-            "https://min-api.cryptocompare.com/data/histo"+historyType+
+            "https://min-api.cryptocompare.com/data/histo"+OHLCVWidthOptions[historyTotal][currentOHLCVWidthSetting][3]+
             "?fsym="+widget.snapshot["symbol"]+
-            "&tsym=USD&limit="+(int.parse(OHLCVLimitAmt)-1).toString()+
-            "&aggregate="+OHLCVAggAmt
+            "&tsym=USD&limit="+(OHLCVWidthOptions[historyTotal][currentOHLCVWidthSetting][1] - 1).toString()+
+            "&aggregate="+OHLCVWidthOptions[historyTotal][currentOHLCVWidthSetting][2].toString()
         ),
         headers: {"Accept": "application/json"}
     );
@@ -89,10 +97,11 @@ class AggregateStatsState extends State<AggregateStats> {
     });
   }
 
-  Future<Null> changeOHLCVWidth(String limit, String aggAmt) async {
-    OHLCVLimitAmt = limit;
-    OHLCVAggAmt = aggAmt;
-
+  Future<Null> changeOHLCVWidth(int currentSetting) async {
+    currentOHLCVWidthSetting = currentSetting;
+    setState(() {
+      historyOHLCVTimeAggregated = null;
+    });
     getHistoryOHLCV();
   }
 
@@ -102,17 +111,17 @@ class AggregateStatsState extends State<AggregateStats> {
 
     for (var i in historyOHLCV) {
       if (i["high"] > highReturn) {
-        highReturn = i["high"];
+        highReturn = i["high"].toDouble();
       }
       if (i["low"] < lowReturn) {
-        lowReturn = i["low"];
+        lowReturn = i["low"].toDouble();
       }
     }
 
     _high = highReturn.toString();
     _low = lowReturn.toString();
 
-    var start = historyOHLCV[0]["close"];
+    var start = historyOHLCV[0]["close"] == 0 ? 1 : historyOHLCV[0]["close"];
     var end = historyOHLCV[int.parse(historyAmt)-1]["close"];
 
     var changePercent = (end-start)/start*100;
@@ -144,21 +153,13 @@ class AggregateStatsState extends State<AggregateStats> {
       historyAgg = agg;
 
       sparkLineData = null;
+      historyOHLCVTimeAggregated = null;
 
-//      switch (total) {
-//        case "1h":
-//          OHLCVWidthOptions = [["1m", 1, 60], ["2m", 2, 30], ["3m", 3, 20]];
-//          break;
-//        case "6h":
-//          OHLCVWidthOptions = [["5m", 5, 72], ["10m", 10, 36], ["15m", 15, 24]];
-//          break;
-//
-//        case "24h":
-//          OHLCVWidthOptions = [["15m", 15, 96], ["30m", 2, 30], ["1h", 3, 24]];
-//      }
+      currentOHLCVWidthSetting = 1;
 
     });
     await getHistorySparkLine();
+    await getHistoryOHLCV();
     _getHL();
     makeSparkLineData();
   }
@@ -277,12 +278,12 @@ class AggregateStatsState extends State<AggregateStats> {
                           new PopupMenuItem(child: new Text("6h"), value: ["minute", "360", "6h", "1"]),
                           new PopupMenuItem(child: new Text("12h"), value: ["minute", "720", "12h", "1"]),
                           new PopupMenuItem(child: new Text("24h"), value: ["minute", "720", "24h", "2"]),
-                          new PopupMenuItem(child: new Text("3D"), value: ["hour", "72", "3d", "1"]),
-                          new PopupMenuItem(child: new Text("7D"), value: ["hour", "168", "7d", "1"]),
-                          new PopupMenuItem(child: new Text("1M"), value: ["hour", "720", "1m", "1"]),
-                          new PopupMenuItem(child: new Text("3M"), value: ["day", "90", "3m", "1"]),
-                          new PopupMenuItem(child: new Text("6M"), value: ["day", "180", "6m", "1"]),
-                          new PopupMenuItem(child: new Text("1Y"), value: ["day", "365", "1y", "1"]),
+                          new PopupMenuItem(child: new Text("3D"), value: ["hour", "72", "3D", "1"]),
+                          new PopupMenuItem(child: new Text("7D"), value: ["hour", "168", "7D", "1"]),
+                          new PopupMenuItem(child: new Text("1M"), value: ["hour", "720", "1M", "1"]),
+                          new PopupMenuItem(child: new Text("3M"), value: ["day", "90", "3M", "1"]),
+                          new PopupMenuItem(child: new Text("6M"), value: ["day", "180", "6M", "1"]),
+                          new PopupMenuItem(child: new Text("1Y"), value: ["day", "365", "1Y", "1"]),
                         ],
                         onSelected: (result) {changeHistory(result[0], result[1], result[2], result[3]);},
                       )
@@ -295,7 +296,7 @@ class AggregateStatsState extends State<AggregateStats> {
                   child: new Column(
                     children: <Widget>[
                       sparkLineData != null ? new Container(
-                        height: MediaQuery.of(context).size.height * 0.3,
+                        height: MediaQuery.of(context).size.height * 0.2,
                         padding: const EdgeInsets.all(8.0),
                         child: new Sparkline(
                           data: sparkLineData,
@@ -306,7 +307,7 @@ class AggregateStatsState extends State<AggregateStats> {
                               end: Alignment.topCenter
                           ),
                         )
-                      ) : new Container(height: MediaQuery.of(context).size.height * 0.3),
+                      ) : new Container(height: MediaQuery.of(context).size.height * 0.2),
                       new Row(
                         children: <Widget>[
                           new Flexible(
@@ -320,7 +321,7 @@ class AggregateStatsState extends State<AggregateStats> {
                                     children: <Widget>[
                                       new Text("Candlestick Width", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
                                       new Padding(padding: const EdgeInsets.only(right: 3.0)),
-                                      new Text(OHLCVAggAmt.toString() + historyType.substring(0, 1))
+                                      new Text(OHLCVWidthOptions[historyTotal][currentOHLCVWidthSetting][0])
                                     ],
                                   ),
                                 ],
@@ -328,11 +329,19 @@ class AggregateStatsState extends State<AggregateStats> {
                             ),
                           ),
                           new Container(
-                              child: new PopupMenuButton( // TODO: make exist
+                              child: new PopupMenuButton(
                                 tooltip: "Select Width",
                                 icon: new Icon(Icons.swap_horiz, color: Theme.of(context).buttonColor),
-                                itemBuilder: (BuildContext context) {},
-                                onSelected: (result) {},
+                                itemBuilder: (BuildContext context) {
+                                  List options = [];
+                                  for (int i = 0; i < OHLCVWidthOptions[historyTotal].length; i++) {
+                                    options.add(new PopupMenuItem(child: new Text(OHLCVWidthOptions[historyTotal][i][0]), value: i));
+                                  }
+                                  return options;
+                                },
+                                onSelected: (result) {
+                                  changeOHLCVWidth(result);
+                                },
                               )
                           ),
                         ],
@@ -341,7 +350,14 @@ class AggregateStatsState extends State<AggregateStats> {
                       historyOHLCVTimeAggregated != null ? new Container(
                           height: MediaQuery.of(context).size.height * 0.6,
                           padding: const EdgeInsets.all(8.0),
-                          child: new OHLCGraph(data: historyOHLCVTimeAggregated, gridLineColor: Theme.of(context).dividerColor),
+                          child: new OHLCVGraph(
+                            data: historyOHLCVTimeAggregated,
+                            enableGridLines: true,
+                            gridLineColor: Theme.of(context).dividerColor,
+                            gridLineLabelColor: Theme.of(context).hintColor,
+                            gridLineAmount: 5,
+                            volumeProp: 0.2,
+                          ),
                       ) : new Container(height: MediaQuery.of(context).size.height * 0.6),
 
                     ],
@@ -414,28 +430,6 @@ class QuickPercentChangeBar extends StatelessWidget {
           )
         ],
       ),
-    );
-  }
-}
-
-class _SparkLine extends StatelessWidget {
-  _SparkLine({this.data});
-  final List data;
-
-  @override
-  Widget build(BuildContext context) {
-    return new Container(
-        height: MediaQuery.of(context).size.height * 0.4,
-        padding: const EdgeInsets.all(8.0),
-        child: new Sparkline(
-          data: data,
-          lineWidth: 1.8,
-          lineGradient: new LinearGradient(
-            colors: [Theme.of(context).accentColor, Theme.of(context).buttonColor],
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter
-          ),
-        )
     );
   }
 }

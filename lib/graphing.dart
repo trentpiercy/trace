@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-class OHLCGraph extends StatelessWidget {
-  OHLCGraph({
+class OHLCVGraph extends StatelessWidget {
+  OHLCVGraph({
     Key key,
     @required this.data,
     this.lineWidth = 1.0,
@@ -11,6 +11,9 @@ class OHLCGraph extends StatelessWidget {
     this.gridLineColor = Colors.grey,
     this.gridLineAmount = 5,
     this.gridLineWidth = 0.5,
+    this.gridLineLabelColor = Colors.grey,
+    @required this.enableGridLines,
+    @required this.volumeProp,
   })  : assert(data != null),
         assert(lineWidth != null),
         super(key: key);
@@ -23,14 +26,21 @@ class OHLCGraph extends StatelessWidget {
   /// All lines in chart are drawn with this width
   final double lineWidth;
 
-  /// Color of grid lines and value indicating text
+  /// Enable or disable grid lines
+  final bool enableGridLines;
+
+  /// Color of grid lines and label text
   final Color gridLineColor;
+  final Color gridLineLabelColor;
 
   /// Number of grid lines
   final int gridLineAmount;
 
   /// Width of grid lines
   final double gridLineWidth;
+
+  /// Proportion of paint to be given to volume bar graph
+  final double volumeProp;
 
   /// If graph is given unbounded space,
   /// it will default to given fallback height and width
@@ -45,11 +55,14 @@ class OHLCGraph extends StatelessWidget {
       child: new CustomPaint(
         size: Size.infinite,
         painter: new _OHLCVPainter(
-            data,
-            lineWidth: lineWidth,
-            gridLineColor: gridLineColor,
-            gridLineAmount: gridLineAmount,
-            gridLineWidth: gridLineWidth,
+          data,
+          lineWidth: lineWidth,
+          gridLineColor: gridLineColor,
+          gridLineAmount: gridLineAmount,
+          gridLineWidth: gridLineWidth,
+          gridLineLabelColor: gridLineLabelColor,
+          enableGridLines: enableGridLines,
+          volumeProp: volumeProp,
         ),
       ),
     );
@@ -59,20 +72,32 @@ class OHLCGraph extends StatelessWidget {
 class _OHLCVPainter extends CustomPainter {
 
   _OHLCVPainter(this.data,
-    {
-      @required this.lineWidth,
-      @required this.gridLineColor,
-      @required this.gridLineAmount,
-      @required this.gridLineWidth,
-    }
-  );
+      {
+        @required this.lineWidth,
+        @required this.enableGridLines,
+        @required this.gridLineColor,
+        @required this.gridLineAmount,
+        @required this.gridLineWidth,
+        @required this.gridLineLabelColor,
+        @required this.volumeProp,
+      }
+      );
 
   final List data;
   final double lineWidth;
+
+  final bool enableGridLines;
   final Color gridLineColor;
   final int gridLineAmount;
   final double gridLineWidth;
-  final double volumeProp = 0.2; //TODO
+  final Color gridLineLabelColor;
+
+  final double volumeProp;
+
+  numCommaParse(number) {
+    return number.round().toString().replaceAllMapped(
+        new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -81,17 +106,17 @@ class _OHLCVPainter extends CustomPainter {
     double _max = -double.infinity;
     for (var i in data) {
       if (i["high"] > _max) {
-        _max = i["high"];
+        _max = i["high"].toDouble();
       }
       if (i["low"] < _min) {
-        _min = i["low"];
+        _min = i["low"].toDouble();
       }
     }
 
     double _maxVolume = -double.infinity;
     for (var i in data) {
       if (i["volumeto"] > _maxVolume) {
-        _maxVolume = i["volumeto"];
+        _maxVolume = i["volumeto"].toDouble();
       }
     }
 
@@ -102,17 +127,49 @@ class _OHLCVPainter extends CustomPainter {
     final double height = size.height*(1-volumeProp);
 
 
-    Paint gridPaint = new Paint()
-      ..color=gridLineColor
-      ..strokeWidth=0.5; //TODO: var for this
+    if (enableGridLines) {
+      Paint gridPaint = new Paint()
+        ..color = gridLineColor
+        ..strokeWidth = 0.5;
 
-    double gridLineDist = height/(gridLineAmount-1);
+      double gridLineDist = height / (gridLineAmount - 1);
+      double gridLineValue;
+      double gridLineY;
 
-    for (int i = 0; i < gridLineAmount; i++) {
-      double gridLineY = (gridLineDist*i).round().toDouble();
-      canvas.drawLine(new Offset(0.0, gridLineY), new Offset(width, gridLineY), gridPaint);
+      // Draw grid lines
+      for (int i = 0; i < gridLineAmount; i++) {
+        gridLineY = (gridLineDist * i).round().toDouble();
+        canvas.drawLine(
+            new Offset(0.0, gridLineY), new Offset(width, gridLineY),
+            gridPaint);
+
+        // Label grid lines
+        gridLineValue = _max - ((_max - _min) * (gridLineY / height));
+        String gridLineText = gridLineValue.toString()[4] != "."
+            ? gridLineValue.toString().substring(0, 5)
+            : gridLineValue.toString().substring(0, 4);
+        TextPainter textPainter = new TextPainter(
+            text: new TextSpan(text: "\$" + gridLineText,
+                style: new TextStyle(color: gridLineLabelColor,
+                    fontSize: 10.0,
+                    fontWeight: FontWeight.bold)),
+            textDirection: TextDirection.ltr
+        );
+        textPainter.layout();
+        textPainter.paint(canvas, new Offset(width - 32.0, gridLineY - 13.0));
+      }
+
+      // Label volume line
+      TextPainter textPainter = new TextPainter(
+          text: new TextSpan(text: "\$" + numCommaParse(_maxVolume),
+              style: new TextStyle(color: gridLineColor,
+                  fontSize: 10.0,
+                  fontWeight: FontWeight.bold)),
+          textDirection: TextDirection.ltr
+      );
+      textPainter.layout();
+      textPainter.paint(canvas, new Offset(0.0, gridLineY + 2.0));
     }
-
 
     final double heightNormalizer = height / (_max - _min);
     final double rectWidth = width / data.length;
@@ -179,9 +236,12 @@ class _OHLCVPainter extends CustomPainter {
   @override
   bool shouldRepaint(_OHLCVPainter old) {
     return data != old.data ||
-        lineWidth != old.lineWidth;
+        lineWidth != old.lineWidth ||
+        enableGridLines != old.enableGridLines ||
+        gridLineColor != old.gridLineColor ||
+        gridLineAmount != old.gridLineAmount ||
+        gridLineWidth != old.gridLineWidth ||
+        volumeProp != old.volumeProp ||
+        gridLineLabelColor != old.gridLineLabelColor;
   }
 }
-
-
-

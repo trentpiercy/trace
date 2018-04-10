@@ -1,8 +1,4 @@
 # Future
-Learn drawing for OHLC and Volume
-    - Control total time period (assigned by sparkline time setting)
-    - Divided into width options specific to total time
-
 Portfolio
     - JSON local storage
         - path pub
@@ -14,20 +10,6 @@ Searching coins
 Animate everything
 
 # Do Soon
-- Data (Cryptowat.ch)
-    - OHLCV: https://api.cryptowat.ch/markets/[exchange]/[pair]/ohlc?period=[periodseconds]
-        - [ CloseTime, OpenPrice, HighPrice, LowPrice, ClosePrice, Volume ]
-        - ?period=
-            - 1m, 3m, 5m, 15m, 30m, 1hr, 2hr, 4hr, 6hr, 12hr, 1d, 3d, 1w (in seconds)
-        - Returns 500 results
-            - First item is oldest
-    - Orderbook (by exchange and trading pair): https://api.cryptowat.ch/markets/[exchange]/[pair]/orderbook
-
-- Get OHLCV data from CryptoCompare but Orderbook for Depth graph will have to come from Cryptowatch
-- Data (CryptoCompare)
-    - OHLCV: https://min-api.cryptocompare.com/data/histo[minute/hour/day]?fsym=[from_symbol]&tsym=USD&limit=30&e=[exchange]&aggregate=[period_to_combine_oer]
-    - ["Data"] -> first item is oldest
-
 Download Coin Icon assets and display only if in list
 
 Good looking market UI
@@ -84,10 +66,20 @@ Specific currency
                 - 6M
                     - 2d (90), 3d (60), 7d (26)
                 - 1Y
-                    - 7d (52)
+                    - 7d (52), 14d (26)
 
         - Volume (base same width of OHLC)
         - Depth
 - Markets
     - Listview of all markets
         - Each item: Market name - Price/24h
+
+
+# Sources
+- Data (Cryptowat.ch)
+    - Orderbook (by exchange and trading pair): https://api.cryptowat.ch/markets/[exchange]/[pair]/orderbook
+
+- Get OHLCV data from CryptoCompare but Orderbook for Depth graph will have to come from Cryptowatch
+- Data (CryptoCompare)
+    - OHLCV: https://min-api.cryptocompare.com/data/histo[minute/hour/day]?fsym=[from_symbol]&tsym=USD&limit=30&e=[exchange]&aggregate=[period_to_combine_oer]
+    - ["Data"] -> first item is oldest
