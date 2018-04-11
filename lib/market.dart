@@ -164,7 +164,8 @@ class CoinListItem extends StatelessWidget {
   CoinListItem({this.snapshot});
   final snapshot;
 
-  _getImage() { //TODO: local image storage
+  _getImage() { //TODO: local image storage, maybe build global Map with snapshot["symbol"]:new Image.network
+                //TODO: or just do assets with a list of which ones exist and when returning image check if it is in list
     if (num.parse(snapshot["rank"]) <= 20) {
       return new Image.network("https://raw.githubusercontent.com/cjdowner/cryptocurrency-icons/master/128/color/"+snapshot["symbol"].toString().toLowerCase()+".png", height: 28.0);
     }

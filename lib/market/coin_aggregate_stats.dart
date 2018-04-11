@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_sparkline/flutter_sparkline.dart';
-import 'package:flutter_candlesticks/flutter_candlesticks.dart';
+//import 'package:flutter_candlesticks/flutter_candlesticks.dart';
+import 'package:trace/flutter_candlesticks.dart';
 
 import 'dart:async';
 import 'package:http/http.dart' as http;
@@ -69,7 +70,7 @@ void resetCoinStats() {
 class AggregateStatsState extends State<AggregateStats> {
   final ScrollController _scrollController = new ScrollController();
 
-    Future<Null> getHistorySparkLine() async {
+  Future<Null> getHistorySparkLine() async {
     var response = await http.get(
       Uri.encodeFull("https://min-api.cryptocompare.com/data/histo"+historyType+"?fsym="+widget.snapshot["symbol"]+"&tsym=USD&limit="+(int.parse(historyAmt)-1).toString()+"&aggregate="+historyAgg),
       headers: {"Accept": "application/json"}
@@ -177,7 +178,7 @@ class AggregateStatsState extends State<AggregateStats> {
     return new Scaffold(
         resizeToAvoidBottomPadding: false,
         body: new RefreshIndicator(
-          onRefresh: () => changeHistory(historyType, historyAmt, historyTotal, historyAgg),
+          onRefresh: () => changeHistory(historyType, historyAmt, historyTotal, historyAgg), //TODO: refresh stats carried over from coinmarketcap as well
           child: new Column(
             children: <Widget>[
               new Container(
@@ -350,7 +351,7 @@ class AggregateStatsState extends State<AggregateStats> {
                           padding: const EdgeInsets.all(8.0),
                           child: new OHLCVGraph(
                             data: historyOHLCVTimeAggregated,
-                            enableGridLines: false,
+                            enableGridLines: true,
                             gridLineColor: Theme.of(context).dividerColor,
                             gridLineLabelColor: Theme.of(context).hintColor,
                             gridLineAmount: 5,
