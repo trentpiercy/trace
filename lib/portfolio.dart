@@ -19,10 +19,6 @@ class PortfolioPageState extends State<PortfolioPage> {
           elevation: appBarElevation,
           title: new Text("Portfolio"),
           actions: <Widget>[
-//            new IconButton(
-//              icon: new Icon(Icons.invert_colors),
-//              onPressed: () {}
-//            ),
             new IconButton(
               icon: new Icon(Icons.timeline, color: Theme.of(context).iconTheme.color),
               onPressed: null,
@@ -39,7 +35,7 @@ class PortfolioPageState extends State<PortfolioPage> {
         onPressed: null,
         elevation: appBarElevation,
         backgroundColor: Theme.of(context).buttonColor,
-        child: new Icon(Icons.add),
+        child: new Icon(Icons.add, color: Theme.of(context).iconTheme.color),
       ),
     );
   }

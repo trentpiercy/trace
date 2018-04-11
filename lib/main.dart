@@ -54,21 +54,17 @@ class Tabs extends StatelessWidget {
     return new DefaultTabController(
       length: 2,
       child: new Scaffold(
-        bottomNavigationBar: new BottomAppBar(
-//          color: Theme.of(context).canvasColor,
-          elevation: bottomAppBarElevation,
-          child: new Container(
-            color: Theme.of(context).canvasColor,
-            height: 34.0,
-            child: new TabBar(
-              indicatorColor: Theme.of(context).accentIconTheme.color,
-              indicatorPadding: const EdgeInsets.only(left: 70.0, bottom: 2.0, right: 70.0),
-              tabs: <Tab>[
-                new Tab(icon: new Icon(Icons.person_outline, color: Theme.of(context).accentIconTheme.color)),
-                new Tab(icon: new Icon(Icons.menu, color: Theme.of(context).accentIconTheme.color))
-              ],
-            )
-          )
+        bottomNavigationBar: new Container(
+          color: Theme.of(context).canvasColor,
+          height: 34.0,
+          child: new TabBar(
+            indicatorColor: Theme.of(context).accentIconTheme.color,
+            indicatorPadding: const EdgeInsets.only(left: 70.0, bottom: 2.0, right: 70.0),
+            tabs: <Tab>[
+              new Tab(icon: new Icon(Icons.person_outline, color: Theme.of(context).accentIconTheme.color)),
+              new Tab(icon: new Icon(Icons.menu, color: Theme.of(context).accentIconTheme.color))
+            ],
+          ),
         ),
         body: new TabBarView(
           children: <Widget>[

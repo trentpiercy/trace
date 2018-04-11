@@ -331,7 +331,7 @@ class AggregateStatsState extends State<AggregateStats> {
                                 tooltip: "Select Width",
                                 icon: new Icon(Icons.swap_horiz, color: Theme.of(context).buttonColor),
                                 itemBuilder: (BuildContext context) {
-                                  List options = [];
+                                  List<PopupMenuEntry<dynamic>> options = [];
                                   for (int i = 0; i < OHLCVWidthOptions[historyTotal].length; i++) {
                                     options.add(new PopupMenuItem(child: new Text(OHLCVWidthOptions[historyTotal][i][0]), value: i));
                                   }
@@ -350,7 +350,7 @@ class AggregateStatsState extends State<AggregateStats> {
                           padding: const EdgeInsets.all(8.0),
                           child: new OHLCVGraph(
                             data: historyOHLCVTimeAggregated,
-                            enableGridLines: true,
+                            enableGridLines: false,
                             gridLineColor: Theme.of(context).dividerColor,
                             gridLineLabelColor: Theme.of(context).hintColor,
                             gridLineAmount: 5,
