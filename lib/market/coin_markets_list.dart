@@ -7,22 +7,20 @@ import 'dart:convert';
 import 'package:trace/market.dart';
 //import 'coin_aggregate_stats.dart';
 
-
 priceTrim(number) {
   if (number.toString().length < 7) {
     return "\$" + number.toString();
   }
-  return "\$" + number.toString().substring(0,7);
+  return "\$" + number.toString().substring(0, 7);
 }
 
 percentTrim(percent) {
   if (percent >= 0) {
-    return "+"+percent.toStringAsFixed(2)+"%";
+    return "+" + percent.toStringAsFixed(2) + "%";
   } else {
-    return percent.toStringAsFixed(2)+"%";
+    return percent.toStringAsFixed(2) + "%";
   }
 }
-
 
 class MarketList extends StatefulWidget {
   MarketList({this.snapshot});
@@ -40,10 +38,15 @@ class MarketListState extends State<MarketList> {
 
   Future<Null> getExchangeData(String toSym) async {
     var response = await http.get(
-      Uri.encodeFull("https://min-api.cryptocompare.com/data/top/exchanges/full?fsym="+widget.snapshot["symbol"]+"&tsym="+toSym+"&limit=50"),
-      headers: {"Accept": "application/json"}
-    );
-    exchangeData = new JsonDecoder().convert(response.body)["Data"]["Exchanges"];
+        Uri.encodeFull(
+            "https://min-api.cryptocompare.com/data/top/exchanges/full?fsym=" +
+                widget.snapshot["symbol"] +
+                "&tsym=" +
+                toSym +
+                "&limit=50"),
+        headers: {"Accept": "application/json"});
+    exchangeData =
+        new JsonDecoder().convert(response.body)["Data"]["Exchanges"];
     makeExchangeData();
   }
 
@@ -54,7 +57,7 @@ class MarketListState extends State<MarketList> {
         sortedExchangeData.add(i);
       }
     }
-    setState((){
+    setState(() {
       exchangeData = sortedExchangeData;
     });
   }
@@ -69,49 +72,54 @@ class MarketListState extends State<MarketList> {
   @override
   Widget build(BuildContext context) {
     return new RefreshIndicator(
-      onRefresh: () => getExchangeData(toSym),
-      child: new SingleChildScrollView(
-        controller: _scrollController,
-        child: new Column(
-          children: <Widget>[
-            new Container(
-              margin: const EdgeInsets.only(left: 6.0, right: 6.0, top: 8.0),
-              decoration: new BoxDecoration(
-                  border: new Border(bottom: new BorderSide(color: Theme.of(context).dividerColor, width: 1.0))
+        onRefresh: () => getExchangeData(toSym),
+        child: new SingleChildScrollView(
+          controller: _scrollController,
+          child: new Column(
+            children: <Widget>[
+              new Container(
+                margin: const EdgeInsets.only(left: 6.0, right: 6.0, top: 8.0),
+                decoration: new BoxDecoration(
+                    border: new Border(
+                        bottom: new BorderSide(
+                            color: Theme.of(context).dividerColor,
+                            width: 1.0))),
+                padding:
+                    const EdgeInsets.only(bottom: 8.0, left: 2.0, right: 2.0),
+                child: new Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    new Container(
+                      width: MediaQuery.of(context).size.width * columnProps[0],
+                      child: new Text("Exchange",
+                          style: Theme.of(context).textTheme.body2),
+                    ),
+                    new Container(
+                      alignment: Alignment.centerRight,
+                      width: MediaQuery.of(context).size.width * columnProps[1],
+                      child: new Text("24h Volume",
+                          style: Theme.of(context).textTheme.body2),
+                    ),
+                    new Container(
+                      alignment: Alignment.centerRight,
+                      width: MediaQuery.of(context).size.width * columnProps[2],
+                      child: new Text("Price/24h",
+                          style: Theme.of(context).textTheme.body2),
+                    ),
+                  ],
+                ),
               ),
-              padding: const EdgeInsets.only(bottom: 8.0, left: 2.0, right: 2.0),
-              child: new Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  new Container(
-                    width: MediaQuery.of(context).size.width * columnProps[0],
-                    child: new Text("Exchange", style: Theme.of(context).textTheme.body2),
-                  ),
-                  new Container(
-                    alignment: Alignment.centerRight,
-                    width: MediaQuery.of(context).size.width * columnProps[1],
-                    child: new Text("24h Volume", style: Theme.of(context).textTheme.body2),
-                  ),
-                  new Container(
-                    alignment: Alignment.centerRight,
-                    width: MediaQuery.of(context).size.width * columnProps[2],
-                    child: new Text("Price/24h", style: Theme.of(context).textTheme.body2),
-                  ),
-                ],
-              ),
-            ),
-            new ListView.builder(
-              controller: _scrollController,
-              shrinkWrap: true,
-              itemCount: exchangeData == null ? 0 : exchangeData.length,
-              itemBuilder: (BuildContext context, int index) {
-                return new ExchangeListItem(exchangeDataSnapshot: exchangeData[index]);
-              }
-            ),
-          ],
-        ),
-      )
-    );
+              new ListView.builder(
+                  controller: _scrollController,
+                  shrinkWrap: true,
+                  itemCount: exchangeData == null ? 0 : exchangeData.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return new ExchangeListItem(
+                        exchangeDataSnapshot: exchangeData[index]);
+                  }),
+            ],
+          ),
+        ));
   }
 }
 
@@ -122,42 +130,43 @@ class ExchangeListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new GestureDetector(
-      onTap: null,
-      child: new Container(
-        padding: const EdgeInsets.all(6.0),
-        decoration: new BoxDecoration(),
-        child: new Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            new Container(
-              width: MediaQuery.of(context).size.width * columnProps[0],
-              child: new Text(exchangeDataSnapshot["MARKET"], style: Theme.of(context).textTheme.body2),
-            ),
-            new Container(
-              alignment: Alignment.centerRight,
-              width: MediaQuery.of(context).size.width * columnProps[1],
-              child: new Text(numCommaParse(exchangeDataSnapshot["VOLUME24HOURTO"].toString()), style: Theme.of(context).textTheme.body2),
-            ),
-            new Container(
-              width: MediaQuery.of(context).size.width * columnProps[2],
-              child: new Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  new Text(priceTrim(exchangeDataSnapshot["PRICE"])),
-                  new Text(
-                      percentTrim(exchangeDataSnapshot["CHANGEPCT24HOUR"]),
-                      style: Theme.of(context).primaryTextTheme.body1.apply(color: exchangeDataSnapshot["CHANGEPCT24HOUR"] >= 0 ? Colors.green : Colors.red)
-                  ),
-                ],
+        onTap: null,
+        child: new Container(
+          padding: const EdgeInsets.all(6.0),
+          decoration: new BoxDecoration(),
+          child: new Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              new Container(
+                width: MediaQuery.of(context).size.width * columnProps[0],
+                child: new Text(exchangeDataSnapshot["MARKET"],
+                    style: Theme.of(context).textTheme.body2),
               ),
-            ),
-          ],
-        ),
-      )
-    );
+              new Container(
+                alignment: Alignment.centerRight,
+                width: MediaQuery.of(context).size.width * columnProps[1],
+                child: new Text(
+                    numCommaParse(
+                        exchangeDataSnapshot["VOLUME24HOURTO"].toString()),
+                    style: Theme.of(context).textTheme.body2),
+              ),
+              new Container(
+                width: MediaQuery.of(context).size.width * columnProps[2],
+                child: new Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    new Text(priceTrim(exchangeDataSnapshot["PRICE"])),
+                    new Text(
+                        percentTrim(exchangeDataSnapshot["CHANGEPCT24HOUR"]),
+                        style: Theme.of(context).primaryTextTheme.body1.apply(
+                            color: exchangeDataSnapshot["CHANGEPCT24HOUR"] >= 0
+                                ? Colors.green
+                                : Colors.red)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ));
   }
 }
-
-
-
-

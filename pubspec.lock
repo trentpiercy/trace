@@ -90,13 +90,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_candlesticks:
-    dependency: "direct main"
-    description:
-      name: flutter_candlesticks
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.0.1"
   flutter_sparkline:
     dependency: "direct main"
     description:
@@ -403,4 +396,3 @@ packages:
     version: "2.1.13"
 sdks:
   dart: ">=2.0.0-dev.28.0 <=2.0.0-edge.3c4dccbd46f152be9e1b6ca95c57357e8e48057c"
-  flutter: ">=0.2.3 <0.3.0"

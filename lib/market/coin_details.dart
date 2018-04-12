@@ -35,9 +35,7 @@ class CoinDetailsState extends State<CoinDetails> {
                             new Tab(text: "Aggregate Stats"),
                             new Tab(text: "Markets"),
                           ],
-                        )
-                    )
-                ),
+                        ))),
               ),
             ),
             body: new TabBarView(
@@ -45,8 +43,6 @@ class CoinDetailsState extends State<CoinDetails> {
                 new AggregateStats(snapshot: widget.snapshot),
                 new MarketList(snapshot: widget.snapshot)
               ],
-            )
-        )
-    );
+            )));
   }
 }

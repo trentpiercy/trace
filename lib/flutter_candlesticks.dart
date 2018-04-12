@@ -49,12 +49,6 @@ class OHLCVGraph extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    TextPainter testTextPainter = new TextPainter(textDirection: TextDirection.ltr,
-      text: new TextSpan(text: "test")
-    );
-    testTextPainter.layout();
-
     return new LimitedBox(
       maxHeight: fallbackHeight,
       maxWidth: fallbackWidth,
@@ -69,7 +63,6 @@ class OHLCVGraph extends StatelessWidget {
           gridLineLabelColor: gridLineLabelColor,
           enableGridLines: enableGridLines,
           volumeProp: volumeProp,
-          testTextPainter: testTextPainter,
         ),
       ),
     );
@@ -86,7 +79,6 @@ class _OHLCVPainter extends CustomPainter {
     @required this.gridLineWidth,
     @required this.gridLineLabelColor,
     @required this.volumeProp,
-    @required this.testTextPainter,
   });
 
   final List data;
@@ -100,21 +92,21 @@ class _OHLCVPainter extends CustomPainter {
 
   final double volumeProp;
 
-  TextPainter testTextPainter;
+  double _min;
+  double _max;
+  double _maxVolume;
+
+  List<TextPainter> gridLineTextPainters = [];
+  TextPainter maxVolumePainter;
 
   numCommaParse(number) {
     return number.round().toString().replaceAllMapped(
         new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
   }
 
-  @override
-  void paint(Canvas canvas, Size size) {
-
-    //TODO: testing
-//    testTextPainter.paint(canvas, new Offset(50.0, 50.0));
-
-    double _min = double.infinity;
-    double _max = -double.infinity;
+  update() {
+    _min = double.infinity;
+    _max = -double.infinity;
     for (var i in data) {
       if (i["high"] > _max) {
         _max = i["high"].toDouble();
@@ -124,11 +116,49 @@ class _OHLCVPainter extends CustomPainter {
       }
     }
 
-    double _maxVolume = -double.infinity;
+    _maxVolume = -double.infinity;
     for (var i in data) {
       if (i["volumeto"] > _maxVolume) {
         _maxVolume = i["volumeto"].toDouble();
       }
+    }
+
+    if (enableGridLines) {
+      double gridLineValue;
+      for (int i = 0; i < gridLineAmount; i++) {
+        // Label grid lines
+        gridLineValue = _max - (((_max - _min) / gridLineAmount) * (i + 1));
+        String gridLineText = gridLineValue.toString()[4] != "."
+            ? gridLineValue.toString().substring(0, 5)
+            : gridLineValue.toString().substring(0, 4);
+        gridLineTextPainters.add(new TextPainter(
+            text: new TextSpan(
+                text: "\$" + gridLineText,
+                style: new TextStyle(
+                    color: gridLineLabelColor,
+                    fontSize: 10.0,
+                    fontWeight: FontWeight.bold)),
+            textDirection: TextDirection.ltr));
+        gridLineTextPainters[i].layout();
+      }
+
+      // Label volume line
+      maxVolumePainter = new TextPainter(
+          text: new TextSpan(
+              text: "\$" + numCommaParse(_maxVolume),
+              style: new TextStyle(
+                  color: gridLineLabelColor,
+                  fontSize: 10.0,
+                  fontWeight: FontWeight.bold)),
+          textDirection: TextDirection.ltr);
+      maxVolumePainter.layout();
+    }
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (_min == null || _max == null || _maxVolume == null) {
+      update();
     }
 
     final double volumeHeight = size.height * volumeProp;
@@ -143,7 +173,6 @@ class _OHLCVPainter extends CustomPainter {
         ..strokeWidth = 0.5;
 
       double gridLineDist = height / (gridLineAmount - 1);
-      double gridLineValue;
       double gridLineY;
 
       // Draw grid lines
@@ -153,33 +182,12 @@ class _OHLCVPainter extends CustomPainter {
             new Offset(width, gridLineY), gridPaint);
 
         // Label grid lines
-        gridLineValue = _max - ((_max - _min) * (gridLineY / height));
-        String gridLineText = gridLineValue.toString()[4] != "."
-            ? gridLineValue.toString().substring(0, 5)
-            : gridLineValue.toString().substring(0, 4);
-        TextPainter textPainter = new TextPainter(
-            text: new TextSpan(
-                text: "\$" + gridLineText,
-                style: new TextStyle(
-                    color: gridLineLabelColor,
-                    fontSize: 10.0,
-                    fontWeight: FontWeight.bold)),
-            textDirection: TextDirection.ltr);
-        textPainter.layout();
-        textPainter.paint(canvas, new Offset(width - 32.0, gridLineY - 13.0));
+        gridLineTextPainters[i]
+            .paint(canvas, new Offset(width - 32.0, gridLineY - 13.0));
       }
 
       // Label volume line
-      TextPainter textPainter = new TextPainter(
-          text: new TextSpan(
-              text: "\$" + numCommaParse(_maxVolume),
-              style: new TextStyle(
-                  color: gridLineLabelColor,
-                  fontSize: 10.0,
-                  fontWeight: FontWeight.bold)),
-          textDirection: TextDirection.ltr);
-      textPainter.layout();
-      textPainter.paint(canvas, new Offset(0.0, gridLineY + 2.0));
+      maxVolumePainter.paint(canvas, new Offset(0.0, gridLineY + 2.0));
     }
 
     final double heightNormalizer = height / (_max - _min);

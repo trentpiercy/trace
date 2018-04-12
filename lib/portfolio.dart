@@ -20,7 +20,8 @@ class PortfolioPageState extends State<PortfolioPage> {
           title: new Text("Portfolio"),
           actions: <Widget>[
             new IconButton(
-              icon: new Icon(Icons.timeline, color: Theme.of(context).iconTheme.color),
+              icon: new Icon(Icons.timeline,
+                  color: Theme.of(context).iconTheme.color),
               onPressed: null,
             )
           ],

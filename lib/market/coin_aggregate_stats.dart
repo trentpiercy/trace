@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_sparkline/flutter_sparkline.dart';
-//import 'package:flutter_candlesticks/flutter_candlesticks.dart';
 import 'package:trace/flutter_candlesticks.dart';
 
 import 'dart:async';
@@ -98,9 +97,7 @@ class AggregateStatsState extends State<AggregateStats> {
 
   Future<Null> changeOHLCVWidth(int currentSetting) async {
     currentOHLCVWidthSetting = currentSetting;
-    setState(() {
-      historyOHLCVTimeAggregated = null;
-    });
+    historyOHLCVTimeAggregated = null;
     getHistoryOHLCV();
   }
 
