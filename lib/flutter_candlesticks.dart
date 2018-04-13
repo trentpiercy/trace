@@ -107,6 +107,7 @@ class _OHLCVPainter extends CustomPainter {
   update() {
     _min = double.infinity;
     _max = -double.infinity;
+    _maxVolume = -double.infinity;
     for (var i in data) {
       if (i["high"] > _max) {
         _max = i["high"].toDouble();
@@ -114,10 +115,6 @@ class _OHLCVPainter extends CustomPainter {
       if (i["low"] < _min) {
         _min = i["low"].toDouble();
       }
-    }
-
-    _maxVolume = -double.infinity;
-    for (var i in data) {
       if (i["volumeto"] > _maxVolume) {
         _maxVolume = i["volumeto"].toDouble();
       }
