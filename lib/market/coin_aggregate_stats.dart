@@ -9,7 +9,7 @@ import 'dart:convert';
 
 import 'package:trace/main.dart';
 import 'package:trace/market.dart';
-import 'package:trace/market/coin_markets_list.dart';
+import 'package:trace/market/coin_exchanges_list.dart';
 
 
 Map OHLCVWidthOptions = {
@@ -47,7 +47,9 @@ void resetCoinStats() {
   _high = "0";
   _low = "0";
   _change = "0";
+}
 
+void resetExchangeData() {
   exchangeData = null;
 }
 

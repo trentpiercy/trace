@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:trace/main.dart';
 import 'package:trace/market/coin_aggregate_stats.dart';
-import 'package:trace/market/coin_markets_list.dart';
+import 'package:trace/market/coin_exchanges_list.dart';
 
 class CoinDetails extends StatefulWidget {
   CoinDetails({this.snapshot});

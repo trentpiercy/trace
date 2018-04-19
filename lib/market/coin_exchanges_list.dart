@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:trace/market.dart';
-import 'coin_market_stats.dart';
+import 'coin_exchange_stats.dart';
 import 'coin_aggregate_stats.dart';
 
 priceTrim(number) {

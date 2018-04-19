@@ -181,6 +181,7 @@ class CoinListItem extends StatelessWidget {
     return new GestureDetector(
       onTap: () {
         resetCoinStats();
+        resetExchangeData();
         Navigator.of(context).push(
           new MaterialPageRoute(
             builder: (BuildContext context) => new CoinDetails(snapshot: snapshot)

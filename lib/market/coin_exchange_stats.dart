@@ -6,13 +6,12 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-//import 'package:trace/market/coin_markets_list.dart';
+//import 'package:trace/market/coin_exchanges_list.dart';
 import 'package:trace/main.dart';
 import 'coin_aggregate_stats.dart';
 import 'package:trace/market.dart';
 
 
-//TODO: not using snapshot for now
 class CoinMarketStats extends StatefulWidget {
   CoinMarketStats({
     Key key,
@@ -86,16 +85,6 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
 
   final ScrollController _scrollController = new ScrollController();
 
-//  Future<Null> getGeneralStats() async {
-//    var response = await http.get(
-//        Uri.encodeFull("https://api.coinmarketcap.com/v1/ticker/"+ snapshot["id"]),
-//        headers: {"Accept": "application/json"}
-//    );
-//    setState(() {
-//      generalStats = new JsonDecoder().convert(response.body)[0];
-//    });
-//  }
-
   Future<Null> getHistoryOHLCV() async {
     var response = await http.get(
         Uri.encodeFull(
@@ -156,7 +145,6 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
       historyOHLCVTimeAggregated = null;
 
     });
-//    getGeneralStats();
     await getHistoryOHLCV();
     _getHL();
   }
@@ -166,9 +154,6 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
     if (historyOHLCVTimeAggregated == null) {
       changeHistory(historyType, historyAmt, historyTotal, historyAgg);
     }
-//    if (generalStats == null) {
-//      getGeneralStats();
-//    }
   }
 
   @override
