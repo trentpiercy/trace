@@ -47,6 +47,8 @@ void resetCoinStats() {
   _high = "0";
   _low = "0";
   _change = "0";
+
+  exchangeData = null;
 }
 
 class AggregateStats extends StatefulWidget {
