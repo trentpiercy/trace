@@ -11,9 +11,11 @@ Animate everything
 
 # Do Soon
 Good looking market UI
-- Specific market Page on click
 Abbreviation options (5,000,000 -> 5M)
 
+# Ideas
+Exchange list for a coin
+    - Instead of bringing up new page, show graph and options right under, expand and contract when tapped
 
 # UI
 Specific currency
