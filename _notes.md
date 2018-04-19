@@ -10,8 +10,6 @@ Searching coins
 Animate everything
 
 # Do Soon
-Download Coin Icon assets and display only if in list
-
 Good looking market UI
 - Specific market Page on click
 Abbreviation options (5,000,000 -> 5M)

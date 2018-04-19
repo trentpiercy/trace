@@ -13,6 +13,8 @@ class CoinDetails extends StatefulWidget {
 }
 
 class CoinDetailsState extends State<CoinDetails> {
+  String toSym = "USD"; //TODO: setting for this
+
   @override
   Widget build(BuildContext context) {
     return new DefaultTabController(
@@ -40,8 +42,8 @@ class CoinDetailsState extends State<CoinDetails> {
             ),
             body: new TabBarView(
               children: <Widget>[
-                new AggregateStats(snapshot: widget.snapshot),
-                new MarketList(snapshot: widget.snapshot)
+                new AggregateStats(snapshot: widget.snapshot, toSym: toSym),
+                new MarketList(snapshot: widget.snapshot, toSym: toSym)
               ],
             )));
   }

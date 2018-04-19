@@ -5,7 +5,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:trace/market.dart';
-//import 'coin_aggregate_stats.dart';
+import 'coin_market_stats.dart';
+import 'coin_aggregate_stats.dart';
 
 priceTrim(number) {
   if (number.toString().length < 7) {
@@ -23,26 +24,42 @@ percentTrim(percent) {
 }
 
 class MarketList extends StatefulWidget {
-  MarketList({this.snapshot});
+  MarketList({
+    Key key,
+    this.snapshot,
+    this.toSym = "USD",
+  })  : assert(snapshot != null),
+        super(key: key);
+
   final snapshot;
+  final toSym;
 
   @override
-  MarketListState createState() => new MarketListState();
+  MarketListState createState() => new MarketListState(
+    snapshot: snapshot,
+    toSym: toSym
+  );
 }
 
 List exchangeData;
-String toSym = "USD";
 
 class MarketListState extends State<MarketList> {
+  MarketListState({
+    this.snapshot,
+    this.toSym,
+  });
+  
+  Map snapshot;
+  String toSym;
+  
   ScrollController _scrollController = new ScrollController();
 
   Future<Null> getExchangeData(String toSym) async {
     var response = await http.get(
         Uri.encodeFull(
             "https://min-api.cryptocompare.com/data/top/exchanges/full?fsym=" +
-                widget.snapshot["symbol"] +
-                "&tsym=" +
-                toSym +
+                snapshot["symbol"] +
+                "&tsym=" + toSym +
                 "&limit=50"),
         headers: {"Accept": "application/json"});
     exchangeData =
@@ -130,7 +147,17 @@ class ExchangeListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new GestureDetector(
-        onTap: null,
+        onTap: () {
+          resetCoinStats();
+          Navigator.of(context).push(
+              new MaterialPageRoute(
+                  builder: (BuildContext context) => new CoinMarketStats(
+                    exchangeData: exchangeDataSnapshot,
+                    e: exchangeDataSnapshot["MARKET"],
+                  )
+              )
+          );
+        },
         child: new Container(
           padding: const EdgeInsets.all(6.0),
           decoration: new BoxDecoration(),

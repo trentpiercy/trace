@@ -11,17 +11,6 @@ import 'package:trace/main.dart';
 import 'package:trace/market.dart';
 import 'package:trace/market/coin_markets_list.dart';
 
-class AggregateStats extends StatefulWidget {
-  AggregateStats({this.snapshot});
-  final snapshot;
-
-  @override
-  AggregateStatsState createState() => new AggregateStatsState();
-}
-
-List sparkLineData;
-List historyOHLCV;
-List historyOHLCVTimeAggregated;
 
 Map OHLCVWidthOptions = {
   "1h":[["1m", 60, 1, "minute"], ["2m", 30, 2, "minute"], ["3m", 20, 3, "minute"]],
@@ -35,47 +24,120 @@ Map OHLCVWidthOptions = {
   "6M":[["2D", 90, 2, "day"], ["3D", 60, 3, "day"], ["7D", 26, 7, "day"]],
   "1Y":[["7D", 52, 7, "day"], ["14D", 26, 14, "day"]],
 };
-int currentOHLCVWidthSetting;
 
-String historyAmt;
-String historyType;
-String historyTotal;
-String historyAgg;
 
-String _high;
-String _low;
-String _change;
+//TODO: probably figure out a better way to do this
+Map generalStats;
+
+List sparkLineData;
+List historySparkline;
+List historyOHLCVTimeAggregated;
+
+String _high = "0";
+String _low = "0";
+String _change = "0";
 
 void resetCoinStats() {
+  generalStats = null;
+
   sparkLineData = null;
-  historyOHLCV = null;
-
+  historySparkline = null;
   historyOHLCVTimeAggregated = null;
-  currentOHLCVWidthSetting = 1;
 
-  historyAmt = "720";
-  historyAgg = "2";
-  historyType = "minute";
-  historyTotal = "24h";
-
-  _high = null;
-  _low = null;
+  _high = "0";
+  _low = "0";
   _change = "0";
+}
 
-  exchangeData = null;
-  toSym = "USD";
+class AggregateStats extends StatefulWidget {
+  AggregateStats({
+    Key key,
+    this.snapshot,
+    this.currentOHLCVWidthSetting = 1,
+    this.historyAmt = "720",
+    this.historyAgg = "2",
+    this.historyType = "minute",
+    this.historyTotal = "24h",
+    this.toSym = "USD",
+    this.showSparkline = true,
+  })  : assert(snapshot != null),
+        super(key: key);
+
+  final snapshot;
+
+  final currentOHLCVWidthSetting;
+
+  final showSparkline;
+
+  final historyAmt;
+  final historyType;
+  final historyTotal;
+  final historyAgg;
+
+  final toSym;
+
+  @override
+  AggregateStatsState createState() => new AggregateStatsState(
+      snapshot: snapshot,
+      currentOHLCVWidthSetting: currentOHLCVWidthSetting,
+      historyAmt: historyAmt,
+      historyAgg: historyAgg,
+      historyType: historyType,
+      historyTotal: historyTotal,
+      toSym: toSym,
+      showSparkline: showSparkline,
+  );
 }
 
 class AggregateStatsState extends State<AggregateStats> {
+  AggregateStatsState({
+    this.snapshot,
+    this.currentOHLCVWidthSetting,
+    this.historyAmt ,
+    this.historyAgg,
+    this.historyType,
+    this.historyTotal,
+    this.toSym,
+    this.showSparkline,
+  });
+
+  Map snapshot;
+
+  int currentOHLCVWidthSetting;
+
+  bool showSparkline;
+
+  String historyAmt;
+  String historyType;
+  String historyTotal;
+  String historyAgg;
+
+  String toSym;
+
+  Map generalStats;
+
   final ScrollController _scrollController = new ScrollController();
+
+  Future<Null> getGeneralStats() async {
+    var response = await http.get(
+        Uri.encodeFull("https://api.coinmarketcap.com/v1/ticker/"+ snapshot["id"]),
+        headers: {"Accept": "application/json"}
+    );
+    setState(() {
+      generalStats = new JsonDecoder().convert(response.body)[0];
+    });
+  }
 
   Future<Null> getHistorySparkLine() async {
     var response = await http.get(
-      Uri.encodeFull("https://min-api.cryptocompare.com/data/histo"+historyType+"?fsym="+widget.snapshot["symbol"]+"&tsym=USD&limit="+(int.parse(historyAmt)-1).toString()+"&aggregate="+historyAgg),
+      Uri.encodeFull("https://min-api.cryptocompare.com/data/histo" +historyType
+          +"?fsym="+snapshot["symbol"]
+          +"&tsym=USD&limit="+(int.parse(historyAmt)-1).toString()
+          +"&aggregate="+historyAgg),
       headers: {"Accept": "application/json"}
     );
     setState(() {
-      historyOHLCV = new JsonDecoder().convert(response.body)["Data"];
+      historySparkline = new JsonDecoder().convert(response.body)["Data"];
     });
   }
 
@@ -84,7 +146,7 @@ class AggregateStatsState extends State<AggregateStats> {
     var response = await http.get(
         Uri.encodeFull(
             "https://min-api.cryptocompare.com/data/histo"+OHLCVWidthOptions[historyTotal][currentOHLCVWidthSetting][3]+
-            "?fsym="+widget.snapshot["symbol"]+
+            "?fsym="+snapshot["symbol"]+
             "&tsym=USD&limit="+(OHLCVWidthOptions[historyTotal][currentOHLCVWidthSetting][1] - 1).toString()+
             "&aggregate="+OHLCVWidthOptions[historyTotal][currentOHLCVWidthSetting][2].toString()
         ),
@@ -105,7 +167,7 @@ class AggregateStatsState extends State<AggregateStats> {
     num highReturn = -double.infinity;
     num lowReturn = double.infinity;
 
-    for (var i in historyOHLCV) {
+    for (var i in historySparkline) {
       if (i["high"] > highReturn) {
         highReturn = i["high"].toDouble();
       }
@@ -117,8 +179,8 @@ class AggregateStatsState extends State<AggregateStats> {
     _high = highReturn.toString();
     _low = lowReturn.toString();
 
-    var start = historyOHLCV[0]["close"] == 0 ? 1 : historyOHLCV[0]["close"];
-    var end = historyOHLCV[int.parse(historyAmt)-1]["close"];
+    var start = historySparkline[0]["close"] == 0 ? 1 : historySparkline[0]["close"];
+    var end = historySparkline.last["close"];
 
     var changePercent = (end-start)/start*100;
 
@@ -128,7 +190,7 @@ class AggregateStatsState extends State<AggregateStats> {
   Future<Null> makeSparkLineData() async {
     List<double> returnData = [];
 
-    for (var i in historyOHLCV) {
+    for (var i in historySparkline) {
       returnData.add(((i["high"]+i["low"])/2));
     }
 
@@ -151,11 +213,10 @@ class AggregateStatsState extends State<AggregateStats> {
       sparkLineData = null;
       historyOHLCVTimeAggregated = null;
 
-      currentOHLCVWidthSetting = 1;
-
     });
+    getGeneralStats();
+    getHistoryOHLCV();
     await getHistorySparkLine();
-    await getHistoryOHLCV();
     _getHL();
     makeSparkLineData();
   }
@@ -167,6 +228,9 @@ class AggregateStatsState extends State<AggregateStats> {
     }
     if (historyOHLCVTimeAggregated == null) {
       getHistoryOHLCV();
+    }
+    if (generalStats == null) {
+      getGeneralStats();
     }
   }
 
@@ -188,21 +252,21 @@ class AggregateStatsState extends State<AggregateStats> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         new Text("Price", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
-                        new Text("\$"+widget.snapshot["price_usd"].toString(), style: Theme.of(context).textTheme.button.apply(fontSizeFactor: 1.4, color: Theme.of(context).accentColor)),
+                        new Text("\$"+ (generalStats != null ? generalStats["price_usd"] : snapshot["price_usd"]).toString(), style: Theme.of(context).textTheme.button.apply(fontSizeFactor: 1.4, color: Theme.of(context).accentColor)),
                       ],
                     ),
                     new Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         new Text("Market Cap", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
-                        new Text(numCommaParse(widget.snapshot["market_cap_usd"].toString()), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)),
+                        new Text(numCommaParse((generalStats != null ? generalStats["market_cap_usd"] : snapshot["market_cap_usd"]).toString()), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)),
                       ],
                     ),
                     new Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         new Text("24h Volume", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
-                        new Text(numCommaParse(widget.snapshot["24h_volume_usd"].toString()), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)),
+                        new Text(numCommaParse((generalStats != null ? generalStats["24h_volume_usd"] : snapshot["24h_volume_usd"]).toString()), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)),
                       ],
                     ),
                   ],
@@ -228,7 +292,7 @@ class AggregateStatsState extends State<AggregateStats> {
                                         new Padding(padding: const EdgeInsets.only(right: 3.0)),
                                         new Text(historyTotal, style: Theme.of(context).textTheme.button),
                                         new Padding(padding: const EdgeInsets.only(right: 4.0)),
-                                        new Text(num.parse(_change) > 0 ? "+$_change%" : "$_change%",
+                                        new Text(num.parse(_change) > 0 ? "+" + _change+"%" : _change+"%",
                                             style: Theme.of(context).primaryTextTheme.body1.apply(
                                                 fontWeightDelta: 1,
                                                 color: num.parse(_change) >= 0 ? Colors.green : Colors.red
@@ -247,14 +311,14 @@ class AggregateStatsState extends State<AggregateStats> {
                                       children: <Widget>[
                                         new Text("High", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
                                         new Padding(padding: const EdgeInsets.only(right: 3.0)),
-                                        new Text("\$$_high")
+                                        new Text("\$"+_high)
                                       ],
                                     ),
                                     new Row(
                                       children: <Widget>[
                                         new Text("Low", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
                                         new Padding(padding: const EdgeInsets.only(right: 3.0)),
-                                        new Text("\$$_low")
+                                        new Text("\$"+_low)
                                       ],
                                     ),
                                   ],
@@ -291,7 +355,7 @@ class AggregateStatsState extends State<AggregateStats> {
                   controller: _scrollController,
                   child: new Column(
                     children: <Widget>[
-                      sparkLineData != null ? new Container(
+                      sparkLineData != null && showSparkline ? new Container(
                         height: MediaQuery.of(context).size.height * 0.2,
                         padding: const EdgeInsets.all(8.0),
                         child: new Sparkline(
@@ -365,7 +429,7 @@ class AggregateStatsState extends State<AggregateStats> {
         ),
       bottomNavigationBar: new BottomAppBar(
         elevation: bottomAppBarElevation,
-        child: new QuickPercentChangeBar(snapshot: widget.snapshot, bgColor: Theme.of(context).canvasColor),
+        child: new QuickPercentChangeBar(snapshot: snapshot, bgColor: Theme.of(context).canvasColor),
       ),
     );
   }
