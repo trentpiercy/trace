@@ -57,7 +57,7 @@ class AggregateStats extends StatefulWidget {
   AggregateStats({
     Key key,
     this.snapshot,
-    this.currentOHLCVWidthSetting = 1,
+    this.currentOHLCVWidthSetting = 0,
     this.historyAmt = "720",
     this.historyAgg = "2",
     this.historyType = "minute",
@@ -243,34 +243,29 @@ class AggregateStatsState extends State<AggregateStats> {
     return new Scaffold(
         resizeToAvoidBottomPadding: false,
         body: new RefreshIndicator(
-          onRefresh: () => changeHistory(historyType, historyAmt, historyTotal, historyAgg), //TODO: refresh stats carried over from coinmarketcap as well
+          color: Theme.of(context).primaryColor,
+          onRefresh: () => changeHistory(historyType, historyAmt, historyTotal, historyAgg),
           child: new Column(
             children: <Widget>[
               new Container(
-                padding: const EdgeInsets.only(left: 6.0, right: 6.0, top: 5.0, bottom: 1.0),
+                padding: const EdgeInsets.only(left: 6.0, right: 6.0, top: 10.0, bottom: 10.0),
                 child: new Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    new Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        new Text("Price", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
-                        new Text("\$"+ (generalStats != null ? generalStats["price_usd"] : snapshot["price_usd"]).toString(), style: Theme.of(context).textTheme.button.apply(fontSizeFactor: 1.4, color: Theme.of(context).accentColor)),
-                      ],
-                    ),
+                    new Text("\$"+ (generalStats != null ? generalStats["price_usd"] : "0"), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)),
                     new Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         new Text("Market Cap", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
-                        new Text(numCommaParse((generalStats != null ? generalStats["market_cap_usd"] : snapshot["market_cap_usd"]).toString()), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)),
+                        new Text(numCommaParse((generalStats != null ? generalStats["market_cap_usd"] : "0")), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)),
                       ],
                     ),
                     new Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         new Text("24h Volume", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
-                        new Text(numCommaParse((generalStats != null ? generalStats["24h_volume_usd"] : snapshot["24h_volume_usd"]).toString()), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)),
+                        new Text(numCommaParse((generalStats != null ? generalStats["24h_volume_usd"] : "0")), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)),
                       ],
                     ),
                   ],
@@ -304,8 +299,13 @@ class AggregateStatsState extends State<AggregateStats> {
                                         )
                                       ],
                                     ),
-                                    new Padding(padding: const EdgeInsets.only(bottom: 1.5)),
-                                    new Text("CCCAGG Data Set", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor, fontSizeFactor: 0.7)),
+                                    new Row(
+                                      children: <Widget>[
+                                        new Text("Candle Width", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor, fontSizeFactor: 0.9)),
+                                        new Padding(padding: const EdgeInsets.only(right: 2.0)),
+                                        new Text(OHLCVWidthOptions[historyTotal][currentOHLCVWidthSetting][0])
+                                      ],
+                                    ),
                                   ],
                                 ),
                                 new Column(
@@ -318,6 +318,7 @@ class AggregateStatsState extends State<AggregateStats> {
                                         new Text("\$"+_high)
                                       ],
                                     ),
+                                    new Padding(padding: const EdgeInsets.only(bottom: 1.0)),
                                     new Row(
                                       children: <Widget>[
                                         new Text("Low", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
@@ -332,6 +333,22 @@ class AggregateStatsState extends State<AggregateStats> {
                           ],
                         )
                     ),
+                  ),
+                  new Container(
+                      child: new PopupMenuButton(
+                        tooltip: "Select Width",
+                        icon: new Icon(Icons.swap_horiz, color: Theme.of(context).buttonColor),
+                        itemBuilder: (BuildContext context) {
+                          List<PopupMenuEntry<dynamic>> options = [];
+                          for (int i = 0; i < OHLCVWidthOptions[historyTotal].length; i++) {
+                            options.add(new PopupMenuItem(child: new Text(OHLCVWidthOptions[historyTotal][i][0]), value: i));
+                          }
+                          return options;
+                        },
+                        onSelected: (result) {
+                          changeOHLCVWidth(result);
+                        },
+                      )
                   ),
                   new Container(
                       child: new PopupMenuButton(
@@ -360,60 +377,22 @@ class AggregateStatsState extends State<AggregateStats> {
                   child: new Column(
                     children: <Widget>[
                       sparkLineData != null && showSparkline ? new Container(
-                        height: MediaQuery.of(context).size.height * 0.2,
+                        height: MediaQuery.of(context).size.height * 0.25,
                         padding: const EdgeInsets.all(8.0),
                         child: new Sparkline(
                           data: sparkLineData,
                           lineWidth: 1.8,
                           lineGradient: new LinearGradient(
-                              colors: [Theme.of(context).accentColor, Theme.of(context).buttonColor],
+                              colors: [darkTheme.accentColor, Colors.purpleAccent],
                               begin: Alignment.bottomCenter,
                               end: Alignment.topCenter
                           ),
                         )
                       ) : new Container(height: MediaQuery.of(context).size.height * 0.2),
-                      new Row(
-                        children: <Widget>[
-                          new Flexible(
-                            child: new Container(
-                              color: Theme.of(context).cardColor,
-                              padding: const EdgeInsets.all(6.0),
-                              child: new Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  new Row(
-                                    children: <Widget>[
-                                      new Text("Candlestick Width", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
-                                      new Padding(padding: const EdgeInsets.only(right: 3.0)),
-                                      new Text(OHLCVWidthOptions[historyTotal][currentOHLCVWidthSetting][0])
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          new Container(
-                              child: new PopupMenuButton(
-                                tooltip: "Select Width",
-                                icon: new Icon(Icons.swap_horiz, color: Theme.of(context).buttonColor),
-                                itemBuilder: (BuildContext context) {
-                                  List<PopupMenuEntry<dynamic>> options = [];
-                                  for (int i = 0; i < OHLCVWidthOptions[historyTotal].length; i++) {
-                                    options.add(new PopupMenuItem(child: new Text(OHLCVWidthOptions[historyTotal][i][0]), value: i));
-                                  }
-                                  return options;
-                                },
-                                onSelected: (result) {
-                                  changeOHLCVWidth(result);
-                                },
-                              )
-                          ),
-                        ],
-                      ),
 
                       historyOHLCVTimeAggregated != null ? new Container(
-                          height: MediaQuery.of(context).size.height * 0.6,
-                          padding: const EdgeInsets.all(8.0),
+                          height: MediaQuery.of(context).size.height * 0.65,
+                          padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 12.0),
                           child: new OHLCVGraph(
                             data: historyOHLCVTimeAggregated,
                             enableGridLines: true,
@@ -433,7 +412,7 @@ class AggregateStatsState extends State<AggregateStats> {
         ),
       bottomNavigationBar: new BottomAppBar(
         elevation: bottomAppBarElevation,
-        child: new QuickPercentChangeBar(snapshot: snapshot, bgColor: Theme.of(context).canvasColor),
+        child: new QuickPercentChangeBar(snapshot: snapshot, bgColor: Theme.of(context).cardColor),
       ),
     );
   }

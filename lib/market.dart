@@ -79,12 +79,12 @@ class MarketPageState extends State<MarketPage> {
             icon: new Icon(Icons.search),
             onPressed: null
           ),
-          actions: <Widget>[ // TODO: Number shortening
-            new IconButton(
-              icon: new Icon(Icons.short_text, color: Theme.of(context).iconTheme.color),
-              onPressed: null
-            )
-          ],
+//          actions: <Widget>[ // TODO: Number shortening
+//            new IconButton(
+//              icon: new Icon(Icons.short_text, color: Theme.of(context).iconTheme.color),
+//              onPressed: null
+//            )
+//          ],
         ),
       ),
       body: new RefreshIndicator(

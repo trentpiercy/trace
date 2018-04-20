@@ -10,8 +10,7 @@ Searching coins
 Animate everything
 
 # Do Soon
-Good looking market UI
-Abbreviation options (5,000,000 -> 5M)
+Candlestick labels on right of lines
 
 # Ideas
 Exchange list for a coin

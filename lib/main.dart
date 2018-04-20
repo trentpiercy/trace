@@ -23,16 +23,19 @@ final ThemeData lightTheme = new ThemeData(
     dividerColor: Colors.grey[200],
     buttonColor: Colors.purple[700],
     iconTheme: new IconThemeData(color: Colors.white),
-    accentIconTheme: new IconThemeData(color: Colors.purple[700]));
+    accentIconTheme: new IconThemeData(color: Colors.purple[700]),
+);
 
 final ThemeData darkTheme = new ThemeData(
     brightness: Brightness.dark,
-    accentColor: Colors.purpleAccent[100],
-    primaryColor: Colors.purple[700],
+    accentColor: Colors.deepPurpleAccent[200],
+    primaryColor: Colors.purple[900],
     textSelectionColor: Colors.blueGrey[800],
-    buttonColor: Colors.purpleAccent[200],
+    buttonColor: Colors.deepPurpleAccent,
     iconTheme: new IconThemeData(color: Colors.white),
-    accentIconTheme: new IconThemeData(color: Colors.purpleAccent[100]));
+    accentIconTheme: new IconThemeData(color: Colors.deepPurpleAccent[200]),
+    cardColor: Color.fromRGBO(55, 55, 55, 1.0),
+);
 
 const double appBarHeight = 48.0;
 const double appBarElevation = 1.0;
@@ -44,21 +47,24 @@ class Tabs extends StatelessWidget {
     return new DefaultTabController(
         length: 2,
         child: new Scaffold(
-          bottomNavigationBar: new Container(
-            color: Theme.of(context).canvasColor,
-            height: 34.0,
-            child: new TabBar(
-              indicatorColor: Theme.of(context).accentIconTheme.color,
-              indicatorPadding:
-                  const EdgeInsets.only(left: 70.0, bottom: 2.0, right: 70.0),
-              tabs: <Tab>[
-                new Tab(
-                    icon: new Icon(Icons.person_outline,
-                        color: Theme.of(context).accentIconTheme.color)),
-                new Tab(
-                    icon: new Icon(Icons.menu,
-                        color: Theme.of(context).accentIconTheme.color))
-              ],
+          bottomNavigationBar: new Card(
+            elevation: 4.0,
+            child: new Container(
+//              color: Theme.of(context).canvasColor,
+              height: 36.0,
+              child: new TabBar(
+                indicatorColor: Theme.of(context).accentIconTheme.color,
+                indicatorPadding:
+                const EdgeInsets.only(left: 70.0, bottom: 2.0, right: 70.0),
+                tabs: <Tab>[
+                  new Tab(
+                      icon: new Icon(Icons.person_outline,
+                          color: Theme.of(context).accentIconTheme.color)),
+                  new Tab(
+                      icon: new Icon(Icons.menu,
+                          color: Theme.of(context).accentIconTheme.color))
+                ],
+              ),
             ),
           ),
           body: new TabBarView(
