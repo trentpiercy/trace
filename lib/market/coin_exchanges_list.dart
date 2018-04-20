@@ -90,6 +90,7 @@ class MarketListState extends State<MarketList> {
   Widget build(BuildContext context) {
     return new RefreshIndicator(
         onRefresh: () => getExchangeData(toSym),
+        color: Theme.of(context).buttonColor,
         child: new SingleChildScrollView(
           controller: _scrollController,
           child: new Column(

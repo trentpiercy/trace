@@ -96,7 +96,7 @@ class MarketPageState extends State<MarketPage> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               globalData != null ? new Container(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(9.0),
                 child: new Column(
                   children: <Widget>[
                     new Row(
@@ -105,13 +105,13 @@ class MarketPageState extends State<MarketPage> {
                         new Column(
                           children: <Widget>[
                             new Text("Total Market Cap", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
-                            new Text(numCommaParse(globalData["total_market_cap_usd"].toString()), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1, fontWeightDelta: 2)),
+                            new Text(numCommaParse(globalData["total_market_cap_usd"].toString()), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2, fontWeightDelta: 2)),
                           ],
                         ),
                         new Column(
                           children: <Widget>[
                             new Text("Total 24h Volume", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
-                            new Text(numCommaParse(globalData["total_24h_volume_usd"].toString()), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1, fontWeightDelta: 2)),
+                            new Text(numCommaParse(globalData["total_24h_volume_usd"].toString()), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2, fontWeightDelta: 2)),
                           ],
                         ),
                       ],

@@ -10,7 +10,7 @@ Searching coins
 Animate everything
 
 # Do Soon
-Candlestick labels on right of lines
+
 
 # Ideas
 Exchange list for a coin

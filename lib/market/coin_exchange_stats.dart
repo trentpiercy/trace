@@ -183,7 +183,7 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
       ),
       resizeToAvoidBottomPadding: false,
       body: new RefreshIndicator(
-        color: Theme.of(context).primaryColor,
+        color: Theme.of(context).buttonColor,
         onRefresh: () => changeHistory(historyType, historyAmt, historyTotal, historyAgg),
         child: new SingleChildScrollView(
           child: new Column(
@@ -241,7 +241,7 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
                                     new Padding(padding: const EdgeInsets.only(bottom: 1.5)),
                                     new Row(
                                       children: <Widget>[
-                                        new Text("Width", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
+                                        new Text("Candle Width", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
                                         new Padding(padding: const EdgeInsets.only(right: 3.0)),
                                         new Text(OHLCVWidthOptions[historyTotal][currentOHLCVWidthSetting][0], style: Theme.of(context).primaryTextTheme.body1)
                                       ],

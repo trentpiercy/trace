@@ -18,8 +18,7 @@ class OHLCVGraph extends StatelessWidget {
         assert(lineWidth != null),
         super(key: key);
 
-  /// OHLCV data to graph
-  /// List of Maps containing open, high, low, close and volumeto
+  /// OHLCV data to graph  /// List of Maps containing open, high, low, close and volumeto
   /// Example: [["open" : 40.0, "high" : 75.0, "low" : 25.0, "close" : 50.0, "volumeto" : 5000.0}, {...}]
   final List data;
 
@@ -161,10 +160,11 @@ class _OHLCVPainter extends CustomPainter {
     final double volumeHeight = size.height * volumeProp;
     final double volumeNormalizer = volumeHeight / _maxVolume;
 
-    final double width = size.width;
+    double width = size.width;
     final double height = size.height * (1 - volumeProp);
 
     if (enableGridLines) {
+      width = size.width - 36.0;
       Paint gridPaint = new Paint()
         ..color = gridLineColor
         ..strokeWidth = 0.5;
@@ -180,7 +180,7 @@ class _OHLCVPainter extends CustomPainter {
 
         // Label grid lines
         gridLineTextPainters[i]
-            .paint(canvas, new Offset(width - 32.0, gridLineY - 13.0));
+            .paint(canvas, new Offset(width + 2.0, gridLineY - 6.0));
       }
 
       // Label volume line

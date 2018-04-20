@@ -37,6 +37,15 @@ String _high = "0";
 String _low = "0";
 String _change = "0";
 
+
+int currentOHLCVWidthSetting;
+
+String historyAmt;
+String historyType;
+String historyTotal;
+String historyAgg;
+
+
 void resetCoinStats() {
   generalStats = null;
 
@@ -47,6 +56,12 @@ void resetCoinStats() {
   _high = "0";
   _low = "0";
   _change = "0";
+
+  currentOHLCVWidthSetting = 0;
+  historyAmt = "720";
+  historyAgg = "2";
+  historyType = "minute";
+  historyTotal = "24h";
 }
 
 void resetExchangeData() {
@@ -57,37 +72,38 @@ class AggregateStats extends StatefulWidget {
   AggregateStats({
     Key key,
     this.snapshot,
-    this.currentOHLCVWidthSetting = 0,
-    this.historyAmt = "720",
-    this.historyAgg = "2",
-    this.historyType = "minute",
-    this.historyTotal = "24h",
+//    this.currentOHLCVWidthSetting = 0,
+//    this.historyAmt = "720",
+//    this.historyAgg = "2",
+//    this.historyType = "minute",
+//    this.historyTotal = "24h",
     this.toSym = "USD",
     this.showSparkline = true,
   })  : assert(snapshot != null),
         super(key: key);
 
   final snapshot;
-
-  final currentOHLCVWidthSetting;
-
   final showSparkline;
 
-  final historyAmt;
-  final historyType;
-  final historyTotal;
-  final historyAgg;
+//  final currentOHLCVWidthSetting;
+//
+//  final historyAmt;
+//  final historyType;
+//  final historyTotal;
+//  final historyAgg;
 
   final toSym;
+
+  List historyOHLCVTimeAggregated;
 
   @override
   AggregateStatsState createState() => new AggregateStatsState(
       snapshot: snapshot,
-      currentOHLCVWidthSetting: currentOHLCVWidthSetting,
-      historyAmt: historyAmt,
-      historyAgg: historyAgg,
-      historyType: historyType,
-      historyTotal: historyTotal,
+//      currentOHLCVWidthSetting: currentOHLCVWidthSetting,
+//      historyAmt: historyAmt,
+//      historyAgg: historyAgg,
+//      historyType: historyType,
+//      historyTotal: historyTotal,
       toSym: toSym,
       showSparkline: showSparkline,
   );
@@ -96,29 +112,28 @@ class AggregateStats extends StatefulWidget {
 class AggregateStatsState extends State<AggregateStats> {
   AggregateStatsState({
     this.snapshot,
-    this.currentOHLCVWidthSetting,
-    this.historyAmt ,
-    this.historyAgg,
-    this.historyType,
-    this.historyTotal,
+//    this.currentOHLCVWidthSetting,
+//    this.historyAmt ,
+//    this.historyAgg,
+//    this.historyType,
+//    this.historyTotal,
     this.toSym,
     this.showSparkline,
   });
 
   Map snapshot;
-
-  int currentOHLCVWidthSetting;
-
   bool showSparkline;
 
-  String historyAmt;
-  String historyType;
-  String historyTotal;
-  String historyAgg;
+//  int currentOHLCVWidthSetting;
+//
+//  String historyAmt;
+//  String historyType;
+//  String historyTotal;
+//  String historyAgg;
 
   String toSym;
 
-  Map generalStats;
+//  Map generalStats;
 
   final ScrollController _scrollController = new ScrollController();
 
@@ -243,7 +258,7 @@ class AggregateStatsState extends State<AggregateStats> {
     return new Scaffold(
         resizeToAvoidBottomPadding: false,
         body: new RefreshIndicator(
-          color: Theme.of(context).primaryColor,
+          color: Theme.of(context).buttonColor,
           onRefresh: () => changeHistory(historyType, historyAmt, historyTotal, historyAgg),
           child: new Column(
             children: <Widget>[
@@ -301,7 +316,7 @@ class AggregateStatsState extends State<AggregateStats> {
                                     ),
                                     new Row(
                                       children: <Widget>[
-                                        new Text("Candle Width", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor, fontSizeFactor: 0.9)),
+                                        new Text("Candle Width", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
                                         new Padding(padding: const EdgeInsets.only(right: 2.0)),
                                         new Text(OHLCVWidthOptions[historyTotal][currentOHLCVWidthSetting][0])
                                       ],
@@ -318,7 +333,6 @@ class AggregateStatsState extends State<AggregateStats> {
                                         new Text("\$"+_high)
                                       ],
                                     ),
-                                    new Padding(padding: const EdgeInsets.only(bottom: 1.0)),
                                     new Row(
                                       children: <Widget>[
                                         new Text("Low", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
@@ -377,7 +391,7 @@ class AggregateStatsState extends State<AggregateStats> {
                   child: new Column(
                     children: <Widget>[
                       sparkLineData != null && showSparkline ? new Container(
-                        height: MediaQuery.of(context).size.height * 0.25,
+                        height: MediaQuery.of(context).size.height * 0.3,
                         padding: const EdgeInsets.all(8.0),
                         child: new Sparkline(
                           data: sparkLineData,
@@ -392,7 +406,7 @@ class AggregateStatsState extends State<AggregateStats> {
 
                       historyOHLCVTimeAggregated != null ? new Container(
                           height: MediaQuery.of(context).size.height * 0.65,
-                          padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 12.0),
+                          padding: const EdgeInsets.only(left: 2.0, right: 0.0),
                           child: new OHLCVGraph(
                             data: historyOHLCVTimeAggregated,
                             enableGridLines: true,
