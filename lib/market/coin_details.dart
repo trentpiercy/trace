@@ -18,8 +18,6 @@ class CoinDetailsState extends State<CoinDetails> {
   @override
   Widget build(BuildContext context) {
 
-    print("built details state");
-
     final _aggregateStats = new AggregateStats(snapshot: widget.snapshot, toSym: toSym);
     final _marketList = new MarketList(snapshot: widget.snapshot, toSym: toSym);
 
