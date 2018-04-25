@@ -10,7 +10,9 @@ Searching coins
 Animate everything
 
 # Do Soon
-
+Icon
+- Vector drawable
+Splash screen
 
 # Ideas
 Exchange list for a coin

@@ -5,15 +5,9 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_sparkline: ^0.0.4
-  flutter_launcher_icons: ^0.2.0
 #  flutter_candlesticks: ^0.0.1
 
   cupertino_icons: ^0.1.0
-
-flutter_icons:
-  image_path: "icon.png"
-  android: true
-  ios: true
 
 dev_dependencies:
   flutter_test:
