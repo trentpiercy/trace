@@ -119,11 +119,15 @@ class _OHLCVPainter extends CustomPainter {
       }
     }
 
+    print("MAX");
+    print(_max);
+
     if (enableGridLines) {
       double gridLineValue;
       for (int i = 0; i < gridLineAmount; i++) {
         // Label grid lines
-        gridLineValue = _max - (((_max - _min) / gridLineAmount) * (i + 1));
+        gridLineValue = _max - (((_max - _min) / (gridLineAmount)) * i);
+        print(gridLineValue);
         String gridLineText = gridLineValue.toString()[4] != "."
             ? gridLineValue.toString().substring(0, 5)
             : gridLineValue.toString().substring(0, 4);

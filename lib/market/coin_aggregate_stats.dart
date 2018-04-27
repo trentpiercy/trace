@@ -297,7 +297,6 @@ class AggregateStatsState extends State<AggregateStats> {
                       ),
                     ),
                     new Card(
-                      color: Theme.of(context).cardColor,
                       elevation: 2.0,
                       child: new Row(
                         children: <Widget>[
@@ -409,6 +408,7 @@ class AggregateStatsState extends State<AggregateStats> {
                     children: <Widget>[
 
                       new Padding(padding: const EdgeInsets.only(top: 10.0)),
+
                       historyOHLCVTimeAggregated != null ? new Container(
                           height: MediaQuery.of(context).size.height * 0.65,
                           padding: const EdgeInsets.only(left: 2.0, right: 0.0),
