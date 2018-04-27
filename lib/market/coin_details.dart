@@ -29,7 +29,7 @@ class CoinDetailsState extends State<CoinDetails> {
               preferredSize: const Size.fromHeight(75.0),
               child: new AppBar(
                 titleSpacing: 0.0,
-                elevation: 0.0,
+                elevation: appBarElevation,
                 title: new Text(widget.snapshot["name"]),
                 bottom: new PreferredSize(
                     preferredSize: const Size.fromHeight(25.0),

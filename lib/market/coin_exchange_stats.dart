@@ -311,9 +311,7 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
               ),
 
               new Padding(padding: const EdgeInsets.only(top: 10.0)),
-
-              new Card(
-                child: historyOHLCVTimeAggregated != null ? new Container(
+              historyOHLCVTimeAggregated != null ? new Container(
                   height: MediaQuery.of(context).size.height * 0.7,
                   padding: const EdgeInsets.all(8.0),
                   child: new OHLCVGraph(
@@ -325,7 +323,6 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
                     volumeProp: 0.2,
                   ),
                 ) : new Container(height: MediaQuery.of(context).size.height * 0.6),
-              ),
 
               new Container(height: 100.0,)
 
