@@ -5,7 +5,7 @@ import 'market.dart';
 
 void main() {
   runApp(new MaterialApp(
-    color: Colors.purple[700],
+    color: Colors.purple[900],
     title: "Trace",
     home: new Tabs(),
     routes: <String, WidgetBuilder>{},
@@ -48,7 +48,7 @@ class Tabs extends StatelessWidget {
         length: 2,
         child: new Scaffold(
           bottomNavigationBar: new Card(
-            elevation: 4.0,
+            elevation: 2.0,
             child: new Container(
 //              color: Theme.of(context).canvasColor,
               height: 36.0,
