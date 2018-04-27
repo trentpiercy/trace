@@ -35,6 +35,7 @@ final ThemeData darkTheme = new ThemeData(
     iconTheme: new IconThemeData(color: Colors.white),
     accentIconTheme: new IconThemeData(color: Colors.deepPurpleAccent[200]),
     cardColor: Color.fromRGBO(55, 55, 55, 1.0),
+    dividerColor: Color.fromRGBO(60, 60, 60, 1.0),
 );
 
 const double appBarHeight = 48.0;
@@ -47,10 +48,12 @@ class Tabs extends StatelessWidget {
     return new DefaultTabController(
         length: 2,
         child: new Scaffold(
-          bottomNavigationBar: new Card(
-            elevation: 2.0,
-            child: new Container(
+          bottomNavigationBar: new Container(
 //              color: Theme.of(context).canvasColor,
+              decoration: new BoxDecoration(
+                  border: new Border(top: new BorderSide(color: darkEnabled ? Color.fromRGBO(45, 45, 45, 1.0) : Theme.of(context).dividerColor, width: 1.25))
+//                  border: new Border(top: new BorderSide(color: darkEnabled ? Theme.of(context).cardColor : Theme.of(context).dividerColor, width: 1.25))
+              ),
               height: 36.0,
               child: new TabBar(
                 indicatorColor: Theme.of(context).accentIconTheme.color,
@@ -66,7 +69,6 @@ class Tabs extends StatelessWidget {
                 ],
               ),
             ),
-          ),
           body: new TabBarView(
             children: <Widget>[new PortfolioPage(), new MarketPage()],
           ),

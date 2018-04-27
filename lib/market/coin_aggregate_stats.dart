@@ -406,7 +406,7 @@ class AggregateStatsState extends State<AggregateStats> {
                   controller: _scrollController,
                   child: new Column(
                     children: <Widget>[
-
+//                      new Container(height: 100.0),
                       new Padding(padding: const EdgeInsets.only(top: 10.0)),
 
                       historyOHLCVTimeAggregated != null ? new Container(
@@ -447,7 +447,12 @@ class AggregateStatsState extends State<AggregateStats> {
         ),
       bottomNavigationBar: new BottomAppBar(
         elevation: bottomAppBarElevation,
-        child: new QuickPercentChangeBar(snapshot: snapshot, bgColor: Theme.of(context).cardColor),
+        child: new Container(
+          decoration: new BoxDecoration(
+              border: new Border(top: new BorderSide(color: darkEnabled ? Color.fromRGBO(45, 45, 45, 1.0) : Theme.of(context).dividerColor, width: 1.25))
+          ),
+          child: new QuickPercentChangeBar(snapshot: snapshot, bgColor: Theme.of(context).canvasColor),
+        ),
       ),
     );
   }
