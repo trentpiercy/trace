@@ -4,11 +4,16 @@ import 'package:flutter_sparkline/flutter_sparkline.dart';
 import 'main.dart';
 
 class PortfolioPage extends StatefulWidget {
+  PortfolioPage(this.toggleTheme);
+  final toggleTheme;
+
   @override
   PortfolioPageState createState() => new PortfolioPageState();
 }
 
 class PortfolioPageState extends State<PortfolioPage> {
+
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -33,7 +38,7 @@ class PortfolioPageState extends State<PortfolioPage> {
         child: null,
       ),
       floatingActionButton: new FloatingActionButton(
-        onPressed: null,
+        onPressed: widget.toggleTheme,
         elevation: appBarElevation,
         backgroundColor: Theme.of(context).buttonColor,
         child: new Icon(Icons.add, color: Theme.of(context).iconTheme.color),

@@ -401,58 +401,57 @@ class AggregateStatsState extends State<AggregateStats> {
                   ],
                 ),
               ),
-              new Flexible(
-                child: new SingleChildScrollView(
-                  controller: _scrollController,
-                  child: new Column(
-                    children: <Widget>[
-//                      new Container(height: 100.0),
-                      new Padding(padding: const EdgeInsets.only(top: 10.0)),
 
-                      historyOHLCVTimeAggregated != null ? new Container(
-                          height: MediaQuery.of(context).size.height * 0.65,
-                          padding: const EdgeInsets.only(left: 2.0, right: 0.0),
-                          child: new OHLCVGraph(
-                            data: historyOHLCVTimeAggregated,
-                            enableGridLines: true,
-                            gridLineColor: Theme.of(context).dividerColor,
-                            gridLineLabelColor: Theme.of(context).hintColor,
-                            gridLineAmount: 5,
-                            volumeProp: 0.2,
-                          ),
-                      ) : new Container(height: MediaQuery.of(context).size.height * 0.6),
+              new Padding(padding: const EdgeInsets.only(top: 10.0)),
 
-                      new Container(height: 500.0),
-
-//                      sparkLineData != null && showSparkline ? new Container(
-//                          height: MediaQuery.of(context).size.height * 0.4,
-//                          padding: const EdgeInsets.all(8.0),
-//                          child: new Sparkline(
-//                            data: sparkLineData,
-//                            lineWidth: 1.8,
-//                            lineGradient: new LinearGradient(
-//                                colors: [darkTheme.accentColor, Colors.purpleAccent],
-//                                begin: Alignment.bottomCenter,
-//                                end: Alignment.topCenter
-//                            ),
-//                          )
-//                      ) : new Container(height: MediaQuery.of(context).size.height * 0.4),
-
-                    ],
-                  ),
+              historyOHLCVTimeAggregated != null ? new Container(
+                height: MediaQuery.of(context).size.height * 0.6,
+                padding: const EdgeInsets.only(left: 2.0, right: 0.0),
+                child: new OHLCVGraph(
+                  data: historyOHLCVTimeAggregated,
+                  enableGridLines: true,
+                  gridLineColor: Theme.of(context).dividerColor,
+                  gridLineLabelColor: Theme.of(context).hintColor,
+                  gridLineAmount: 5,
+                  volumeProp: 0.2,
                 ),
+              ) : new Container(
+                  height: MediaQuery.of(context).size.height * 0.6,
+                  child: new Center(
+                    child: new CircularProgressIndicator(),
+                  ),
               ),
+
+//              new Flexible(
+//                child: new SingleChildScrollView(
+//                  controller: _scrollController,
+//                  child: new Column(
+//                    children: <Widget>[
+//
+////                      sparkLineData != null && showSparkline ? new Container(
+////                          height: MediaQuery.of(context).size.height * 0.4,
+////                          padding: const EdgeInsets.all(8.0),
+////                          child: new Sparkline(
+////                            data: sparkLineData,
+////                            lineWidth: 1.8,
+////                            lineGradient: new LinearGradient(
+////                                colors: [darkTheme.accentColor, Colors.purpleAccent],
+////                                begin: Alignment.bottomCenter,
+////                                end: Alignment.topCenter
+////                            ),
+////                          )
+////                      ) : new Container(height: MediaQuery.of(context).size.height * 0.4),
+//
+//                    ],
+//                  ),
+//                ),
+//              ),
             ],
           ),
         ),
       bottomNavigationBar: new BottomAppBar(
         elevation: bottomAppBarElevation,
-        child: new Container(
-          decoration: new BoxDecoration(
-              border: new Border(top: new BorderSide(color: darkEnabled ? Color.fromRGBO(45, 45, 45, 1.0) : Theme.of(context).dividerColor, width: 1.25))
-          ),
-          child: new QuickPercentChangeBar(snapshot: snapshot, bgColor: Theme.of(context).canvasColor),
-        ),
+        child: new QuickPercentChangeBar(snapshot: snapshot, bgColor: Theme.of(context).canvasColor),
       ),
     );
   }

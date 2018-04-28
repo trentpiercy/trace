@@ -93,7 +93,6 @@ class MarketPageState extends State<MarketPage> {
         child: new SingleChildScrollView(
           controller: _scrollController,
           child: new Column(
-            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               globalData != null ? new Container(
                 padding: const EdgeInsets.all(9.0),
@@ -146,8 +145,8 @@ class MarketPageState extends State<MarketPage> {
                 ),
               ),
               new ListView.builder(
-                controller: _scrollController,
                 shrinkWrap: true,
+                controller: _scrollController,
                 itemCount: marketListData == null ? 0 : marketListData.length,
                 itemBuilder: (BuildContext context, int index) {
                   return new CoinListItem(snapshot: marketListData[index]);
