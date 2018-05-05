@@ -21,6 +21,7 @@ class PortfolioPageState extends State<PortfolioPage> {
       appBar: new PreferredSize(
         preferredSize: const Size.fromHeight(appBarHeight),
         child: new AppBar(
+          titleSpacing: 0.0,
           elevation: appBarElevation,
           title: new Text("Portfolio"),
           actions: <Widget>[
@@ -32,16 +33,29 @@ class PortfolioPageState extends State<PortfolioPage> {
           ],
         ),
       ),
+      floatingActionButton: new FloatingActionButton(
+        onPressed: null,
+        elevation: appBarElevation,
+        backgroundColor: Theme.of(context).buttonColor,
+        child: new Icon(Icons.add, color: Theme.of(context).iconTheme.color),
+      ),
+      drawer: new Drawer(
+        child: new Row(
+          children: <Widget>[
+            new IconButton(
+                icon: new Icon(Icons.brightness_3),
+                color: Theme.of(context).buttonColor,
+                onPressed: widget.toggleTheme
+            )
+
+          ],
+        ),
+      ),
+
       body: new Container(
         padding: const EdgeInsets.all(16.0),
         height: 200.0,
         child: null,
-      ),
-      floatingActionButton: new FloatingActionButton(
-        onPressed: widget.toggleTheme,
-        elevation: appBarElevation,
-        backgroundColor: Theme.of(context).buttonColor,
-        child: new Icon(Icons.add, color: Theme.of(context).iconTheme.color),
       ),
     );
   }

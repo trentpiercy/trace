@@ -54,7 +54,19 @@ class TraceAppState extends State<TraceApp> {
     return new MaterialApp(
       color: Colors.purple[900],
       title: "Trace",
-      home: new DefaultTabController(
+      home: new Tabs(toggleTheme),
+      theme: darkEnabled ? darkTheme : lightTheme,
+    );
+  }
+}
+
+class Tabs extends StatelessWidget {
+  Tabs(this.toggleTheme);
+  final toggleTheme;
+
+  @override
+  Widget build(BuildContext context) {
+    return new DefaultTabController(
         length: 2,
         child: new Scaffold(
           bottomNavigationBar: new Container(
@@ -86,10 +98,6 @@ class TraceAppState extends State<TraceApp> {
             children: <Widget>[new PortfolioPage(toggleTheme), new MarketPage()],
           ),
         )
-      ),
-
-      theme: darkEnabled ? darkTheme : lightTheme,
-
     );
   }
 }
