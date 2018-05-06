@@ -87,37 +87,48 @@ class MarketPageState extends State<MarketPage> {
 //          ],
         ),
       ),
-      body: new RefreshIndicator(
+      body: globalData != null ? new RefreshIndicator(
         color: Theme.of(context).buttonColor,
         onRefresh: () => refreshData(),
         child: new SingleChildScrollView(
           controller: _scrollController,
           child: new Column(
             children: <Widget>[
-              globalData != null ? new Container(
-                padding: const EdgeInsets.all(9.0),
-                child: new Column(
-                  children: <Widget>[
-                    new Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        new Column(
-                          children: <Widget>[
-                            new Text("Total Market Cap", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
-                            new Text(numCommaParse(globalData["total_market_cap_usd"].toString()), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2, fontWeightDelta: 2)),
-                          ],
-                        ),
-                        new Column(
-                          children: <Widget>[
-                            new Text("Total 24h Volume", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
-                            new Text(numCommaParse(globalData["total_24h_volume_usd"].toString()), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2, fontWeightDelta: 2)),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
+              new Padding(padding: const EdgeInsets.only(top: 4.0)),
+              new Card(
+                child: new Container(
+                  padding: const EdgeInsets.all(10.0),
+                  child: new Column(
+                    children: <Widget>[
+//                      new Text("Grand Totals", style: Theme.of(context).textTheme.title.apply(fontSizeFactor: 0.85, fontWeightDelta: 1)),
+//                      new Padding(padding: const EdgeInsets.only(bottom: 2.0)),
+                      new Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          new Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              new Text("Total Market Cap", style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)),
+                              new Padding(padding: const EdgeInsets.symmetric(vertical: 1.0)),
+                              new Text("Total 24h Volume", style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)),
+                            ],
+                          ),
+                          new Padding(padding: const EdgeInsets.symmetric(horizontal: 1.0)),
+                          new Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: <Widget>[
+                              new Text(numCommaParse(globalData["total_market_cap_usd"].toString()), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2, fontWeightDelta: 2)),
+                              new Text(numCommaParse(globalData["total_24h_volume_usd"].toString()),
+                                  style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2, fontWeightDelta: 2, color: Theme.of(context).hintColor)
+                              ),
+                            ],
+                          )
+                        ],
+                      )
+                    ],
+                  )
                 ),
-              ) : new Container(),
+              ),
               new Container(
                 margin: const EdgeInsets.only(left: 6.0, right: 6.0, top: 8.0),
                 decoration: new BoxDecoration(
@@ -155,6 +166,8 @@ class MarketPageState extends State<MarketPage> {
             ],
           )
         )
+      ) : new Container(
+        child: new Center(child: new CircularProgressIndicator()),
       )
     );
   }
