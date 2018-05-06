@@ -24,9 +24,9 @@ class MarketPage extends StatefulWidget {
   MarketPageState createState() => new MarketPageState();
 }
 
+
 List marketListData;
 Map globalData;
-
 class MarketPageState extends State<MarketPage> {
   ScrollController _scrollController = new ScrollController();
 

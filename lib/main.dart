@@ -17,13 +17,30 @@ class TraceApp extends StatefulWidget {
   TraceAppState createState() => new TraceAppState();
 }
 
+bool darkEnabled = true;
+String themeMode = "Automatic";
 class TraceAppState extends State<TraceApp> {
-  bool darkEnabled = true;
-
   void toggleTheme() {
-    setState(() {
-      darkEnabled = !darkEnabled;
-    });
+    switch (themeMode) {
+      case "Automatic":
+        themeMode = "Dark";
+        darkEnabled = true;
+        break;
+      case "Dark":
+        themeMode = "Light";
+        darkEnabled = false;
+        break;
+      case "Light":
+        themeMode = "Automatic";
+        int nowHour = new DateTime.now().hour;
+        if (nowHour > 6 && nowHour < 18) {
+          darkEnabled = false;
+        } else {
+          darkEnabled = true;
+        }
+        break;
+    }
+    setState(() {});
   }
 
   final ThemeData lightTheme = new ThemeData(

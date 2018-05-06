@@ -29,9 +29,7 @@ Map OHLCVWidthOptions = {
 //TODO: probably figure out a better way to do this
 Map generalStats;
 
-List sparkLineData;
-List historySparkline;
-List historyOHLCVTimeAggregated;
+List historyOHLCV;
 
 String _high = "0";
 String _low = "0";
@@ -49,9 +47,7 @@ String historyAgg;
 void resetCoinStats() {
   generalStats = null;
 
-  sparkLineData = null;
-  historySparkline = null;
-  historyOHLCVTimeAggregated = null;
+  historyOHLCV = null;
 
   _high = "0";
   _low = "0";
@@ -147,19 +143,6 @@ class AggregateStatsState extends State<AggregateStats> {
     });
   }
 
-  Future<Null> getHistorySparkLine() async {
-    var response = await http.get(
-      Uri.encodeFull("https://min-api.cryptocompare.com/data/histo" +historyType
-          +"?fsym="+snapshot["symbol"]
-          +"&tsym=USD&limit="+(int.parse(historyAmt)-1).toString()
-          +"&aggregate="+historyAgg),
-      headers: {"Accept": "application/json"}
-    );
-    setState(() {
-      historySparkline = new JsonDecoder().convert(response.body)["Data"];
-    });
-  }
-
 
   Future<Null> getHistoryOHLCV() async {
     var response = await http.get(
@@ -172,13 +155,13 @@ class AggregateStatsState extends State<AggregateStats> {
         headers: {"Accept": "application/json"}
     );
     setState(() {
-      historyOHLCVTimeAggregated = new JsonDecoder().convert(response.body)["Data"];
+      historyOHLCV = new JsonDecoder().convert(response.body)["Data"];
     });
   }
 
   Future<Null> changeOHLCVWidth(int currentSetting) async {
     currentOHLCVWidthSetting = currentSetting;
-    historyOHLCVTimeAggregated = null;
+    historyOHLCV = null;
     getHistoryOHLCV();
   }
 
@@ -186,7 +169,7 @@ class AggregateStatsState extends State<AggregateStats> {
     num highReturn = -double.infinity;
     num lowReturn = double.infinity;
 
-    for (var i in historySparkline) {
+    for (var i in historyOHLCV) {
       if (i["high"] > highReturn) {
         highReturn = i["high"].toDouble();
       }
@@ -194,28 +177,14 @@ class AggregateStatsState extends State<AggregateStats> {
         lowReturn = i["low"].toDouble();
       }
     }
-
     _high = highReturn.toString();
     _low = lowReturn.toString();
 
-    var start = historySparkline[0]["close"] == 0 ? 1 : historySparkline[0]["close"];
-    var end = historySparkline.last["close"];
 
+    var start = historyOHLCV[0]["open"] == 0 ? 1 : historyOHLCV[0]["open"];
+    var end = historyOHLCV.last["close"];
     var changePercent = (end-start)/start*100;
-
     _change = changePercent.toString().substring(0, changePercent > 0 ? 5 : 6);
-  }
-
-  Future<Null> makeSparkLineData() async {
-    List<double> returnData = [];
-
-    for (var i in historySparkline) {
-      returnData.add(((i["high"]+i["low"])/2));
-    }
-
-    setState(() {
-      sparkLineData = returnData;
-    });
   }
 
   Future<Null> changeHistory(String type, String amt, String total, String agg) async {
@@ -229,23 +198,17 @@ class AggregateStatsState extends State<AggregateStats> {
       historyTotal = total;
       historyAgg = agg;
 
-      sparkLineData = null;
-      historyOHLCVTimeAggregated = null;
+      historyOHLCV = null;
 
     });
     getGeneralStats();
-    getHistoryOHLCV();
-    await getHistorySparkLine();
+    await getHistoryOHLCV();
     _getHL();
-    makeSparkLineData();
   }
 
   void initState() {
     super.initState();
-    if (sparkLineData == null) {
-      changeHistory(historyType, historyAmt, historyTotal, historyAgg);
-    }
-    if (historyOHLCVTimeAggregated == null) {
+    if (historyOHLCV == null) {
       getHistoryOHLCV();
     }
     if (generalStats == null) {
@@ -253,27 +216,23 @@ class AggregateStatsState extends State<AggregateStats> {
     }
   }
 
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = new GlobalKey<RefreshIndicatorState>();
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
         resizeToAvoidBottomPadding: false,
         body: new RefreshIndicator(
+          key: _refreshIndicatorKey,
           color: Theme.of(context).buttonColor,
           onRefresh: () => changeHistory(historyType, historyAmt, historyTotal, historyAgg),
           child: new Column(
             children: <Widget>[
               new Container(
-//                padding: const EdgeInsets.all(4.0),
-//                margin: const EdgeInsets.only(left: 4.0, right: 4.0),
-//                decoration: new BoxDecoration(
-//                  color: Color.fromRGBO(40, 40, 40, 1.0),
-//                  border: new Border(bottom: new BorderSide(color: Colors.grey[900]))
-//                ),
                 child: new Column(
                   children: <Widget>[
                     new Container(
                       padding: const EdgeInsets.only(left: 6.0, right: 6.0, top: 10.0, bottom: 4.0),
-//                      color: Theme.of(context).cardColor,
                       child: new Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -402,50 +361,24 @@ class AggregateStatsState extends State<AggregateStats> {
                 ),
               ),
 
-              new Padding(padding: const EdgeInsets.only(top: 10.0)),
-
-              historyOHLCVTimeAggregated != null ? new Container(
-                height: MediaQuery.of(context).size.height * 0.6,
-                padding: const EdgeInsets.only(left: 2.0, right: 0.0),
-                child: new OHLCVGraph(
-                  data: historyOHLCVTimeAggregated,
-                  enableGridLines: true,
-                  gridLineColor: Theme.of(context).dividerColor,
-                  gridLineLabelColor: Theme.of(context).hintColor,
-                  gridLineAmount: 5,
-                  volumeProp: 0.2,
-                ),
-              ) : new Container(
-                  height: MediaQuery.of(context).size.height * 0.6,
-                  child: new Center(
-                    child: new CircularProgressIndicator(),
+              new Flexible(
+                  child: historyOHLCV != null ? new Container(
+                    padding: const EdgeInsets.only(left: 2.0, right: 0.0, top: 10.0),
+                    child: new OHLCVGraph(
+                      data: historyOHLCV,
+                      enableGridLines: true,
+                      gridLineColor: Theme.of(context).dividerColor,
+                      gridLineLabelColor: Theme.of(context).hintColor,
+                      gridLineAmount: 5,
+                      volumeProp: 0.2,
+                    ),
+                  ) : new Container(
+                    child: new Center(
+                      child: new CircularProgressIndicator(),
+                    ),
                   ),
-              ),
+              )
 
-//              new Flexible(
-//                child: new SingleChildScrollView(
-//                  controller: _scrollController,
-//                  child: new Column(
-//                    children: <Widget>[
-//
-////                      sparkLineData != null && showSparkline ? new Container(
-////                          height: MediaQuery.of(context).size.height * 0.4,
-////                          padding: const EdgeInsets.all(8.0),
-////                          child: new Sparkline(
-////                            data: sparkLineData,
-////                            lineWidth: 1.8,
-////                            lineGradient: new LinearGradient(
-////                                colors: [darkTheme.accentColor, Colors.purpleAccent],
-////                                begin: Alignment.bottomCenter,
-////                                end: Alignment.topCenter
-////                            ),
-////                          )
-////                      ) : new Container(height: MediaQuery.of(context).size.height * 0.4),
-//
-//                    ],
-//                  ),
-//                ),
-//              ),
             ],
           ),
         ),

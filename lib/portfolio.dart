@@ -12,8 +12,6 @@ class PortfolioPage extends StatefulWidget {
 }
 
 class PortfolioPageState extends State<PortfolioPage> {
-
-
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -40,16 +38,26 @@ class PortfolioPageState extends State<PortfolioPage> {
         child: new Icon(Icons.add, color: Theme.of(context).iconTheme.color),
       ),
       drawer: new Drawer(
-        child: new Row(
-          children: <Widget>[
-            new IconButton(
-                icon: new Icon(Icons.brightness_3),
-                color: Theme.of(context).buttonColor,
-                onPressed: widget.toggleTheme
+        child: new Scaffold(
+          bottomNavigationBar: new Container(
+            decoration: new BoxDecoration(
+              border: new Border(top: new BorderSide(color: Theme.of(context).dividerColor))
+            ),
+            child: new ListTile(
+              onTap: widget.toggleTheme,
+              leading: new Icon(darkEnabled ? Icons.brightness_3 : Icons.brightness_7, color: Theme.of(context).buttonColor),
+              title: new Text(themeMode, style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).buttonColor)),
             )
-
-          ],
-        ),
+          ),
+          body: new ListView(
+            children: <Widget>[
+              new ListTile(
+                leading: new Icon(Icons.settings),
+                title: new Text("Settings"),
+              ),
+            ],
+          )
+        )
       ),
 
       body: new Container(
