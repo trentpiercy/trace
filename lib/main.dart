@@ -98,8 +98,7 @@ class Tabs extends StatelessWidget {
             height: 36.0,
             child: new TabBar(
               indicatorColor: Theme.of(context).accentIconTheme.color,
-              indicatorPadding:
-              const EdgeInsets.only(left: 50.0, bottom: 2.0, right: 50.0),
+              indicatorPadding: const EdgeInsets.only(left: 50.0, bottom: 2.0, right: 50.0),
               tabs: <Tab>[
                 new Tab(
                     icon: new Icon(Icons.person_outline,
