@@ -19,6 +19,7 @@ class TraceApp extends StatefulWidget {
 
 bool darkEnabled = true;
 String themeMode = "Automatic";
+
 class TraceAppState extends State<TraceApp> {
   void toggleTheme() {
     switch (themeMode) {

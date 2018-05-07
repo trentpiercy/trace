@@ -82,8 +82,6 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
 
   String toSym;
 
-  final ScrollController _scrollController = new ScrollController();
-
   Future<Null> getPrice() async {
     var response = await http.get(
         Uri.encodeFull("https://min-api.cryptocompare.com/data/price?fsym="+exchangeData["FROMSYMBOL"]
@@ -131,14 +129,12 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
       }
     }
 
-    _high = highReturn.toString();
-    _low = lowReturn.toString();
+    _high = highReturn.toStringAsFixed(2);
+    _low = lowReturn.toStringAsFixed(2);
 
-    var start = historyOHLCV[0]["close"] == 0 ? 1 : historyOHLCV[0]["close"];
+    var start = historyOHLCV[0]["open"] == 0 ? 1 : historyOHLCV[0]["open"];
     var end = historyOHLCV.last["close"];
-
     var changePercent = (end-start)/start*100;
-
     _change = changePercent.toString().substring(0, changePercent > 0 ? 5 : 6);
   }
 
@@ -202,7 +198,7 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
                             new Text("24h Volume", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
-                            new Text(numCommaParse((exchangeData["VOLUME24HOURTO"]).toString()), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)),
+                            new Text(numCommaParse((exchangeData["VOLUME24HOURTO"]).toString()), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2)),
                           ],
                         ),
                       ],

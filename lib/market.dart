@@ -76,7 +76,7 @@ class MarketPageState extends State<MarketPage> {
           title: new Text("Aggregate Markets"),
           titleSpacing: 0.0,
           leading: new IconButton( // TODO: Searching
-            icon: new Icon(Icons.search),
+            icon: new Icon(Icons.search, color: Theme.of(context).iconTheme.color),
             onPressed: null
           ),
 //          actions: <Widget>[ // TODO: Number shortening
