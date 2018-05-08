@@ -190,6 +190,11 @@ class CoinListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    snapshot.forEach((k, v) {
+      if (v == null) {
+        snapshot[k] = "0";
+      }
+    });
     return new GestureDetector(
       onTap: () {
         resetCoinStats();

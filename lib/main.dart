@@ -17,28 +17,40 @@ class TraceApp extends StatefulWidget {
   TraceAppState createState() => new TraceAppState();
 }
 
-bool darkEnabled = true;
-String themeMode = "Automatic";
-
 class TraceAppState extends State<TraceApp> {
+  bool darkEnabled;
+  String themeMode = "Automatic";
+
   void toggleTheme() {
     switch (themeMode) {
       case "Automatic":
         themeMode = "Dark";
-        darkEnabled = true;
         break;
       case "Dark":
         themeMode = "Light";
-        darkEnabled = false;
         break;
       case "Light":
         themeMode = "Automatic";
+        break;
+    }
+    handleTheme();
+  }
+
+  void handleTheme() {
+    switch (themeMode) {
+      case "Automatic":
         int nowHour = new DateTime.now().hour;
         if (nowHour > 6 && nowHour < 18) {
           darkEnabled = false;
         } else {
           darkEnabled = true;
         }
+        break;
+      case "Dark":
+        darkEnabled = true;
+        break;
+      case "Light":
+        darkEnabled = false;
         break;
     }
     setState(() {});
@@ -68,19 +80,32 @@ class TraceAppState extends State<TraceApp> {
   );
 
   @override
+  void initState() {
+    super.initState();
+    handleTheme();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      color: Colors.purple[900],
+      color: darkEnabled ? darkTheme.primaryColor : lightTheme.primaryColor,
       title: "Trace",
-      home: new Tabs(toggleTheme),
+      home: new Tabs(toggleTheme, darkEnabled, themeMode),
       theme: darkEnabled ? darkTheme : lightTheme,
     );
   }
 }
 
 class Tabs extends StatelessWidget {
-  Tabs(this.toggleTheme);
+  Tabs(
+    this.toggleTheme,
+    this.darkEnabled,
+    this.themeMode
+  );
+
   final toggleTheme;
+  final darkEnabled;
+  final themeMode;
 
   @override
   Widget build(BuildContext context) {
@@ -110,9 +135,11 @@ class Tabs extends StatelessWidget {
               ],
             ),
           ),
-
           body: new TabBarView(
-            children: <Widget>[new PortfolioPage(toggleTheme), new MarketPage()],
+            children: <Widget>[
+              new PortfolioPage(toggleTheme, darkEnabled, themeMode),
+              new MarketPage()
+            ],
           ),
         )
     );

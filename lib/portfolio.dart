@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_sparkline/flutter_sparkline.dart';
 
 import 'main.dart';
 
 class PortfolioPage extends StatefulWidget {
-  PortfolioPage(this.toggleTheme);
+  PortfolioPage(
+    this.toggleTheme,
+    this.darkEnabled,
+    this.themeMode,
+  );
+
   final toggleTheme;
+  final darkEnabled;
+  final themeMode;
 
   @override
   PortfolioPageState createState() => new PortfolioPageState();
@@ -41,12 +47,15 @@ class PortfolioPageState extends State<PortfolioPage> {
         child: new Scaffold(
           bottomNavigationBar: new Container(
             decoration: new BoxDecoration(
-              border: new Border(top: new BorderSide(color: Theme.of(context).dividerColor))
+              border: new Border(
+                top: new BorderSide(color: Theme.of(context).dividerColor),
+                bottom: new BorderSide(color: Theme.of(context).dividerColor)
+              )
             ),
             child: new ListTile(
               onTap: widget.toggleTheme,
-              leading: new Icon(darkEnabled ? Icons.brightness_3 : Icons.brightness_7, color: Theme.of(context).buttonColor),
-              title: new Text(themeMode, style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).buttonColor)),
+              leading: new Icon(widget.darkEnabled ? Icons.brightness_3 : Icons.brightness_7, color: Theme.of(context).buttonColor),
+              title: new Text(widget.themeMode, style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).buttonColor)),
             )
           ),
           body: new ListView(

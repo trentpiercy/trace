@@ -4,12 +4,12 @@ Portfolio
         - path pub
     - Upload to firebase
 
-Python backend for aggregate market depth stats
-Searching coins
-
+Searching
 Animate everything
 
 # Do Soon
+Try home top appbar tabs
+
 Icon
 - Vector drawable
 Splash screen
