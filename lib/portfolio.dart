@@ -28,13 +28,6 @@ class PortfolioPageState extends State<PortfolioPage> {
           titleSpacing: 0.0,
           elevation: appBarElevation,
           title: new Text("Portfolio"),
-          actions: <Widget>[
-            new IconButton(
-              icon: new Icon(Icons.timeline,
-                  color: Theme.of(context).iconTheme.color),
-              onPressed: null,
-            )
-          ],
         ),
       ),
       floatingActionButton: new FloatingActionButton(
@@ -64,12 +57,20 @@ class PortfolioPageState extends State<PortfolioPage> {
                 leading: new Icon(Icons.settings),
                 title: new Text("Settings"),
               ),
+              new ListTile(
+                leading: new Icon(Icons.timeline),
+                title: new Text("Portfolio Timeline"),
+              ),
+              new ListTile(
+                leading: new Icon(Icons.short_text),
+                title: new Text("Shorten Numbers"),
+              )
             ],
           )
         )
       ),
 
-      body: new Container(
+      body: new Container( // TODO: Portfolio Body Container
         padding: const EdgeInsets.all(16.0),
         height: 200.0,
         child: null,

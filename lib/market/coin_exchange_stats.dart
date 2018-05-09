@@ -308,11 +308,9 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
                     ),
                   ),
 
-                  new Padding(padding: const EdgeInsets.only(top: 10.0)),
-
                   new Flexible(
                     child: historyOHLCV != null ? new Container(
-                      padding: const EdgeInsets.only(left: 2.0, right: 0.0),
+                      padding: const EdgeInsets.only(left: 2.0, right: 0.0, top: 10.0),
                       child: new OHLCVGraph(
                         data: historyOHLCV,
                         enableGridLines: true,

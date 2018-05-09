@@ -79,12 +79,6 @@ class MarketPageState extends State<MarketPage> {
             icon: new Icon(Icons.search, color: Theme.of(context).iconTheme.color),
             onPressed: null
           ),
-//          actions: <Widget>[ // TODO: Number shortening
-//            new IconButton(
-//              icon: new Icon(Icons.short_text, color: Theme.of(context).iconTheme.color),
-//              onPressed: null
-//            )
-//          ],
         ),
       ),
       body: globalData != null ? new RefreshIndicator(
@@ -100,8 +94,6 @@ class MarketPageState extends State<MarketPage> {
                   padding: const EdgeInsets.all(10.0),
                   child: new Column(
                     children: <Widget>[
-//                      new Text("Grand Totals", style: Theme.of(context).textTheme.title.apply(fontSizeFactor: 0.85, fontWeightDelta: 1)),
-//                      new Padding(padding: const EdgeInsets.only(bottom: 2.0)),
                       new Row(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
