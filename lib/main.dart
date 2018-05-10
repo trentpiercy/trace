@@ -114,42 +114,46 @@ class Tabs extends StatefulWidget {
 }
 
 class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
+  TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = new TabController(length: 3, vsync: this);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return new DefaultTabController(
-        length: 2,
-        child: new Scaffold(
-          bottomNavigationBar: new Container(
-            decoration: new BoxDecoration(
-              color: Theme.of(context).canvasColor,
-              boxShadow: <BoxShadow>[
-                new BoxShadow(color: Colors.black,
-                    blurRadius: 10.0,
-                    offset: new Offset(0.0, 10.5))
-              ],
-            ),
-            height: 36.0,
-            child: new TabBar(
-              indicatorColor: Theme.of(context).accentIconTheme.color,
-              indicatorPadding: const EdgeInsets.only(left: 50.0, bottom: 2.0, right: 50.0),
-              indicatorWeight: 2.0,
-              tabs: <Tab>[
-                new Tab(
-                    icon: new Icon(Icons.person_outline,
-                        color: Theme.of(context).accentIconTheme.color)),
-                new Tab(
-                    icon: new Icon(Icons.menu,
-                        color: Theme.of(context).accentIconTheme.color))
-              ],
-            ),
-          ),
-          body: new TabBarView(
-            children: <Widget>[
-              new PortfolioPage(widget.toggleTheme, widget.darkEnabled, widget.themeMode),
-              new MarketPage()
-            ],
-          ),
-        )
+    return new Scaffold(
+      bottomNavigationBar: new Container(
+        decoration: new BoxDecoration(
+          color: Theme.of(context).canvasColor,
+          boxShadow: <BoxShadow>[
+            new BoxShadow(color: Colors.black,
+                blurRadius: 10.0,
+                offset: new Offset(0.0, 10.5))
+          ],
+        ),
+        height: 40.0,
+        child: new TabBar(
+          controller: _tabController,
+          indicatorColor: Theme.of(context).accentIconTheme.color,
+          indicatorPadding: const EdgeInsets.only(left: 0.0, bottom: 1.0, right: 0.0),
+          indicatorWeight: 2.0,
+          tabs: <Tab>[
+            new Tab(icon: new Icon(Icons.person, color: _tabController.index == 0 ? Theme.of(context).accentIconTheme.color : Theme.of(context).backgroundColor)),
+            new Tab(icon: new Icon(Icons.menu, color: Theme.of(context).accentIconTheme.color)),
+//            new Tab(icon: new Icon(Icons.notifications, color: Theme.of(context).accentIconTheme.color))
+          ],
+        ),
+      ),
+      body: new TabBarView(
+        controller: _tabController,
+        children: <Widget>[
+          new PortfolioPage(widget.toggleTheme, widget.darkEnabled, widget.themeMode),
+          new MarketPage()
+        ],
+      ),
     );
   }
 }
