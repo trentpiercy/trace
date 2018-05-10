@@ -96,17 +96,24 @@ class TraceAppState extends State<TraceApp> {
   }
 }
 
-class Tabs extends StatelessWidget {
+
+
+class Tabs extends StatefulWidget {
   Tabs(
-    this.toggleTheme,
-    this.darkEnabled,
-    this.themeMode
-  );
+      this.toggleTheme,
+      this.darkEnabled,
+      this.themeMode
+      );
 
   final toggleTheme;
   final darkEnabled;
   final themeMode;
 
+  @override
+  TabsState createState() => new TabsState();
+}
+
+class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return new DefaultTabController(
@@ -125,6 +132,7 @@ class Tabs extends StatelessWidget {
             child: new TabBar(
               indicatorColor: Theme.of(context).accentIconTheme.color,
               indicatorPadding: const EdgeInsets.only(left: 50.0, bottom: 2.0, right: 50.0),
+              indicatorWeight: 2.0,
               tabs: <Tab>[
                 new Tab(
                     icon: new Icon(Icons.person_outline,
@@ -137,7 +145,7 @@ class Tabs extends StatelessWidget {
           ),
           body: new TabBarView(
             children: <Widget>[
-              new PortfolioPage(toggleTheme, darkEnabled, themeMode),
+              new PortfolioPage(widget.toggleTheme, widget.darkEnabled, widget.themeMode),
               new MarketPage()
             ],
           ),

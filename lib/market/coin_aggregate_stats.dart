@@ -278,7 +278,7 @@ class AggregateStatsState extends State<AggregateStats> {
                                               children: <Widget>[
                                                 new Text("Period", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
                                                 new Padding(padding: const EdgeInsets.only(right: 3.0)),
-                                                new Text(historyTotal, style: Theme.of(context).textTheme.button),
+                                                new Text(historyTotal, style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).buttonColor)),
                                                 new Padding(padding: const EdgeInsets.only(right: 4.0)),
                                                 new Text(num.parse(_change) > 0 ? "+" + _change+"%" : _change+"%",
                                                     style: Theme.of(context).primaryTextTheme.body1.apply(
@@ -292,7 +292,7 @@ class AggregateStatsState extends State<AggregateStats> {
                                               children: <Widget>[
                                                 new Text("Candle Width", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
                                                 new Padding(padding: const EdgeInsets.only(right: 2.0)),
-                                                new Text(OHLCVWidthOptions[historyTotal][currentOHLCVWidthSetting][0])
+                                                new Text(OHLCVWidthOptions[historyTotal][currentOHLCVWidthSetting][0], style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).buttonColor))
                                               ],
                                             ),
                                           ],

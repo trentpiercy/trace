@@ -70,10 +70,49 @@ class PortfolioPageState extends State<PortfolioPage> {
         )
       ),
 
-      body: new Container( // TODO: Portfolio Body Container
-        padding: const EdgeInsets.all(16.0),
-        height: 200.0,
-        child: null,
+      body: new CustomScrollView(
+        slivers: <Widget>[
+          new SliverAppBar(
+            floating: true,
+            pinned: false,
+
+            backgroundColor: Theme.of(context).cardColor,
+
+            title: new Text("Testing"),
+            elevation: 0.0,
+//            leading: new IconButton(icon: new Icon(Icons.search), onPressed: null),
+            titleSpacing: 0.0,
+
+          ),
+
+          new SliverAppBar(
+            backgroundColor: Theme.of(context).cardColor,
+            elevation: appBarElevation,
+            pinned: true,
+            leading: new Container(),
+            bottom: new PreferredSize(
+                preferredSize: const Size.fromHeight(0.0),
+                child: new Container(
+                  child: new TabBar(
+                    tabs: <Tab>[
+                      new Tab(icon: new Icon(Icons.person, color: Theme.of(context).accentIconTheme.color)),
+                      new Tab(icon: new Icon(Icons.menu, color: Theme.of(context).accentIconTheme.color)),
+                      new Tab(icon: new Icon(Icons.notifications, color: Theme.of(context).accentIconTheme.color))
+                    ],
+                  ),
+                )
+            ),
+          ),
+
+          new SliverList(
+              delegate: new SliverChildBuilderDelegate(
+                  (context, index) => new ListTile(
+                    title: new Text("item $index"),
+                  )
+              )
+          )
+
+        ],
       ),
     );
   }
