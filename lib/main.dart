@@ -33,10 +33,10 @@ class TraceAppState extends State<TraceApp> {
         themeMode = "Automatic";
         break;
     }
-    handleTheme();
+    handleUpdate();
   }
 
-  void handleTheme() {
+  void handleUpdate() {
     switch (themeMode) {
       case "Automatic":
         int nowHour = new DateTime.now().hour;
@@ -64,7 +64,9 @@ class TraceAppState extends State<TraceApp> {
     dividerColor: Colors.grey[200],
     buttonColor: Colors.purple[700],
     iconTheme: new IconThemeData(color: Colors.white),
+    primaryIconTheme: new IconThemeData(color: Colors.black),
     accentIconTheme: new IconThemeData(color: Colors.purple[700]),
+    backgroundColor: Colors.grey[500],
   );
 
   final ThemeData darkTheme = new ThemeData(
@@ -82,7 +84,7 @@ class TraceAppState extends State<TraceApp> {
   @override
   void initState() {
     super.initState();
-    handleTheme();
+    handleUpdate();
   }
 
   @override
@@ -90,7 +92,7 @@ class TraceAppState extends State<TraceApp> {
     return new MaterialApp(
       color: darkEnabled ? darkTheme.primaryColor : lightTheme.primaryColor,
       title: "Trace",
-      home: new Tabs(toggleTheme, darkEnabled, themeMode),
+      home: new Tabs(toggleTheme, handleUpdate, darkEnabled, themeMode),
       theme: darkEnabled ? darkTheme : lightTheme,
     );
   }
@@ -100,14 +102,18 @@ class TraceAppState extends State<TraceApp> {
 
 class Tabs extends StatefulWidget {
   Tabs(
-      this.toggleTheme,
-      this.darkEnabled,
-      this.themeMode
-      );
+    this.toggleTheme,
+    this.handleUpdate,
+    this.darkEnabled,
+    this.themeMode,
+  );
 
   final toggleTheme;
+  final handleUpdate;
+
   final darkEnabled;
   final themeMode;
+
 
   @override
   TabsState createState() => new TabsState();
@@ -116,41 +122,145 @@ class Tabs extends StatefulWidget {
 class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   TabController _tabController;
 
+  PageController _pageController = new PageController();
+
+  _testPage(BuildContext context) {
+    return new SliverList(
+        delegate: new SliverChildBuilderDelegate((context, index) => new ListTile(title: new Text("item $index")))
+    );
+  }
+
+  bottomAppBar(BuildContext context) {
+    return new PreferredSize(
+        preferredSize: const Size.fromHeight(20.0),
+        child: new Container(
+          height: 36.0,
+          child: new TabBar(
+            controller: _tabController,
+            indicatorColor: Theme.of(context).buttonColor,
+            tabs: <Tab>[
+              new Tab(icon: new Icon(Icons.person, color: _tabIndex == 0 ? Theme.of(context).accentIconTheme.color : Theme.of(context).backgroundColor)),
+              new Tab(icon: new Icon(Icons.menu, color: _tabIndex == 1 ? Theme.of(context).accentIconTheme.color : Theme.of(context).backgroundColor)),
+              new Tab(icon: new Icon(Icons.notifications, color: _tabIndex == 2 ? Theme.of(context).accentIconTheme.color : Theme.of(context).backgroundColor))
+            ],
+          ),
+        )
+    );
+  }
+
+  portfolioAppBar(BuildContext context) {
+    return new PreferredSize(
+      preferredSize: const Size.fromHeight(85.0),
+      child: new AppBar(
+          backgroundColor: Theme.of(context).cardColor,
+          titleSpacing: 0.0,
+          elevation: appBarElevation,
+          title: new Text("Portfolio", style: Theme.of(context).textTheme.title),
+          bottom: bottomAppBar(context)
+      ),
+    );
+  }
+
+  marketsAppBar(BuildContext context) {
+    return new PreferredSize(
+      preferredSize: const Size.fromHeight(85.0),
+      child: new AppBar(
+          backgroundColor: Theme.of(context).cardColor,
+          elevation: appBarElevation,
+          title: new Text("Aggregate Markets", style: Theme.of(context).textTheme.title),
+          titleSpacing: 0.0,
+          leading: new IconButton( // TODO: Searching
+              icon: new Icon(Icons.search, color: Theme.of(context).primaryIconTheme.color),
+              onPressed: null
+          ),
+          bottom: bottomAppBar(context)
+      ),
+    );
+  }
+
+
+  int _tabIndex = 0;
   @override
   void initState() {
     super.initState();
     _tabController = new TabController(length: 3, vsync: this);
+    _tabController.addListener(() {
+      setState(() {
+        _tabIndex = _tabController.index;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      bottomNavigationBar: new Container(
-        decoration: new BoxDecoration(
-          color: Theme.of(context).canvasColor,
-          boxShadow: <BoxShadow>[
-            new BoxShadow(color: Colors.black,
-                blurRadius: 10.0,
-                offset: new Offset(0.0, 10.5))
-          ],
-        ),
-        height: 40.0,
-        child: new TabBar(
-          controller: _tabController,
-          indicatorColor: Theme.of(context).accentIconTheme.color,
-          indicatorPadding: const EdgeInsets.only(left: 0.0, bottom: 1.0, right: 0.0),
-          indicatorWeight: 2.0,
-          tabs: <Tab>[
-            new Tab(icon: new Icon(Icons.person, color: _tabController.index == 0 ? Theme.of(context).accentIconTheme.color : Theme.of(context).backgroundColor)),
-            new Tab(icon: new Icon(Icons.menu, color: Theme.of(context).accentIconTheme.color)),
-//            new Tab(icon: new Icon(Icons.notifications, color: Theme.of(context).accentIconTheme.color))
-          ],
-        ),
+      appBar: _tabIndex == 0 ? portfolioAppBar(context) : marketsAppBar(context),
+
+      drawer: new Drawer(
+          child: new Scaffold(
+              bottomNavigationBar: new Container(
+                  decoration: new BoxDecoration(
+                      border: new Border(
+                          top: new BorderSide(color: Theme.of(context).dividerColor),
+                          bottom: new BorderSide(color: Theme.of(context).dividerColor)
+                      )
+                  ),
+                  child: new ListTile(
+                    onTap: widget.toggleTheme,
+                    leading: new Icon(widget.darkEnabled ? Icons.brightness_3 : Icons.brightness_7, color: Theme.of(context).buttonColor),
+                    title: new Text(widget.themeMode, style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).buttonColor)),
+                  )
+              ),
+              body: new ListView(
+                children: <Widget>[
+                  new ListTile(
+                    leading: new Icon(Icons.settings),
+                    title: new Text("Settings"),
+                  ),
+                  new ListTile(
+                    leading: new Icon(Icons.timeline),
+                    title: new Text("Portfolio Timeline"),
+                  ),
+                  new ListTile(
+                    leading: new Icon(Icons.short_text),
+                    title: new Text("Shorten Numbers"),
+                  )
+                ],
+              )
+          )
       ),
+
+//      body: new CustomScrollView(
+//        slivers: <Widget>[
+//          new SliverAppBar(
+//            pinned: false,
+//            floating: true,
+//
+//            title: new Text("meme"),
+//          ),
+//
+////          new PageView.custom(
+////              childrenDelegate: new SliverChildBuilderDelegate(
+////                (context, index) => [_testPage(context), _testPage(context)][index],
+////                childCount: 2
+////              )
+////          )
+//
+//        new PageView(
+//          controller: _pageController,
+//          children: <Widget>[
+//            _testPage(context),
+//            _testPage(context)
+//          ],
+//        )
+//
+//        ],
+//      ),
+
       body: new TabBarView(
         controller: _tabController,
         children: <Widget>[
-          new PortfolioPage(widget.toggleTheme, widget.darkEnabled, widget.themeMode),
+          new PortfolioPage(),
           new MarketPage()
         ],
       ),

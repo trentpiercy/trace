@@ -28,17 +28,19 @@ class CoinDetailsState extends State<CoinDetails> {
             appBar: new PreferredSize(
               preferredSize: const Size.fromHeight(75.0),
               child: new AppBar(
-//                backgroundColor: Theme.of(context).cardColor,
+                backgroundColor: Theme.of(context).cardColor,
                 titleSpacing: 0.0,
                 elevation: appBarElevation,
-                title: new Text(widget.snapshot["name"]),
+                title: new Text(widget.snapshot["name"], style: Theme.of(context).textTheme.title),
                 bottom: new PreferredSize(
                     preferredSize: const Size.fromHeight(25.0),
                     child: new Container(
                         height: 30.0,
                         child: new TabBar(
-                          indicatorColor: Theme.of(context).accentColor,
+                          indicatorColor: Theme.of(context).accentIconTheme.color,
                           indicatorWeight: 2.0,
+                          unselectedLabelColor: Theme.of(context).backgroundColor,
+                          labelColor: Theme.of(context).primaryIconTheme.color,
                           tabs: <Widget>[
                             new Tab(text: "Aggregate Stats"),
                             new Tab(text: "Markets"),

@@ -20,6 +20,7 @@ numCommaParseNoDollar(numString) {
 }
 
 class MarketPage extends StatefulWidget {
+
   @override
   MarketPageState createState() => new MarketPageState();
 }
@@ -69,18 +70,7 @@ class MarketPageState extends State<MarketPage> {
   Widget build(BuildContext context) {
     return new Scaffold(
       resizeToAvoidBottomPadding: false,
-      appBar: new PreferredSize(
-        preferredSize: const Size.fromHeight(appBarHeight),
-        child: new AppBar(
-          elevation: appBarElevation,
-          title: new Text("Aggregate Markets"),
-          titleSpacing: 0.0,
-          leading: new IconButton( // TODO: Searching
-            icon: new Icon(Icons.search, color: Theme.of(context).iconTheme.color),
-            onPressed: null
-          ),
-        ),
-      ),
+
       body: globalData != null ? new RefreshIndicator(
         color: Theme.of(context).buttonColor,
         onRefresh: () => refreshData(),
