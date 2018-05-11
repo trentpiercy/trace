@@ -61,7 +61,7 @@ class TraceAppState extends State<TraceApp> {
 
     brightness: Brightness.light,
     accentColor: Colors.purpleAccent[100],
-    primaryColor: Colors.purple[700],
+    primaryColor: Colors.white,
     primaryColorLight: Colors.purple[700],
 
     textSelectionColor: Colors.grey[200],
@@ -78,7 +78,7 @@ class TraceAppState extends State<TraceApp> {
 
     brightness: Brightness.dark,
     accentColor: Colors.deepPurpleAccent[100],
-    primaryColor: Colors.purple[900],
+    primaryColor: Color.fromRGBO(50, 50, 60, 1.0),
     primaryColorLight: Colors.deepPurpleAccent[100],
 
     textSelectionColor: Colors.blueGrey[800],
@@ -128,19 +128,19 @@ class Tabs extends StatefulWidget {
 }
 
 class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
-  PageController _pageController = new PageController();
-
-  _testPage(BuildContext context) {
-    return new SliverList(
-        delegate: new SliverChildBuilderDelegate((context, index) => new ListTile(title: new Text("item $index")))
-    );
-  }
+//  PageController _pageController = new PageController();
+//
+//  _testPage(BuildContext context) {
+//    return new SliverList(
+//        delegate: new SliverChildBuilderDelegate((context, index) => new ListTile(title: new Text("item $index")))
+//    );
+//  }
 
   bottomAppBar(BuildContext context) {
     return new PreferredSize(
-        preferredSize: const Size.fromHeight(20.0),
+        preferredSize: const Size.fromHeight(0.0),
         child: new Container(
-          height: 36.0,
+          height: 38.0,
           child: new TabBar(
             controller: _tabController,
             indicatorColor: Theme.of(context).accentIconTheme.color,
@@ -156,9 +156,9 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
 
   portfolioAppBar(BuildContext context) {
     return new PreferredSize(
-      preferredSize: const Size.fromHeight(85.0),
+      preferredSize: const Size.fromHeight(88.0),
       child: new AppBar(
-          backgroundColor: Theme.of(context).cardColor,
+          backgroundColor: Theme.of(context).primaryColor,
           titleSpacing: 0.0,
           elevation: appBarElevation,
           title: new Text("Portfolio", style: Theme.of(context).textTheme.title),
@@ -169,9 +169,9 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
 
   marketsAppBar(BuildContext context) {
     return new PreferredSize(
-      preferredSize: const Size.fromHeight(85.0),
+      preferredSize: const Size.fromHeight(88.0),
       child: new AppBar(
-          backgroundColor: Theme.of(context).cardColor,
+          backgroundColor: Theme.of(context).primaryColor,
           elevation: appBarElevation,
           title: new Text("Aggregate Markets", style: Theme.of(context).textTheme.title),
           titleSpacing: 0.0,
