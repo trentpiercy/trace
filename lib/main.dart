@@ -144,10 +144,12 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           child: new TabBar(
             controller: _tabController,
             indicatorColor: Theme.of(context).accentIconTheme.color,
+            unselectedLabelColor: Theme.of(context).disabledColor,
+            labelColor: Theme.of(context).accentIconTheme.color,
             tabs: <Tab>[
-              new Tab(icon: new Icon(Icons.person, color: _tabIndex == 0 ? Theme.of(context).accentIconTheme.color : Theme.of(context).disabledColor)),
-              new Tab(icon: new Icon(Icons.menu, color: _tabIndex == 1 ? Theme.of(context).accentIconTheme.color : Theme.of(context).disabledColor)),
-              new Tab(icon: new Icon(Icons.notifications, color: _tabIndex == 2 ? Theme.of(context).accentIconTheme.color : Theme.of(context).disabledColor))
+              new Tab(icon: new Icon(Icons.person)),
+              new Tab(icon: new Icon(Icons.menu)),
+              new Tab(icon: new Icon(Icons.notifications))
             ],
           ),
         )
@@ -190,7 +192,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     _tabController = new TabController(length: 3, vsync: this);
-    _tabController.addListener(() {
+    _tabController.addListener(() { //TODO: laggy - try different approach - possibly change top appBar on let go of swipe
       setState(() {
         _tabIndex = _tabController.index;
       });
@@ -200,7 +202,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: _tabIndex == 0 ? portfolioAppBar(context) : marketsAppBar(context),
+      appBar: [portfolioAppBar(context), marketsAppBar(context), marketsAppBar(context)][_tabIndex],
 
       drawer: new Drawer(
           child: new Scaffold(
@@ -267,7 +269,8 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         controller: _tabController,
         children: <Widget>[
           new PortfolioPage(),
-          new MarketPage()
+          new MarketPage(),
+          new Container() //Notification page placeholder
         ],
       ),
     );
