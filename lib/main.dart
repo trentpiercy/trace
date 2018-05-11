@@ -203,6 +203,17 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: [portfolioAppBar(context), marketsAppBar(context), marketsAppBar(context)][_tabIndex],
+//      appBar: new PreferredSize(
+//        preferredSize: const Size.fromHeight(100.0),
+//        child: new TabBarView(
+//          controller: _tabController,
+//          children: <Widget>[
+//            portfolioAppBar(context),
+//            marketsAppBar(context),
+//            marketsAppBar(context)
+//          ],
+//        ),
+//      ),
 
       drawer: new Drawer(
           child: new Scaffold(
