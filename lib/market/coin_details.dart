@@ -39,7 +39,7 @@ class CoinDetailsState extends State<CoinDetails> {
                         child: new TabBar(
                           indicatorColor: Theme.of(context).accentIconTheme.color,
                           indicatorWeight: 2.0,
-                          unselectedLabelColor: Theme.of(context).backgroundColor,
+                          unselectedLabelColor: Theme.of(context).disabledColor,
                           labelColor: Theme.of(context).primaryIconTheme.color,
                           tabs: <Widget>[
                             new Tab(text: "Aggregate Stats"),

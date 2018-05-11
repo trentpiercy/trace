@@ -278,7 +278,7 @@ class AggregateStatsState extends State<AggregateStats> {
                                               children: <Widget>[
                                                 new Text("Period", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
                                                 new Padding(padding: const EdgeInsets.only(right: 3.0)),
-                                                new Text(historyTotal, style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).buttonColor)),
+                                                new Text(historyTotal, style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).primaryColorLight)),
                                                 new Padding(padding: const EdgeInsets.only(right: 4.0)),
                                                 new Text(num.parse(_change) > 0 ? "+" + _change+"%" : _change+"%",
                                                     style: Theme.of(context).primaryTextTheme.body1.apply(
@@ -292,7 +292,7 @@ class AggregateStatsState extends State<AggregateStats> {
                                               children: <Widget>[
                                                 new Text("Candle Width", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
                                                 new Padding(padding: const EdgeInsets.only(right: 2.0)),
-                                                new Text(OHLCVWidthOptions[historyTotal][currentOHLCVWidthSetting][0], style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).buttonColor))
+                                                new Text(OHLCVWidthOptions[historyTotal][currentOHLCVWidthSetting][0], style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).primaryColorLight))
                                               ],
                                             ),
                                           ],
@@ -409,7 +409,7 @@ class QuickPercentChangeBar extends StatelessWidget {
           new Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              new Text("1H", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
+              new Text("1h", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
               new Padding(padding: const EdgeInsets.only(right: 3.0)),
               new Text(
                   num.parse(snapshot["percent_change_1h"]) >= 0 ? "+"+snapshot["percent_change_1h"]+"%" : snapshot["percent_change_1h"]+"%",
@@ -422,7 +422,7 @@ class QuickPercentChangeBar extends StatelessWidget {
           new Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              new Text("24H", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
+              new Text("24h", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
               new Padding(padding: const EdgeInsets.only(right: 3.0)),
               new Text(
                   num.parse(snapshot["percent_change_24h"]) >= 0 ? "+"+snapshot["percent_change_24h"]+"%" : snapshot["percent_change_24h"]+"%",

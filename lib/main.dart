@@ -57,26 +57,34 @@ class TraceAppState extends State<TraceApp> {
   }
 
   final ThemeData lightTheme = new ThemeData(
+    primarySwatch: Colors.purple,
+
     brightness: Brightness.light,
     accentColor: Colors.purpleAccent[100],
     primaryColor: Colors.purple[700],
+    primaryColorLight: Colors.purple[700],
+
     textSelectionColor: Colors.grey[200],
     dividerColor: Colors.grey[200],
     buttonColor: Colors.purple[700],
     iconTheme: new IconThemeData(color: Colors.white),
     primaryIconTheme: new IconThemeData(color: Colors.black),
     accentIconTheme: new IconThemeData(color: Colors.purple[700]),
-    backgroundColor: Colors.grey[500],
+    disabledColor: Colors.grey[500],
   );
 
   final ThemeData darkTheme = new ThemeData(
+    primarySwatch: Colors.purple,
+
     brightness: Brightness.dark,
-    accentColor: Colors.deepPurpleAccent[200],
+    accentColor: Colors.deepPurpleAccent[100],
     primaryColor: Colors.purple[900],
+    primaryColorLight: Colors.deepPurpleAccent[100],
+
     textSelectionColor: Colors.blueGrey[800],
-    buttonColor: Colors.deepPurpleAccent,
+    buttonColor: Colors.deepPurpleAccent[200],
     iconTheme: new IconThemeData(color: Colors.white),
-    accentIconTheme: new IconThemeData(color: Colors.deepPurpleAccent[200]),
+    accentIconTheme: new IconThemeData(color: Colors.deepPurpleAccent[100]),
     cardColor: Color.fromRGBO(55, 55, 55, 1.0),
     dividerColor: Color.fromRGBO(60, 60, 60, 1.0),
   );
@@ -120,8 +128,6 @@ class Tabs extends StatefulWidget {
 }
 
 class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
-  TabController _tabController;
-
   PageController _pageController = new PageController();
 
   _testPage(BuildContext context) {
@@ -137,11 +143,11 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           height: 36.0,
           child: new TabBar(
             controller: _tabController,
-            indicatorColor: Theme.of(context).buttonColor,
+            indicatorColor: Theme.of(context).accentIconTheme.color,
             tabs: <Tab>[
-              new Tab(icon: new Icon(Icons.person, color: _tabIndex == 0 ? Theme.of(context).accentIconTheme.color : Theme.of(context).backgroundColor)),
-              new Tab(icon: new Icon(Icons.menu, color: _tabIndex == 1 ? Theme.of(context).accentIconTheme.color : Theme.of(context).backgroundColor)),
-              new Tab(icon: new Icon(Icons.notifications, color: _tabIndex == 2 ? Theme.of(context).accentIconTheme.color : Theme.of(context).backgroundColor))
+              new Tab(icon: new Icon(Icons.person, color: _tabIndex == 0 ? Theme.of(context).accentIconTheme.color : Theme.of(context).disabledColor)),
+              new Tab(icon: new Icon(Icons.menu, color: _tabIndex == 1 ? Theme.of(context).accentIconTheme.color : Theme.of(context).disabledColor)),
+              new Tab(icon: new Icon(Icons.notifications, color: _tabIndex == 2 ? Theme.of(context).accentIconTheme.color : Theme.of(context).disabledColor))
             ],
           ),
         )
@@ -178,7 +184,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     );
   }
 
-
+  TabController _tabController;
   int _tabIndex = 0;
   @override
   void initState() {
