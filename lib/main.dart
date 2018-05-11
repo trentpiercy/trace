@@ -163,6 +163,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           backgroundColor: Theme.of(context).primaryColor,
           titleSpacing: 0.0,
           elevation: appBarElevation,
+          leading: null,
           title: new Text("Portfolio", style: Theme.of(context).textTheme.title),
           bottom: bottomAppBar(context)
       ),
@@ -198,6 +199,18 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
       });
     });
   }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+//  PageStorageBucket _bucket = new PageStorageBucket();
+
+  PageStorageKey _marketKey = new PageStorageKey("market");
+
+//  ScrollController _scrollController = new ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -249,41 +262,47 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           )
       ),
 
-//      body: new CustomScrollView(
-//        slivers: <Widget>[
-//          new SliverAppBar(
-//            pinned: false,
-//            floating: true,
-//
-//            title: new Text("meme"),
-//          ),
-//
-////          new PageView.custom(
-////              childrenDelegate: new SliverChildBuilderDelegate(
-////                (context, index) => [_testPage(context), _testPage(context)][index],
-////                childCount: 2
-////              )
-////          )
-//
-//        new PageView(
-//          controller: _pageController,
-//          children: <Widget>[
-//            _testPage(context),
-//            _testPage(context)
-//          ],
-//        )
-//
-//        ],
-//      ),
-
       body: new TabBarView(
         controller: _tabController,
         children: <Widget>[
           new PortfolioPage(),
-          new MarketPage(),
-          new Container() //Notification page placeholder
+          new MarketPage(_marketKey),
+//          new MarketPage(),
+          new Container()
+//          new Container()
         ],
       ),
+
+//      body: new Column(
+//        children: <Widget>[
+//          new Flexible(
+//            child: new TabBarView(
+//              controller: _tabController,
+//              children: <Widget>[
+//                portfolioAppBar(context),
+//                marketsAppBar(context),
+//                marketsAppBar(context)
+//              ],
+//            ),
+//          ),
+//
+//          new Flexible(
+//            fit: FlexFit.tight,
+//            child: bottomAppBar(context),
+//          ),
+//
+//          new Flexible(
+//            child: new TabBarView(
+//              controller: _tabController,
+//              children: <Widget>[
+//                new PortfolioPage(),
+//                new MarketPage(),
+//                new Container() //Notification page placeholder
+//              ],
+//            ),
+//          ),
+//        ],
+//      )
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'main.dart';
 
 class PortfolioPage extends StatefulWidget {
+  PortfolioPage({Key key}) : super(key: key);
 
   @override
   PortfolioPageState createState() => new PortfolioPageState();

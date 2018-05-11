@@ -20,6 +20,11 @@ numCommaParseNoDollar(numString) {
 }
 
 class MarketPage extends StatefulWidget {
+  MarketPage(this.stateKey,
+      {Key key}
+      ) : super(key: key);
+
+  final stateKey;
 
   @override
   MarketPageState createState() => new MarketPageState();
@@ -28,7 +33,12 @@ class MarketPage extends StatefulWidget {
 
 List marketListData;
 Map globalData;
+
 class MarketPageState extends State<MarketPage> {
+//  MarketPageState(this.controller);
+//
+//  final controller;
+
   ScrollController _scrollController = new ScrollController();
 
   Future<Null> refreshData() async {
@@ -68,9 +78,12 @@ class MarketPageState extends State<MarketPage> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      resizeToAvoidBottomPadding: false,
 
+    print("built markets ***");
+
+    return new Scaffold(
+      key: widget.stateKey,
+      resizeToAvoidBottomPadding: false,
       body: globalData != null ? new RefreshIndicator(
         color: Theme.of(context).buttonColor,
         onRefresh: () => refreshData(),
