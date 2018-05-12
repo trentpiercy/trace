@@ -179,7 +179,6 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
       ),
       resizeToAvoidBottomPadding: false,
       body: new RefreshIndicator(
-        color: Theme.of(context).buttonColor,
         onRefresh: () => changeHistory(historyType, historyAmt, historyTotal, historyAgg),
         child: new ListView(
           children: <Widget>[
@@ -197,7 +196,7 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
                         new Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
-                            new Text("24h Volume", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
+                            new Text("24h Volume", style: Theme.of(context).textTheme.caption),
                             new Text(numCommaParse((exchangeData["VOLUME24HOURTO"]).toString()), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2)),
                           ],
                         ),
@@ -224,7 +223,7 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
                                             children: <Widget>[
                                               new Text("Period", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
                                               new Padding(padding: const EdgeInsets.only(right: 3.0)),
-                                              new Text(historyTotal, style: Theme.of(context).textTheme.button),
+                                              new Text(historyTotal, style: Theme.of(context).textTheme.body2.apply(fontWeightDelta: 2)),
                                               new Padding(padding: const EdgeInsets.only(right: 4.0)),
                                               new Text(num.parse(_change) > 0 ? "+" + _change+"%" : _change+"%",
                                                   style: Theme.of(context).primaryTextTheme.body1.apply(
@@ -239,7 +238,7 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
                                             children: <Widget>[
                                               new Text("Candle Width", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
                                               new Padding(padding: const EdgeInsets.only(right: 3.0)),
-                                              new Text(OHLCVWidthOptions[historyTotal][currentOHLCVWidthSetting][0], style: Theme.of(context).primaryTextTheme.body1)
+                                              new Text(OHLCVWidthOptions[historyTotal][currentOHLCVWidthSetting][0], style: Theme.of(context).textTheme.body2.apply(fontWeightDelta: 2))
                                             ],
                                           ),
                                         ],

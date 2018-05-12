@@ -24,7 +24,7 @@ class PortfolioPageState extends State<PortfolioPage> {
 
           new SliverList(delegate: new SliverChildBuilderDelegate(
             (context, index) => new ListTile(
-              title: new Text("item $index"),
+              title: new Text("placeholder $index"),
             ))
           )
 

@@ -97,41 +97,37 @@ class MarketPageState extends State<MarketPage> {
     return globalData != null ? new RefreshIndicator(
         onRefresh: () => refreshData(),
         child: new CustomScrollView(
-//      controller: _scrollController,
           slivers: <Widget>[
             new SliverList(
                 delegate: new SliverChildListDelegate(<Widget>[
-                  new Padding(padding: const EdgeInsets.only(top: 4.0)),
-                  new Card(
-//              elevation: 0.0,
-                    child: new Container(
-//                color: Theme.of(context).canvasColor,
-                        padding: const EdgeInsets.all(10.0),
-                        child: new Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            new Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                new Text("Total Market Cap", style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)),
-                                new Padding(padding: const EdgeInsets.symmetric(vertical: 1.0)),
-                                new Text("Total 24h Volume", style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)),
-                              ],
-                            ),
-                            new Padding(padding: const EdgeInsets.symmetric(horizontal: 1.0)),
-                            new Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: <Widget>[
-                                new Text(numCommaParse(globalData["total_market_cap_usd"].toString()), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2, fontWeightDelta: 2)),
-                                new Text(numCommaParse(globalData["total_24h_volume_usd"].toString()),
-                                    style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2, fontWeightDelta: 2, color: Theme.of(context).hintColor)
-                                ),
-                              ],
-                            )
-                          ],
-                        )
-                    ),
+                  new Container(
+                      padding: const EdgeInsets.all(10.0),
+                      child: new Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          new Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              new Text("Total Market Cap", style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)),
+                              new Padding(padding: const EdgeInsets.symmetric(vertical: 1.0)),
+                              new Text("Total 24h Volume", style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)),
+                            ],
+                          ),
+                          new Padding(padding: const EdgeInsets.symmetric(horizontal: 1.0)),
+                          new Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: <Widget>[
+                              new Text(numCommaParse(globalData["total_market_cap_usd"].toString()),
+                                  style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2, fontWeightDelta: 2)
+                              ),
+                              new Text(numCommaParse(globalData["total_24h_volume_usd"].toString()),
+                                  style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2, fontWeightDelta: 2)
+                              ),
+                            ],
+                          )
+                        ],
+                      )
                   ),
                   new Container(
                     margin: const EdgeInsets.only(left: 6.0, right: 6.0, top: 8.0),

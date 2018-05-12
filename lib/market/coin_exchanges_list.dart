@@ -51,8 +51,6 @@ class MarketListState extends State<MarketList> {
   
   Map snapshot;
   String toSym;
-  
-//  ScrollController _scrollController = new ScrollController();
 
   Future<Null> getExchangeData(String toSym) async {
     var response = await http.get(
@@ -60,11 +58,17 @@ class MarketListState extends State<MarketList> {
             "https://min-api.cryptocompare.com/data/top/exchanges/full?fsym=" +
                 snapshot["symbol"] +
                 "&tsym=" + toSym +
-                "&limit=50"),
+                "&limit=1000"),
         headers: {"Accept": "application/json"});
-    exchangeData =
-        new JsonDecoder().convert(response.body)["Data"]["Exchanges"];
-    makeExchangeData();
+
+    if (new JsonDecoder().convert(response.body)["Response"] != "Success") {
+      setState(() {
+        exchangeData = [];
+      });
+    } else {
+      exchangeData = new JsonDecoder().convert(response.body)["Data"]["Exchanges"];
+      makeExchangeData();
+    }
   }
 
   void makeExchangeData() {
@@ -88,11 +92,10 @@ class MarketListState extends State<MarketList> {
 
   @override
   Widget build(BuildContext context) {
-    return new RefreshIndicator(
+    return exchangeData != null ? new RefreshIndicator(
         onRefresh: () => getExchangeData(toSym),
-        color: Theme.of(context).buttonColor,
-        child: new CustomScrollView(
-          slivers: <Widget>[
+        child: exchangeData.isEmpty != true ? new CustomScrollView(
+            slivers: <Widget>[
             new SliverList(
                 delegate: new SliverChildListDelegate(
                   <Widget>[
@@ -141,7 +144,21 @@ class MarketListState extends State<MarketList> {
                 )
             )
           ],
+        ) : new CustomScrollView(
+          slivers: <Widget>[
+            new SliverList(delegate: new SliverChildListDelegate(
+                <Widget>[
+                  new Container(
+                    padding: const EdgeInsets.all(30.0),
+                    alignment: Alignment.topCenter,
+                    child: new Text("No exchanges found :(", style: Theme.of(context).textTheme.caption),
+                  )
+                ]
+            ))
+          ],
         )
+    ) : new Container(
+      child: new Center(child: new CircularProgressIndicator()),
     );
   }
 }
@@ -181,7 +198,7 @@ class ExchangeListItem extends StatelessWidget {
                 child: new Text(
                     numCommaParse(
                         exchangeDataSnapshot["VOLUME24HOURTO"].toString()),
-                    style: Theme.of(context).textTheme.body2),
+                    style: Theme.of(context).textTheme.body1),
               ),
               new Container(
                 width: MediaQuery.of(context).size.width * columnProps[2],

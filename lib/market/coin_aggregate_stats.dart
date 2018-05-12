@@ -156,6 +156,11 @@ class AggregateStatsState extends State<AggregateStats> {
     );
     setState(() {
       historyOHLCV = new JsonDecoder().convert(response.body)["Data"];
+
+      if (historyOHLCV == null) {
+        historyOHLCV = [];
+      }
+
     });
   }
 
@@ -219,7 +224,6 @@ class AggregateStatsState extends State<AggregateStats> {
     return new Scaffold(
         resizeToAvoidBottomPadding: false,
         body: new RefreshIndicator(
-          color: Theme.of(context).buttonColor,
           onRefresh: () => changeHistory(historyType, historyAmt, historyTotal, historyAgg),
           child: new ListView(
             children: <Widget>[
@@ -240,17 +244,17 @@ class AggregateStatsState extends State<AggregateStats> {
                               new Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  new Text("Market Cap", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
+                                  new Text("Market Cap", style: Theme.of(context).textTheme.caption),
                                   new Padding(padding: const EdgeInsets.symmetric(vertical: 1.0)),
-                                  new Text("24h Volume", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
+                                  new Text("24h Volume", style: Theme.of(context).textTheme.caption),
                                 ],
                               ),
                               new Padding(padding: const EdgeInsets.symmetric(horizontal: 1.0)),
                               new Column(
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: <Widget>[
-                                  new Text(numCommaParse((generalStats != null ? generalStats["market_cap_usd"] : "0")), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2)),
-                                  new Text(numCommaParse((generalStats != null ? generalStats["24h_volume_usd"] : "0")), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2, color: Theme.of(context).hintColor)),
+                                  new Text(numCommaParse((generalStats != null ? generalStats["market_cap_usd"] : "0")), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)),
+                                  new Text(numCommaParse((generalStats != null ? generalStats["24h_volume_usd"] : "0")), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)),
                                 ],
                               ),
                             ],
@@ -278,11 +282,10 @@ class AggregateStatsState extends State<AggregateStats> {
                                               children: <Widget>[
                                                 new Text("Period", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
                                                 new Padding(padding: const EdgeInsets.only(right: 3.0)),
-                                                new Text(historyTotal, style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).primaryColorLight)),
+                                                new Text(historyTotal, style: Theme.of(context).textTheme.body2.apply(fontWeightDelta: 2)),
                                                 new Padding(padding: const EdgeInsets.only(right: 4.0)),
                                                 new Text(num.parse(_change) > 0 ? "+" + _change+"%" : _change+"%",
-                                                    style: Theme.of(context).primaryTextTheme.body1.apply(
-                                                        fontWeightDelta: 1,
+                                                    style: Theme.of(context).primaryTextTheme.body2.apply(
                                                         color: num.parse(_change) >= 0 ? Colors.green : Colors.red
                                                     )
                                                 )
@@ -292,7 +295,7 @@ class AggregateStatsState extends State<AggregateStats> {
                                               children: <Widget>[
                                                 new Text("Candle Width", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
                                                 new Padding(padding: const EdgeInsets.only(right: 2.0)),
-                                                new Text(OHLCVWidthOptions[historyTotal][currentOHLCVWidthSetting][0], style: Theme.of(context).textTheme.button.apply(color: Theme.of(context).primaryColorLight))
+                                                new Text(OHLCVWidthOptions[historyTotal][currentOHLCVWidthSetting][0], style: Theme.of(context).textTheme.body2.apply(fontWeightDelta: 2))
                                               ],
                                             ),
                                           ],
@@ -364,13 +367,17 @@ class AggregateStatsState extends State<AggregateStats> {
                     new Flexible(
                       child: historyOHLCV != null ? new Container(
                         padding: const EdgeInsets.only(left: 2.0, right: 0.0, top: 10.0),
-                        child: new OHLCVGraph(
+                        child: historyOHLCV.isEmpty != true ? new OHLCVGraph(
                           data: historyOHLCV,
                           enableGridLines: true,
                           gridLineColor: Theme.of(context).dividerColor,
                           gridLineLabelColor: Theme.of(context).hintColor,
                           gridLineAmount: 5,
                           volumeProp: 0.2,
+                        ) : new Container(
+                          padding: const EdgeInsets.all(30.0),
+                          alignment: Alignment.topCenter,
+                          child: new Text("No OHLCV data found :(", style: Theme.of(context).textTheme.caption),
                         ),
                       ) : new Container(
                         child: new Center(
