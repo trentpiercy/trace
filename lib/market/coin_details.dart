@@ -28,7 +28,7 @@ class CoinDetailsState extends State<CoinDetails> {
             appBar: new PreferredSize(
               preferredSize: const Size.fromHeight(75.0),
               child: new AppBar(
-                backgroundColor: Theme.of(context).cardColor,
+                backgroundColor: Theme.of(context).primaryColor,
                 titleSpacing: 0.0,
                 elevation: appBarElevation,
                 title: new Text(widget.snapshot["name"], style: Theme.of(context).textTheme.title),
