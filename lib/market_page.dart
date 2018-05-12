@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'package:trace/market/coin_details.dart';
+import 'package:trace/market/coin_tabs.dart';
 import 'package:trace/market/coin_aggregate_stats.dart';
 import 'main.dart';
 

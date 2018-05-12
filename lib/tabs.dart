@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'main.dart';
-import 'portfolio.dart';
-import 'market.dart';
+import 'portfolio_page.dart';
+import 'market_page.dart';
 
 class Tabs extends StatefulWidget {
   Tabs(
@@ -68,10 +68,10 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                 ),
                 body: new ListView(
                   children: <Widget>[
-                    new ListTile(
-                      leading: new Icon(Icons.settings),
-                      title: new Text("Settings"),
-                    ),
+//                    new ListTile(
+//                      leading: new Icon(Icons.settings),
+//                      title: new Text("Settings"),
+//                    ),
                     new ListTile(
                       leading: new Icon(Icons.timeline),
                       title: new Text("Portfolio Timeline"),
@@ -92,7 +92,10 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
               new SliverAppBar(
                 title: [
                   new Text("Portfolio"),
-                  new Text("Aggregate Markets"),
+                  new GestureDetector(
+                    onTap: () => print("search - appbar"), //Navigator.of(context).pushNamed("/settings"),
+                    child: new Text("Aggregate Markets"),
+                  ),
                   new Text("Alerts")
                 ][_tabController.index],
 
@@ -101,7 +104,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                     new Container(),
                     new IconButton( // TODO: Searching
                         icon: new Icon(Icons.search, color: Theme.of(context).primaryIconTheme.color),
-                        onPressed: null
+                        onPressed: () => print("search - icon") //Navigator.of(context).pushNamed("/settings")
                     ),
                     new Container()
                   ][_tabController.index],

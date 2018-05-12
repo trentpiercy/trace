@@ -9,7 +9,7 @@ import 'dart:convert';
 //import 'package:trace/market/coin_exchanges_list.dart';
 import 'package:trace/main.dart';
 import 'coin_aggregate_stats.dart';
-import 'package:trace/market.dart';
+import 'package:trace/market_page.dart';
 
 
 class CoinMarketStats extends StatefulWidget {

@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:trace/main.dart';
-import 'package:trace/market.dart';
+import 'package:trace/market_page.dart';
 import 'package:trace/market/coin_exchanges_list.dart';
 
 
