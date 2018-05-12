@@ -135,11 +135,11 @@ class AggregateStatsState extends State<AggregateStats> {
 
   Future<Null> getGeneralStats() async {
     var response = await http.get(
-        Uri.encodeFull("https://api.coinmarketcap.com/v1/ticker/"+ snapshot["id"]),
+        Uri.encodeFull("https://api.coinmarketcap.com/v2/ticker/"+ snapshot["id"].toString()),
         headers: {"Accept": "application/json"}
     );
     setState(() {
-      generalStats = new JsonDecoder().convert(response.body)[0];
+      generalStats = new JsonDecoder().convert(response.body)["data"]["quotes"]["USD"];
     });
   }
 
@@ -237,7 +237,7 @@ class AggregateStatsState extends State<AggregateStats> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
-                          new Text("\$"+ (generalStats != null ? generalStats["price_usd"] : "0"), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)),
+                          new Text("\$"+ (generalStats != null ? generalStats["price"].toString() : "0"), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)),
                           new Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: <Widget>[
@@ -253,8 +253,8 @@ class AggregateStatsState extends State<AggregateStats> {
                               new Column(
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: <Widget>[
-                                  new Text(numCommaParse((generalStats != null ? generalStats["market_cap_usd"] : "0")), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)),
-                                  new Text(numCommaParse((generalStats != null ? generalStats["24h_volume_usd"] : "0")), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)),
+                                  new Text(generalStats != null ? numCommaParse(generalStats["market_cap"].toString()) : "0", style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)),
+                                  new Text(generalStats != null ? numCommaParse(generalStats["volume_24h"].toString()) : "0", style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)),
                                 ],
                               ),
                             ],
@@ -419,11 +419,11 @@ class QuickPercentChangeBar extends StatelessWidget {
               new Text("1h", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
               new Padding(padding: const EdgeInsets.only(right: 3.0)),
               new Text(
-                  num.parse(snapshot["percent_change_1h"]) >= 0 ? "+"+snapshot["percent_change_1h"]+"%" : snapshot["percent_change_1h"]+"%",
-                  style: Theme.of(context).primaryTextTheme.body1.apply(fontWeightDelta: 1,
-                      color: num.parse(snapshot["percent_change_1h"]) >= 0 ? Colors.green : Colors.red
+                  snapshot["quotes"]["USD"]["percent_change_1h"] >= 0 ? "+"+snapshot["quotes"]["USD"]["percent_change_1h"].toString()+"%" : snapshot["quotes"]["USD"]["percent_change_1h"].toString()+"%",
+                  style: Theme.of(context).primaryTextTheme.body1.apply(
+                      color: snapshot["quotes"]["USD"]["percent_change_1h"] >= 0 ? Colors.green : Colors.red
                   )
-              ),
+              )
             ],
           ),
           new Row(
@@ -432,11 +432,11 @@ class QuickPercentChangeBar extends StatelessWidget {
               new Text("24h", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
               new Padding(padding: const EdgeInsets.only(right: 3.0)),
               new Text(
-                  num.parse(snapshot["percent_change_24h"]) >= 0 ? "+"+snapshot["percent_change_24h"]+"%" : snapshot["percent_change_24h"]+"%",
-                  style: Theme.of(context).primaryTextTheme.body1.apply(fontWeightDelta: 1,
-                      color: num.parse(snapshot["percent_change_24h"]) >= 0 ? Colors.green : Colors.red
+                  snapshot["quotes"]["USD"]["percent_change_24h"] >= 0 ? "+"+snapshot["quotes"]["USD"]["percent_change_24h"].toString()+"%" : snapshot["quotes"]["USD"]["percent_change_24h"].toString()+"%",
+                  style: Theme.of(context).primaryTextTheme.body1.apply(
+                      color: snapshot["quotes"]["USD"]["percent_change_24h"] >= 0 ? Colors.green : Colors.red
                   )
-              ),
+              )
             ],
           ),
           new Row(
@@ -445,9 +445,9 @@ class QuickPercentChangeBar extends StatelessWidget {
               new Text("7D", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
               new Padding(padding: const EdgeInsets.only(right: 3.0)),
               new Text(
-                  num.parse(snapshot["percent_change_7d"]) >= 0 ? "+"+snapshot["percent_change_7d"]+"%" : snapshot["percent_change_7d"]+"%",
-                  style: Theme.of(context).primaryTextTheme.body1.apply(fontWeightDelta: 1,
-                      color: num.parse(snapshot["percent_change_7d"]) >= 0 ? Colors.green : Colors.red
+                  snapshot["quotes"]["USD"]["percent_change_7d"] >= 0 ? "+"+snapshot["quotes"]["USD"]["percent_change_7d"].toString()+"%" : snapshot["quotes"]["USD"]["percent_change_7d"].toString()+"%",
+                  style: Theme.of(context).primaryTextTheme.body1.apply(
+                      color: snapshot["quotes"]["USD"]["percent_change_7d"] >= 0 ? Colors.green : Colors.red
                   )
               ),
             ],

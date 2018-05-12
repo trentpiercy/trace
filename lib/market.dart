@@ -42,21 +42,26 @@ class MarketPageState extends State<MarketPage> {
 
   Future<Null> getMarketData() async {
     var response = await http.get(
-        Uri.encodeFull("https://api.coinmarketcap.com/v1/ticker/?limit="+limit.toString()),
+        Uri.encodeFull("https://api.coinmarketcap.com/v2/ticker/?limit="+limit.toString()),
         headers: {"Accept": "application/json"}
     );
-    setState(() {
-      marketListData = new JsonDecoder().convert(response.body);
-    });
+
+    Map rawMarketListData = new JsonDecoder().convert(response.body)["data"];
+
+    marketListData = [];
+    rawMarketListData.forEach((key, value) => marketListData.add(value));
+
+    setState(() {});
   }
 
   Future<Null> getGlobalData() async {
     var response = await http.get(
-        Uri.encodeFull("https://api.coinmarketcap.com/v1/global/"),
+        Uri.encodeFull("https://api.coinmarketcap.com/v2/global/"),
         headers: {"Accept": "application/json"}
     );
+
     setState(() {
-      globalData = new JsonDecoder().convert(response.body);
+      globalData = new JsonDecoder().convert(response.body)["data"]["quotes"]["USD"];
     });
   }
 
@@ -118,10 +123,10 @@ class MarketPageState extends State<MarketPage> {
                           new Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: <Widget>[
-                              new Text(numCommaParse(globalData["total_market_cap_usd"].toString()),
+                              new Text(numCommaParse(globalData["total_market_cap"].toString()),
                                   style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2, fontWeightDelta: 2)
                               ),
-                              new Text(numCommaParse(globalData["total_24h_volume_usd"].toString()),
+                              new Text(numCommaParse(globalData["total_volume_24h"].toString()),
                                   style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2, fontWeightDelta: 2)
                               ),
                             ],
@@ -194,6 +199,7 @@ class CoinListItem extends StatelessWidget {
         snapshot[k] = "0";
       }
     });
+
     return new GestureDetector(
       onTap: () {
         resetCoinStats();
@@ -215,7 +221,7 @@ class CoinListItem extends StatelessWidget {
               child: new Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  new Text(snapshot["rank"], style: Theme.of(context).textTheme.body2),
+                  new Text(snapshot["rank"].toString(), style: Theme.of(context).textTheme.body2),
                   new Padding(padding: const EdgeInsets.only(right: 7.0)),
                   _getImage(),
                   new Padding(padding: const EdgeInsets.only(right: 7.0)),
@@ -229,9 +235,9 @@ class CoinListItem extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
-                  new Text(numCommaParse(snapshot["market_cap_usd"]), style: Theme.of(context).textTheme.body2),
+                  new Text(numCommaParse(snapshot["quotes"]["USD"]["market_cap"].toString()), style: Theme.of(context).textTheme.body2),
                   new Padding(padding: const EdgeInsets.only(bottom: 4.0)),
-                  new Text(numCommaParse(snapshot["24h_volume_usd"]), style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor))
+                  new Text(numCommaParse(snapshot["quotes"]["USD"]["volume_24h"].toString()), style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor))
                 ],
               )
             ),
@@ -241,12 +247,12 @@ class CoinListItem extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
-                  new Text("\$"+snapshot["price_usd"]),
+                  new Text("\$"+snapshot["quotes"]["USD"]["price"].toString()),
                   new Padding(padding: const EdgeInsets.only(bottom: 4.0)),
                   new Text(
-                    num.parse(snapshot["percent_change_24h"]) >= 0 ? "+"+snapshot["percent_change_24h"]+"%" : snapshot["percent_change_24h"]+"%",
+                    snapshot["quotes"]["USD"]["percent_change_24h"] >= 0 ? "+"+snapshot["quotes"]["USD"]["percent_change_24h"].toString()+"%" : snapshot["quotes"]["USD"]["percent_change_24h"].toString()+"%",
                     style: Theme.of(context).primaryTextTheme.body1.apply(
-                      color: num.parse(snapshot["percent_change_24h"]) >= 0 ? Colors.green : Colors.red
+                      color: snapshot["quotes"]["USD"]["percent_change_24h"] >= 0 ? Colors.green : Colors.red
                     )
                   ),
                 ],
