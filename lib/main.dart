@@ -8,7 +8,6 @@ void main() {
 
 const double appBarHeight = 48.0;
 const double appBarElevation = 1.0;
-const double bottomAppBarElevation = 8.0;
 
 class TraceApp extends StatefulWidget {
   @override

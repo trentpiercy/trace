@@ -392,8 +392,8 @@ class AggregateStatsState extends State<AggregateStats> {
           )
         ),
         bottomNavigationBar: new BottomAppBar(
-          elevation: bottomAppBarElevation,
-          child: new QuickPercentChangeBar(snapshot: snapshot, bgColor: Theme.of(context).canvasColor),
+          elevation: appBarElevation,
+          child: new QuickPercentChangeBar(snapshot: snapshot),
         ),
     );
   }
@@ -401,15 +401,14 @@ class AggregateStatsState extends State<AggregateStats> {
 
 
 class QuickPercentChangeBar extends StatelessWidget {
-  QuickPercentChangeBar({this.snapshot, this.bgColor});
+  QuickPercentChangeBar({this.snapshot});
   final snapshot;
-  final bgColor;
 
   @override
   Widget build(BuildContext context) {
     return new Container(
       padding: const EdgeInsets.only(left: 6.0, right: 6.0, bottom: 3.0, top: 3.0),
-      color: bgColor != null ? bgColor : Theme.of(context).canvasColor,
+      color: Theme.of(context).primaryColor,
       child: new Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
@@ -420,7 +419,7 @@ class QuickPercentChangeBar extends StatelessWidget {
               new Padding(padding: const EdgeInsets.only(right: 3.0)),
               new Text(
                   snapshot["quotes"]["USD"]["percent_change_1h"] >= 0 ? "+"+snapshot["quotes"]["USD"]["percent_change_1h"].toString()+"%" : snapshot["quotes"]["USD"]["percent_change_1h"].toString()+"%",
-                  style: Theme.of(context).primaryTextTheme.body1.apply(
+                  style: Theme.of(context).primaryTextTheme.body2.apply(
                       color: snapshot["quotes"]["USD"]["percent_change_1h"] >= 0 ? Colors.green : Colors.red
                   )
               )
@@ -433,7 +432,7 @@ class QuickPercentChangeBar extends StatelessWidget {
               new Padding(padding: const EdgeInsets.only(right: 3.0)),
               new Text(
                   snapshot["quotes"]["USD"]["percent_change_24h"] >= 0 ? "+"+snapshot["quotes"]["USD"]["percent_change_24h"].toString()+"%" : snapshot["quotes"]["USD"]["percent_change_24h"].toString()+"%",
-                  style: Theme.of(context).primaryTextTheme.body1.apply(
+                  style: Theme.of(context).primaryTextTheme.body2.apply(
                       color: snapshot["quotes"]["USD"]["percent_change_24h"] >= 0 ? Colors.green : Colors.red
                   )
               )
@@ -446,7 +445,7 @@ class QuickPercentChangeBar extends StatelessWidget {
               new Padding(padding: const EdgeInsets.only(right: 3.0)),
               new Text(
                   snapshot["quotes"]["USD"]["percent_change_7d"] >= 0 ? "+"+snapshot["quotes"]["USD"]["percent_change_7d"].toString()+"%" : snapshot["quotes"]["USD"]["percent_change_7d"].toString()+"%",
-                  style: Theme.of(context).primaryTextTheme.body1.apply(
+                  style: Theme.of(context).primaryTextTheme.body2.apply(
                       color: snapshot["quotes"]["USD"]["percent_change_7d"] >= 0 ? Colors.green : Colors.red
                   )
               ),

@@ -58,7 +58,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                     decoration: new BoxDecoration(
                         border: new Border(
                             top: new BorderSide(color: Theme.of(context).dividerColor),
-                            bottom: new BorderSide(color: Theme.of(context).dividerColor)
                         )
                     ),
                     child: new ListTile(
