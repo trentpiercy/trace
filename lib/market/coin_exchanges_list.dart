@@ -52,7 +52,7 @@ class MarketListState extends State<MarketList> {
   Map snapshot;
   String toSym;
   
-  ScrollController _scrollController = new ScrollController();
+//  ScrollController _scrollController = new ScrollController();
 
   Future<Null> getExchangeData(String toSym) async {
     var response = await http.get(
@@ -91,53 +91,58 @@ class MarketListState extends State<MarketList> {
     return new RefreshIndicator(
         onRefresh: () => getExchangeData(toSym),
         color: Theme.of(context).buttonColor,
-        child: new SingleChildScrollView(
-          controller: _scrollController,
-          child: new Column(
-            children: <Widget>[
-              new Container(
-                margin: const EdgeInsets.only(left: 6.0, right: 6.0, top: 8.0),
-                decoration: new BoxDecoration(
-                    border: new Border(
-                        bottom: new BorderSide(
-                            color: Theme.of(context).dividerColor,
-                            width: 1.0))),
-                padding:
-                    const EdgeInsets.only(bottom: 8.0, left: 2.0, right: 2.0),
-                child: new Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
+        child: new CustomScrollView(
+          slivers: <Widget>[
+            new SliverList(
+                delegate: new SliverChildListDelegate(
+                  <Widget>[
                     new Container(
-                      width: MediaQuery.of(context).size.width * columnProps[0],
-                      child: new Text("Exchange",
-                          style: Theme.of(context).textTheme.body2),
+                      margin: const EdgeInsets.only(left: 6.0, right: 6.0, top: 8.0),
+                      decoration: new BoxDecoration(
+                          border: new Border(
+                              bottom: new BorderSide(
+                                  color: Theme.of(context).dividerColor,
+                                  width: 1.0))),
+                      padding: const EdgeInsets.only(bottom: 8.0, left: 2.0, right: 2.0),
+                      child: new Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          new Container(
+                            width: MediaQuery.of(context).size.width * columnProps[0],
+                            child: new Text("Exchange",
+                                style: Theme.of(context).textTheme.body2),
+                          ),
+                          new Container(
+                            alignment: Alignment.centerRight,
+                            width: MediaQuery.of(context).size.width * columnProps[1],
+                            child: new Text("24h Volume",
+                                style: Theme.of(context).textTheme.body2),
+                          ),
+                          new Container(
+                            alignment: Alignment.centerRight,
+                            width: MediaQuery.of(context).size.width * columnProps[2],
+                            child: new Text("Price/24h",
+                                style: Theme.of(context).textTheme.body2),
+                          ),
+                        ],
+                      ),
                     ),
-                    new Container(
-                      alignment: Alignment.centerRight,
-                      width: MediaQuery.of(context).size.width * columnProps[1],
-                      child: new Text("24h Volume",
-                          style: Theme.of(context).textTheme.body2),
-                    ),
-                    new Container(
-                      alignment: Alignment.centerRight,
-                      width: MediaQuery.of(context).size.width * columnProps[2],
-                      child: new Text("Price/24h",
-                          style: Theme.of(context).textTheme.body2),
-                    ),
-                  ],
-                ),
-              ),
-              new ListView.builder(
-                  controller: _scrollController,
-                  shrinkWrap: true,
-                  itemCount: exchangeData == null ? 0 : exchangeData.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return new ExchangeListItem(
-                        exchangeDataSnapshot: exchangeData[index]);
-                  }),
-            ],
-          ),
-        ));
+                  ]
+                )
+            ),
+            new SliverList(
+                delegate: new SliverChildBuilderDelegate(
+                  (BuildContext context, int index) {
+                      return new ExchangeListItem(
+                        exchangeDataSnapshot: exchangeData[index]
+                      );
+                  },
+                  childCount: exchangeData == null ? 0 : exchangeData.length,
+                )
+            )
+          ],
+        )
+    );
   }
 }
 

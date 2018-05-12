@@ -20,11 +20,7 @@ numCommaParseNoDollar(numString) {
 }
 
 class MarketPage extends StatefulWidget {
-  MarketPage(
-      {Key key}
-      ) : super(key: key);
-
-//  final _scrollController;
+  MarketPage({Key key}) : super(key: key);
 
   @override
   MarketPageState createState() => new MarketPageState();
@@ -167,8 +163,8 @@ class MarketPageState extends State<MarketPage> {
             ),
 
             new SliverList(delegate: new SliverChildBuilderDelegate(
-                    (BuildContext context, int index) {return new CoinListItem(snapshot: marketListData[index]);},
-                childCount: marketListData == null ? 0 : marketListData.length
+              (BuildContext context, int index) {return new CoinListItem(snapshot: marketListData[index]);},
+              childCount: marketListData == null ? 0 : marketListData.length
             ))
 
           ],

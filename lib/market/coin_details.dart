@@ -17,10 +17,6 @@ class CoinDetailsState extends State<CoinDetails> {
 
   @override
   Widget build(BuildContext context) {
-
-    final _aggregateStats = new AggregateStats(snapshot: widget.snapshot, toSym: toSym);
-    final _marketList = new MarketList(snapshot: widget.snapshot, toSym: toSym);
-
     return new DefaultTabController(
         length: 2,
         child: new Scaffold(
@@ -50,8 +46,8 @@ class CoinDetailsState extends State<CoinDetails> {
             ),
             body: new TabBarView(
               children: <Widget>[
-                _aggregateStats,
-                _marketList
+                new AggregateStats(snapshot: widget.snapshot, toSym: toSym),
+                new MarketList(snapshot: widget.snapshot, toSym: toSym, key: new PageStorageKey("exchanges"))
               ],
             )));
   }
