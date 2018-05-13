@@ -20,10 +20,12 @@ numCommaParseNoDollar(numString) {
 }
 
 class MarketPage extends StatefulWidget {
-  MarketPage({Key key}) : super(key: key);
+  MarketPage(this.filter, {Key key}) : super(key: key);
+
+  final filter;
 
   @override
-  MarketPageState createState() => new MarketPageState();
+  MarketPageState createState() => new MarketPageState(filter);
 }
 
 
@@ -31,13 +33,20 @@ List marketListData;
 Map globalData;
 
 class MarketPageState extends State<MarketPage> {
-//  ScrollController _scrollController;
+  MarketPageState(this.filter);
+  bool filter;
 
   int limit = 500;
 
-  Future<Null> refreshData() async {
-    getGlobalData();
-    getMarketData();
+  Future<Null> getGlobalData() async {
+    var response = await http.get(
+        Uri.encodeFull("https://api.coinmarketcap.com/v2/global/"),
+        headers: {"Accept": "application/json"}
+    );
+
+    setState(() {
+      globalData = new JsonDecoder().convert(response.body)["data"]["quotes"]["USD"];
+    });
   }
 
   Future<Null> getMarketData() async {
@@ -54,16 +63,15 @@ class MarketPageState extends State<MarketPage> {
     setState(() {});
   }
 
-  Future<Null> getGlobalData() async {
-    var response = await http.get(
-        Uri.encodeFull("https://api.coinmarketcap.com/v2/global/"),
-        headers: {"Accept": "application/json"}
-    );
-
-    setState(() {
-      globalData = new JsonDecoder().convert(response.body)["data"]["quotes"]["USD"];
-    });
+  Future<Null> refreshData() async {
+    getGlobalData();
+    getMarketData();
   }
+
+  filterMarketData() {
+
+  }
+
 
   @override
   void initState() {
@@ -74,23 +82,13 @@ class MarketPageState extends State<MarketPage> {
     if (globalData == null) {
       getGlobalData();
     }
-
-//    _scrollController = new ScrollController();
-//    _scrollController.addListener(_scrollListener);
+    if (filter != null) {
+      filterMarketData();
+    }
   }
-
-//  void _scrollListener() {
-//    if (_scrollController.position.extentAfter < 50 && listAmt <= 480) {
-//      print("ADDED TO LISTVIEW");
-//      setState(() {
-//        listAmt += 20;
-//      });
-//    }
-//  }
 
   @override
   void dispose() {
-//    _scrollController.removeListener(_scrollListener);
     super.dispose();
   }
 

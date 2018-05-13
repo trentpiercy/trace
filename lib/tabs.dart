@@ -25,18 +25,50 @@ class Tabs extends StatefulWidget {
 
 class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   TabController _tabController;
+  TextEditingController _textController = new TextEditingController();
+
+  bool isSearching = false;
+  String filter;
+
+  _handleFilter(value) {
+    if (value == null || value == "") {
+      isSearching = false;
+      filter = null;
+    } else {
+      filter = value;
+      isSearching = true;
+    }
+
+    setState(() {});
+  }
+
+  _startSearch() {
+    setState(() {
+      isSearching = true;
+    });
+  }
+
+  _stopSearch() {
+    setState(() {
+      isSearching = false;
+      filter = null;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     _tabController = new TabController(length: 3, vsync: this);
     _tabController.addListener(() { //TODO: laggy - try different approach - possibly change top appBar on let go of swipe
-      setState(() {});
+//      setState(() {});
+      _stopSearch();
     });
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _textController.dispose();
     super.dispose();
   }
 
@@ -92,20 +124,37 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
               new SliverAppBar(
                 title: [
                   new Text("Portfolio"),
+
+                  isSearching ? new TextField(
+                    controller: _textController,
+                    autocorrect: false,
+                    keyboardType: TextInputType.text,
+                    style: Theme.of(context).textTheme.title,
+                    onChanged: (value) => _handleFilter(value),
+                    autofocus: true,
+                    decoration: new InputDecoration(),
+                  ) :
                   new GestureDetector(
-                    onTap: () => print("search - appbar"), //Navigator.of(context).pushNamed("/settings"),
+                    onTap: () => _startSearch(),
                     child: new Text("Aggregate Markets"),
                   ),
+
                   new Text("Alerts")
                 ][_tabController.index],
 
                 actions: <Widget>[
                   [
                     new Container(),
-                    new IconButton( // TODO: Searching
+
+                    isSearching ? new IconButton(
+                        icon: new Icon(Icons.close),
+                        onPressed: () => _stopSearch()
+                    ) :
+                    new IconButton(
                         icon: new Icon(Icons.search, color: Theme.of(context).primaryIconTheme.color),
-                        onPressed: () => print("search - icon") //Navigator.of(context).pushNamed("/settings")
+                        onPressed: () => _startSearch()
                     ),
+
                     new Container()
                   ][_tabController.index],
                 ],
@@ -142,7 +191,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
             controller: _tabController,
             children: <Widget>[
               new PortfolioPage(key: _portfolioKey),
-              new MarketPage(key: _marketKey),
+              new MarketPage(filter, key: _marketKey),
               new PortfolioPage(key: _portfolioKey2,)
             ],
           ),

@@ -103,7 +103,6 @@ class TraceAppState extends State<TraceApp> {
       theme: darkEnabled ? darkTheme : lightTheme,
       routes: <String, WidgetBuilder> {
 //        "/settings": (BuildContext context) => new SettingsPage(),
-//        "/search": (BuildContext context) => new SearchPage(),
       },
     );
   }
