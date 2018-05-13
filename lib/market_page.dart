@@ -5,8 +5,6 @@ import 'dart:convert';
 
 import 'package:trace/market/coin_tabs.dart';
 import 'package:trace/market/coin_aggregate_stats.dart';
-import 'main.dart';
-
 
 final columnProps = [.3,.3,.25];
 
@@ -20,12 +18,13 @@ numCommaParseNoDollar(numString) {
 }
 
 class MarketPage extends StatefulWidget {
-  MarketPage(this.filter, {Key key}) : super(key: key);
+  MarketPage(this.filter, this.isSearching, {Key key}) : super(key: key);
 
   final filter;
+  final isSearching;
 
   @override
-  MarketPageState createState() => new MarketPageState(filter);
+  MarketPageState createState() => new MarketPageState();
 }
 
 
@@ -33,8 +32,7 @@ List marketListData;
 Map globalData;
 
 class MarketPageState extends State<MarketPage> {
-  MarketPageState(this.filter);
-  bool filter;
+  List filteredMarketData;
 
   int limit = 500;
 
@@ -56,9 +54,12 @@ class MarketPageState extends State<MarketPage> {
     );
 
     Map rawMarketListData = new JsonDecoder().convert(response.body)["data"];
+//    List marketListData = new JsonDecoder().convert(response.body);
 
     marketListData = [];
     rawMarketListData.forEach((key, value) => marketListData.add(value));
+
+    filteredMarketData = marketListData;
 
     setState(() {});
   }
@@ -69,7 +70,19 @@ class MarketPageState extends State<MarketPage> {
   }
 
   filterMarketData() {
+    print("FILTERING");
 
+    if (widget.filter == "" || widget.filter == null) {
+      filteredMarketData = marketListData;
+    } else {
+      filteredMarketData = [];
+      marketListData.forEach((item) {
+        if (item["symbol"].toLowerCase().contains(widget.filter.toLowerCase()) ||
+            item["name"].toLowerCase().contains(widget.filter.toLowerCase())) {
+          filteredMarketData.add(item);
+        }
+      });
+    }
   }
 
 
@@ -82,9 +95,6 @@ class MarketPageState extends State<MarketPage> {
     if (globalData == null) {
       getGlobalData();
     }
-    if (filter != null) {
-      filterMarketData();
-    }
   }
 
   @override
@@ -96,12 +106,13 @@ class MarketPageState extends State<MarketPage> {
   Widget build(BuildContext context) {
 
     print("built markets ***");
+    filterMarketData();
     
-    return globalData != null ? new RefreshIndicator(
+    return filteredMarketData != null && globalData != null ? new RefreshIndicator(
         onRefresh: () => refreshData(),
         child: new CustomScrollView(
           slivers: <Widget>[
-            new SliverList(
+            widget.isSearching != true ? new SliverList(
                 delegate: new SliverChildListDelegate(<Widget>[
                   new Container(
                       padding: const EdgeInsets.all(10.0),
@@ -159,11 +170,22 @@ class MarketPageState extends State<MarketPage> {
                     ),
                   ),
                 ])
-            ),
+            ) : new SliverPadding(padding: const EdgeInsets.all(0.0)),
 
+            filteredMarketData.isEmpty ? new SliverList(
+                delegate: new SliverChildListDelegate(
+                  <Widget>[
+                    new Container(
+                      padding: const EdgeInsets.all(30.0),
+                      alignment: Alignment.topCenter,
+                      child: new Text("No results", style: Theme.of(context).textTheme.caption),
+                    )
+                  ]
+                )
+            ) :
             new SliverList(delegate: new SliverChildBuilderDelegate(
-              (BuildContext context, int index) {return new CoinListItem(snapshot: marketListData[index]);},
-              childCount: marketListData == null ? 0 : marketListData.length
+              (BuildContext context, int index) {return new CoinListItem(snapshot: filteredMarketData[index]);},
+              childCount: filteredMarketData == null ? 0 : filteredMarketData.length
             ))
 
           ],
@@ -234,8 +256,10 @@ class CoinListItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   new Text(numCommaParse(snapshot["quotes"]["USD"]["market_cap"].toString()), style: Theme.of(context).textTheme.body2),
+//                  new Text(numCommaParse(snapshot["market_cap_usd"].toString()), style: Theme.of(context).textTheme.body2),
                   new Padding(padding: const EdgeInsets.only(bottom: 4.0)),
                   new Text(numCommaParse(snapshot["quotes"]["USD"]["volume_24h"].toString()), style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor))
+//                  new Text(numCommaParse(snapshot["24h_volume_usd"].toString()), style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor))
                 ],
               )
             ),
@@ -246,11 +270,14 @@ class CoinListItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   new Text("\$"+snapshot["quotes"]["USD"]["price"].toString()),
+//                  new Text("\$"+snapshot["price_usd"].toString()),
                   new Padding(padding: const EdgeInsets.only(bottom: 4.0)),
                   new Text(
                     snapshot["quotes"]["USD"]["percent_change_24h"] >= 0 ? "+"+snapshot["quotes"]["USD"]["percent_change_24h"].toString()+"%" : snapshot["quotes"]["USD"]["percent_change_24h"].toString()+"%",
+//                    snapshot["percent_change_24h"].toDouble() >= 0 ? "+"+snapshot["percent_change_24h"].toString()+"%" : snapshot["percent_change_24h"].toString()+"%",
                     style: Theme.of(context).primaryTextTheme.body1.apply(
                       color: snapshot["quotes"]["USD"]["percent_change_24h"] >= 0 ? Colors.green : Colors.red
+//                        color: snapshot["percent_change_24h"].toDouble() >= 0 ? Colors.green : Colors.red
                     )
                   ),
                 ],

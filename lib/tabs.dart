@@ -31,14 +31,13 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   String filter;
 
   _handleFilter(value) {
-    if (value == null || value == "") {
+    if (value == null) {
       isSearching = false;
       filter = null;
     } else {
       filter = value;
       isSearching = true;
     }
-
     setState(() {});
   }
 
@@ -52,6 +51,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     setState(() {
       isSearching = false;
       filter = null;
+      _textController.clear();
     });
   }
 
@@ -60,7 +60,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     super.initState();
     _tabController = new TabController(length: 3, vsync: this);
     _tabController.addListener(() { //TODO: laggy - try different approach - possibly change top appBar on let go of swipe
-//      setState(() {});
       _stopSearch();
     });
   }
@@ -132,7 +131,9 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                     style: Theme.of(context).textTheme.title,
                     onChanged: (value) => _handleFilter(value),
                     autofocus: true,
-                    decoration: new InputDecoration(),
+                    decoration: new InputDecoration.collapsed(
+                        hintText: 'Search names and symbols...'
+                    ),
                   ) :
                   new GestureDetector(
                     onTap: () => _startSearch(),
@@ -191,7 +192,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
             controller: _tabController,
             children: <Widget>[
               new PortfolioPage(key: _portfolioKey),
-              new MarketPage(filter, key: _marketKey),
+              new MarketPage(filter, isSearching, key: _marketKey),
               new PortfolioPage(key: _portfolioKey2,)
             ],
           ),

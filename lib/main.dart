@@ -37,7 +37,7 @@ class TraceAppState extends State<TraceApp> {
     switch (themeMode) {
       case "Automatic":
         int nowHour = new DateTime.now().hour;
-        if (nowHour > 6 && nowHour < 18) {
+        if (nowHour > 6 && nowHour < 20) {
           darkEnabled = false;
         } else {
           darkEnabled = true;
@@ -61,7 +61,7 @@ class TraceAppState extends State<TraceApp> {
     primaryColor: Colors.white,
     primaryColorLight: Colors.purple[700],
 
-    textSelectionColor: Colors.grey[200],
+//    textSelectionColor: Colors.black,
     dividerColor: Colors.grey[200],
     buttonColor: Colors.purple[700],
     iconTheme: new IconThemeData(color: Colors.white),
@@ -78,7 +78,7 @@ class TraceAppState extends State<TraceApp> {
     primaryColor: Color.fromRGBO(50, 50, 60, 1.0),
     primaryColorLight: Colors.deepPurpleAccent[100],
 
-    textSelectionColor: Colors.blueGrey[800],
+//    textSelectionColor: Colors.white,
     buttonColor: Colors.deepPurpleAccent[100],
     iconTheme: new IconThemeData(color: Colors.white),
     accentIconTheme: new IconThemeData(color: Colors.deepPurpleAccent[100]),
@@ -90,6 +90,9 @@ class TraceAppState extends State<TraceApp> {
   void initState() {
     super.initState();
     handleUpdate();
+
+    print("INIT MAIN");
+
   }
 
   @override
