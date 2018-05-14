@@ -4,12 +4,9 @@ Portfolio
         - path pub
     - Upload to firebase
 
-Searching
 Animate everything
 
 # Do Soon
-Try home top appbar tabs
-
 Icon
 - Vector drawable
 Splash screen

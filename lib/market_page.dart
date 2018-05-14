@@ -18,7 +18,10 @@ numCommaParseNoDollar(numString) {
 }
 
 class MarketPage extends StatefulWidget {
-  MarketPage(this.filter, this.isSearching, {Key key}) : super(key: key);
+  MarketPage(
+      this.filter,
+      this.isSearching,
+      {Key key}) : super(key: key);
 
   final filter;
   final isSearching;
@@ -70,8 +73,6 @@ class MarketPageState extends State<MarketPage> {
   }
 
   filterMarketData() {
-    print("FILTERING");
-
     if (widget.filter == "" || widget.filter == null) {
       filteredMarketData = marketListData;
     } else {
@@ -88,7 +89,9 @@ class MarketPageState extends State<MarketPage> {
 
   @override
   void initState() {
+    print("INIT MARKETS");
     super.initState();
+
     if (marketListData == null) {
       getMarketData();
     }
@@ -105,7 +108,7 @@ class MarketPageState extends State<MarketPage> {
   @override
   Widget build(BuildContext context) {
 
-    print("built markets ***");
+    print("built markets & filtered***");
     filterMarketData();
     
     return filteredMarketData != null && globalData != null ? new RefreshIndicator(
@@ -178,7 +181,7 @@ class MarketPageState extends State<MarketPage> {
                     new Container(
                       padding: const EdgeInsets.all(30.0),
                       alignment: Alignment.topCenter,
-                      child: new Text("No results", style: Theme.of(context).textTheme.caption),
+                      child: new Text("No results found", style: Theme.of(context).textTheme.caption),
                     )
                   ]
                 )

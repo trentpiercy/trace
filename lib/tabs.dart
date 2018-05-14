@@ -18,7 +18,6 @@ class Tabs extends StatefulWidget {
   final darkEnabled;
   final themeMode;
 
-
   @override
   TabsState createState() => new TabsState();
 }
@@ -57,6 +56,8 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
+    print("INIT TABS");
+
     super.initState();
     _tabController = new TabController(length: 3, vsync: this);
     _tabController.addListener(() { //TODO: laggy - try different approach - possibly change top appBar on let go of swipe
@@ -80,7 +81,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
 
-    print("built tabs @@@@@@@");
+    print("built tabs");
 
     return new Scaffold(
         drawer: new Drawer(

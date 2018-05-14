@@ -62,6 +62,7 @@ class TraceAppState extends State<TraceApp> {
     primaryColorLight: Colors.purple[700],
 
 //    textSelectionColor: Colors.black,
+    textSelectionHandleColor: Colors.purple[700],
     dividerColor: Colors.grey[200],
     buttonColor: Colors.purple[700],
     iconTheme: new IconThemeData(color: Colors.white),
@@ -79,6 +80,7 @@ class TraceAppState extends State<TraceApp> {
     primaryColorLight: Colors.deepPurpleAccent[100],
 
 //    textSelectionColor: Colors.white,
+    textSelectionHandleColor: Colors.deepPurpleAccent[100],
     buttonColor: Colors.deepPurpleAccent[100],
     iconTheme: new IconThemeData(color: Colors.white),
     accentIconTheme: new IconThemeData(color: Colors.deepPurpleAccent[100]),
@@ -90,9 +92,6 @@ class TraceAppState extends State<TraceApp> {
   void initState() {
     super.initState();
     handleUpdate();
-
-    print("INIT MAIN");
-
   }
 
   @override
