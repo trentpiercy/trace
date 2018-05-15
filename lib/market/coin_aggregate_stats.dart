@@ -366,7 +366,7 @@ class AggregateStatsState extends State<AggregateStats> {
                     ),
                     new Flexible(
                       child: historyOHLCV != null ? new Container(
-                        padding: const EdgeInsets.only(left: 2.0, right: 0.0, top: 10.0),
+                        padding: const EdgeInsets.only(left: 2.0, right: 1.0, top: 10.0),
                         child: historyOHLCV.isEmpty != true ? new OHLCVGraph(
                           data: historyOHLCV,
                           enableGridLines: true,

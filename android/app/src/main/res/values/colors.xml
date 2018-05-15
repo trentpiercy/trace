@@ -3,4 +3,6 @@
 	<color name="purple">#4A148C</color>
 	<color name="darkBackground">#32323C</color>
 
+	<color name="ic_background">#4A148C</color>
+
 </resources>
