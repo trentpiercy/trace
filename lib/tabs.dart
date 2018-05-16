@@ -109,13 +109,35 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                       title: new Text("Portfolio Timeline"),
                     ),
                     new ListTile(
+                      leading: new Icon(Icons.pie_chart_outlined),
+                      title: new Text("Portfolio Breakdown"),
+                    ),
+                    new ListTile(
                       leading: new Icon(Icons.short_text),
-                      title: new Text("Shorten Numbers"),
+                      title: new Text(shortenOn ? "Full Numbers" : "Abbreviate Numbers"),
+                      onTap: () {
+                        setState(() {
+                          shortenOn = !shortenOn;
+                        });
+                      },
                     )
                   ],
                 )
             )
         ),
+
+        floatingActionButton: [
+          new FloatingActionButton(
+            onPressed: null,
+            child: Icon(Icons.add),
+            foregroundColor: Theme.of(context).iconTheme.color,
+            backgroundColor: Theme.of(context).accentIconTheme.color,
+            elevation: 4.0,
+            tooltip: "Add transaction",
+          ),
+          null,
+          null
+        ][_tabController.index],
 
         body: new NestedScrollView(
           controller: _scrollController,
@@ -129,7 +151,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                     controller: _textController,
                     autocorrect: false,
                     keyboardType: TextInputType.text,
-                    style: Theme.of(context).textTheme.title,
+                    style: Theme.of(context).textTheme.subhead,
                     onChanged: (value) => _handleFilter(value),
                     autofocus: true,
                     decoration: new InputDecoration.collapsed(

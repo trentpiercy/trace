@@ -9,6 +9,26 @@ void main() {
 const double appBarHeight = 48.0;
 const double appBarElevation = 1.0;
 
+bool shortenOn = false; //TODO: store
+numCommaParse(numString) {
+  if (shortenOn) {
+    String str = num.parse(numString).round().toString().replaceAllMapped(new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
+    List<String> strList = str.split(",");
+
+    if (strList.length > 3) {
+      return "\$"+strList[0] + "." + strList[1].substring(0, 4-strList[0].length)+"B";
+    } else if (str.length > 2) {
+      return "\$"+strList[0] +"." + strList[1].substring(0, 4-strList[0].length)+"M";
+    }
+  }
+
+  return "\$"+ num.parse(numString).round().toString().replaceAllMapped(new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
+}
+numCommaParseNoDollar(numString) {
+  return num.parse(numString).round().toString().replaceAllMapped(new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
+}
+
+
 class TraceApp extends StatefulWidget {
   @override
   TraceAppState createState() => new TraceAppState();
@@ -104,6 +124,9 @@ class TraceAppState extends State<TraceApp> {
       home: new Tabs(toggleTheme, handleUpdate, darkEnabled, themeMode),
       theme: darkEnabled ? darkTheme : lightTheme,
       routes: <String, WidgetBuilder> {
+//        "/portfolioTimeline": (BuildContext context) => new PortfolioTimelinePage(),
+//        "/portfolioBreakdown": (BuildContext context) => new PortfolioBreakdownPage(),
+//        "/addTransaction": (BuildContext context) => new AddTransactionPage(),
 //        "/settings": (BuildContext context) => new SettingsPage(),
       },
     );

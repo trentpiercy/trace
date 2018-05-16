@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:trace/market_page.dart';
 import 'coin_exchange_stats.dart';
 import 'coin_aggregate_stats.dart';
+import 'package:trace/main.dart';
 
 priceTrim(number) {
   if (number.toString().length < 7) {

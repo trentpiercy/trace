@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-
-import 'package:flutter_sparkline/flutter_sparkline.dart';
 import 'package:trace/flutter_candlesticks.dart';
 
 import 'dart:async';
@@ -8,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:trace/main.dart';
-import 'package:trace/market_page.dart';
 import 'package:trace/market/coin_exchanges_list.dart';
 
 
