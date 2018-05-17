@@ -25,6 +25,7 @@ class Tabs extends StatefulWidget {
 class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   TabController _tabController;
   TextEditingController _textController = new TextEditingController();
+  int _tabIndex = 0;
 
   bool isSearching = false;
   String filter;
@@ -54,15 +55,24 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     });
   }
 
+  _handleTabChange() {
+    _tabIndex = _tabController.animation.value.round();
+    _stopSearch();
+  }
+
   @override
   void initState() {
     print("INIT TABS");
 
     super.initState();
     _tabController = new TabController(length: 3, vsync: this);
-    _tabController.addListener(() { //TODO: laggy - try different approach - possibly change top appBar on let go of swipe
-      _stopSearch();
+
+    _tabController.animation.addListener(() {
+      if (_tabController.animation.value.round() != _tabIndex) {
+        _handleTabChange();
+      }
     });
+
   }
 
   @override
@@ -137,7 +147,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           ),
           null,
           null
-        ][_tabController.index],
+        ][_tabIndex],
 
         body: new NestedScrollView(
           controller: _scrollController,
@@ -164,7 +174,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                   ),
 
                   new Text("Alerts")
-                ][_tabController.index],
+                ][_tabIndex],
 
                 actions: <Widget>[
                   [
@@ -180,7 +190,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                     ),
 
                     new Container()
-                  ][_tabController.index],
+                  ][_tabIndex],
                 ],
 
                 pinned: true,
