@@ -57,7 +57,11 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
 
   _handleTabChange() {
     _tabIndex = _tabController.animation.value.round();
-    _stopSearch();
+    if (isSearching) {
+      _stopSearch();
+    } else {
+      setState(() {});
+    }
   }
 
   @override
@@ -72,13 +76,13 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         _handleTabChange();
       }
     });
-
   }
 
   @override
   void dispose() {
     _tabController.dispose();
     _textController.dispose();
+    _tabController.animation.removeListener(_handleTabChange);
     super.dispose();
   }
 
