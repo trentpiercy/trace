@@ -242,6 +242,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.29.0+1"
+  shared_preferences:
+    dependency: "direct main"
+    description:
+      name: shared_preferences
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.1"
   shelf:
     dependency: transitive
     description:
@@ -375,3 +382,4 @@ packages:
     version: "2.1.13"
 sdks:
   dart: ">=2.0.0-dev.52.0 <=2.0.0-dev.54.0.flutter-46ab040e58"
+  flutter: ">=0.1.4 <2.0.0"

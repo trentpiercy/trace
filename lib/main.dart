@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'tabs.dart';
 
@@ -9,7 +10,8 @@ void main() {
 const double appBarHeight = 48.0;
 const double appBarElevation = 1.0;
 
-bool shortenOn = false; //TODO: store
+bool shortenOn = false;
+
 numCommaParse(numString) {
   if (shortenOn) {
     String str = num.parse(numString).round().toString().replaceAllMapped(new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
@@ -36,7 +38,27 @@ class TraceApp extends StatefulWidget {
 
 class TraceAppState extends State<TraceApp> {
   bool darkEnabled;
-  String themeMode = "Automatic"; //TODO: store this
+  String themeMode = "Automatic";
+
+
+  void savePreferences() async {
+    print("----- saving prefs");
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("themeMode", themeMode);
+    prefs.setBool("shortenOn", shortenOn);
+  }
+
+  void getPreferences() async {
+    print("----- getting prefs");
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool("shortenOn") != null && prefs.getString("themeMode") != null) {
+      shortenOn = prefs.getBool("shortenOn");
+      themeMode = prefs.getString("themeMode");
+      handleUpdate();
+    }
+  }
 
   void toggleTheme() {
     switch (themeMode) {
@@ -51,6 +73,7 @@ class TraceAppState extends State<TraceApp> {
         break;
     }
     handleUpdate();
+    savePreferences();
   }
 
   void handleUpdate() {
@@ -111,6 +134,7 @@ class TraceAppState extends State<TraceApp> {
   @override
   void initState() {
     super.initState();
+    getPreferences();
     handleUpdate();
   }
 
@@ -121,7 +145,7 @@ class TraceAppState extends State<TraceApp> {
     return new MaterialApp(
       color: darkEnabled ? darkTheme.primaryColor : lightTheme.primaryColor,
       title: "Trace",
-      home: new Tabs(toggleTheme, handleUpdate, darkEnabled, themeMode),
+      home: new Tabs(toggleTheme, savePreferences, handleUpdate, darkEnabled, themeMode),
       theme: darkEnabled ? darkTheme : lightTheme,
       routes: <String, WidgetBuilder> {
 //        "/portfolioTimeline": (BuildContext context) => new PortfolioTimelinePage(),

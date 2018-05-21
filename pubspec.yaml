@@ -5,7 +5,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_sparkline: ^0.0.4
-#  flutter_candlesticks: ^0.0.1
+  shared_preferences: ^0.4.1
 
   cupertino_icons: ^0.1.0
 

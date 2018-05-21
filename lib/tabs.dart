@@ -7,16 +7,18 @@ import 'market_page.dart';
 class Tabs extends StatefulWidget {
   Tabs(
       this.toggleTheme,
+      this.savePreferences,
       this.handleUpdate,
       this.darkEnabled,
       this.themeMode,
       );
 
-  final toggleTheme;
-  final handleUpdate;
+  final Function toggleTheme;
+  final Function handleUpdate;
+  final Function savePreferences;
 
-  final darkEnabled;
-  final themeMode;
+  final bool darkEnabled;
+  final String themeMode;
 
   @override
   TabsState createState() => new TabsState();
@@ -133,6 +135,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                         setState(() {
                           shortenOn = !shortenOn;
                         });
+                        widget.savePreferences();
                       },
                     )
                   ],
