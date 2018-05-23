@@ -5,86 +5,23 @@ import 'dart:convert';
 import 'package:path_provider/path_provider.dart';
 
 class PortfolioFAB extends StatefulWidget {
-//  PortfolioFAB(this.updateParent);
-//  final Function updateParent;
+  PortfolioFAB(this.scaffoldKey);
+  final GlobalKey<ScaffoldState> scaffoldKey;
 
   PortfolioFABState createState() => new PortfolioFABState();
 }
 
 class PortfolioFABState extends State<PortfolioFAB> {
   bool sheetOpen = false;
-  int radioValue = 0;
 
-  _handleRadioValueChange(int value) {
-    print("called");
-    setState(() {
-      radioValue = value;
-    });
-  }
+  final _sheetKey = new Key("transactionSheet");
 
   openTransaction() {
     setState(() {
       sheetOpen = true;
     });
-    showBottomSheet(context: context, builder: (BuildContext context) {
-      return new Container(
-        padding: const EdgeInsets.all(8.0),
-        color: Theme.of(context).primaryColor,
-        child: new Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            new Text("Add Transaction", style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2)),
-            new Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                new Text("Buy", style: Theme.of(context).textTheme.caption),
-                new Radio(value: 0, groupValue: radioValue, onChanged: _handleRadioValueChange),
-                new Text("Sell", style: Theme.of(context).textTheme.caption),
-                new Radio(value: 1, groupValue: radioValue, onChanged: _handleRadioValueChange),
-              ],
-            ),
-            new Row(
-              children: <Widget>[
-                new Flexible(
-                  child: new TextField(
-                    decoration: new InputDecoration(
-                      hintText: "Symbol... (BTC)"
-                    ),
-                  ),
-                ),
-                new Flexible(
-                  child: new TextField(
-                    decoration: new InputDecoration(
-                      hintText: "Quantity"
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            new Row(
-              children: <Widget>[
-                new Flexible(
-                  child: new TextField(
-                    decoration: new InputDecoration(
-                        hintText: "Exchange"
-                    ),
-                  ),
-                ),
-                new Flexible(
-                  child: new TextField(
-                    decoration: new InputDecoration(
-                      prefixText: "\$",
-                      prefixStyle: Theme.of(context).textTheme.body1,
-                      hintText: "Price"
-                    ),
-                  ),
-                ),
-              ],
-            )
-          ],
-        )
-      );
-
+    widget.scaffoldKey.currentState.showBottomSheet((BuildContext context) {
+      return new TransactionSheet(key: _sheetKey);
     }).closed.whenComplete(() {
       setState(() {
         sheetOpen = false;
@@ -109,6 +46,165 @@ class PortfolioFABState extends State<PortfolioFAB> {
       backgroundColor: Theme.of(context).accentIconTheme.color,
       elevation: 4.0,
       tooltip: "Add Transaction",
+    );
+  }
+}
+
+class TransactionSheet extends StatefulWidget {
+  TransactionSheet({Key key}) : super(key: key);
+
+  @override
+  TransactionSheetState createState() => new TransactionSheetState();
+}
+
+class TransactionSheetState extends State<TransactionSheet> {
+  int radioValue = 0;
+  DateTime pickedDate = new DateTime.now();
+  TimeOfDay pickedTime = new TimeOfDay.now();
+
+  _handleRadioValueChange(int value) {
+    setState(() {
+      radioValue = value;
+    });
+  }
+
+  Future<Null> _selectDate() async {
+    DateTime pick = await showDatePicker(
+        context: context,
+        initialDate: new DateTime.now(),
+        firstDate: new DateTime(1950),
+        lastDate: new DateTime.now()
+    );
+    if (pick != null) {
+      setState(() {
+        pickedDate = pick;
+      });
+    }
+  }
+
+  Future<Null> _selectTime() async {
+    TimeOfDay pick = await showTimePicker(
+      context: context,
+      initialTime: new TimeOfDay.now()
+    );
+    if (pick != null) {
+      setState(() {
+        pickedTime = pick;
+      });
+    }
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    ThemeData overrideTheme = new ThemeData(
+      primaryColor: Theme.of(context).buttonColor,
+      accentColor: Theme.of(context).accentColor,
+      hintColor: Theme.of(context).hintColor,
+      unselectedWidgetColor: Theme.of(context).unselectedWidgetColor
+    );
+
+    return new Container(
+        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 20.0, left: 20.0),
+        color: Theme.of(context).primaryColor,
+        child: new Theme(
+            data: overrideTheme,
+            child: new Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                new Text("Add Transaction", style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2)),
+                new Row(
+                  children: <Widget>[
+                    new Row(
+                      children: <Widget>[
+                        new Text("Buy", style: Theme.of(context).textTheme.caption),
+                        new Radio(value: 0, groupValue: radioValue, onChanged: _handleRadioValueChange),
+                        new Text("Sell", style: Theme.of(context).textTheme.caption),
+                        new Radio(value: 1, groupValue: radioValue, onChanged: _handleRadioValueChange),
+                      ],
+                    ),
+
+                    new Row(
+                      children: <Widget>[
+                        new FlatButton(
+                          onPressed: () => _selectDate(),
+                          child: new Text(pickedDate.month.toString()
+                              + "/" + pickedDate.day.toString()
+                              + "/" + pickedDate.year.toString()
+                          ),
+                          textColor: Theme.of(context).accentColor,
+                        ),
+
+                        new FlatButton(
+                          onPressed: () => _selectTime(),
+                          child: new Text(
+                              (pickedTime.hourOfPeriod == 0 ? "12" : pickedTime.hourOfPeriod.toString()) + ":" +
+                                  (pickedTime.minute > 9 ? pickedTime.minute.toString() : "0" + pickedTime.minute.toString())
+                                  + (pickedTime.hour >= 12 ? "PM" : "AM")
+                          ),
+                          textColor: Theme.of(context).accentColor,
+                        )
+                      ],
+                    )
+
+                  ],
+                ),
+                new Row(
+                  children: <Widget>[
+                    new Flexible(
+                      child: new TextField(
+                        style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).accentColor),
+                        decoration: new InputDecoration(
+                          labelText: "Symbol",
+                          border: InputBorder.none,
+                          hintText: "BTC",
+                        ),
+                      ),
+                    ),
+                    new Flexible(
+                        child: new TextField(
+                          style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).accentColor),
+                          keyboardType: TextInputType.number,
+                          decoration: new InputDecoration(
+                            border: InputBorder.none,
+                            labelText: "Quantity",
+                            hintText: "Enter Quantity",
+                          ),
+                        )
+                    ),
+                  ],
+                ),
+//            new Padding(padding: const EdgeInsets.symmetric(vertical: 2.0)),
+                new Row(
+                  children: <Widget>[
+                    new Flexible(
+                      child: new TextField(
+                        style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).accentColor),
+                        decoration: new InputDecoration(
+                          labelText: "Exchange",
+                          border: InputBorder.none,
+                          hintText: "Coinbase",
+                        ),
+                      ),
+                    ),
+                    new Flexible(
+                      child: new TextField(
+                        style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).accentColor),
+                        keyboardType: TextInputType.number,
+                        decoration: new InputDecoration(
+                            labelText: "Price",
+                            border: InputBorder.none,
+                            hintText: "Enter Price in USD",
+                            prefixText: "\$",
+                            prefixStyle: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).accentColor)
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            )
+        )
     );
   }
 }
@@ -194,7 +290,7 @@ class PortfolioPageState extends State<PortfolioPage> {
                       new Container(
                         alignment: Alignment.centerRight,
                         width: MediaQuery.of(context).size.width * columnProps[1],
-                        child: new Text("Holdings", style: Theme.of(context).textTheme.body2),
+                        child: new Text("Holdings/24h", style: Theme.of(context).textTheme.body2),
                       ),
                       new Container(
                         alignment: Alignment.centerRight,

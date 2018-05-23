@@ -88,18 +88,13 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
-  static PageStorageKey _marketKey = new PageStorageKey("market");
-  static PageStorageKey _portfolioKey = new PageStorageKey("portfolio");
-  static PageStorageKey _portfolioKey2 = new PageStorageKey("portfolio2");
+  final PageStorageKey _marketKey = new PageStorageKey("market");
+  final PageStorageKey _portfolioKey = new PageStorageKey("portfolio");
+  final PageStorageKey _portfolioKey2 = new PageStorageKey("portfolio2");
 
   ScrollController _scrollController = new ScrollController();
 
-
-  _genericUpdate() {
-    setState(() {
-
-    });
-  }
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -107,6 +102,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     print("built tabs");
 
     return new Scaffold(
+      key: _scaffoldKey,
         drawer: new Drawer(
             child: new Scaffold(
                 bottomNavigationBar: new Container(
@@ -152,11 +148,12 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
             )
         ),
 
-        floatingActionButton: [
-          new PortfolioFAB(),
-          null,
-          null
-        ][_tabIndex],
+//        floatingActionButton: [
+//          new PortfolioFAB(),
+//          null,
+//          null
+//        ][_tabIndex],
+        floatingActionButton: new PortfolioFAB(_scaffoldKey),
 
         body: new NestedScrollView(
           controller: _scrollController,
