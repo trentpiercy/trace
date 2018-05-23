@@ -88,11 +88,18 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
-  PageStorageKey _marketKey = new PageStorageKey("market");
-  PageStorageKey _portfolioKey = new PageStorageKey("portfolio");
-  PageStorageKey _portfolioKey2 = new PageStorageKey("portfolio2");
+  static PageStorageKey _marketKey = new PageStorageKey("market");
+  static PageStorageKey _portfolioKey = new PageStorageKey("portfolio");
+  static PageStorageKey _portfolioKey2 = new PageStorageKey("portfolio2");
 
   ScrollController _scrollController = new ScrollController();
+
+
+  _genericUpdate() {
+    setState(() {
+
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -123,10 +130,12 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                     new ListTile(
                       leading: new Icon(Icons.timeline),
                       title: new Text("Portfolio Timeline"),
+                      onTap: () => Navigator.pushNamed(context, "/portfolioTimeline"),
                     ),
                     new ListTile(
                       leading: new Icon(Icons.pie_chart_outlined),
                       title: new Text("Portfolio Breakdown"),
+                      onTap: () => Navigator.pushNamed(context, "/portfolioBreakdown"),
                     ),
                     new ListTile(
                       leading: new Icon(Icons.short_text),
@@ -144,14 +153,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         ),
 
         floatingActionButton: [
-          new FloatingActionButton(
-            onPressed: null,
-            child: Icon(Icons.add),
-            foregroundColor: Theme.of(context).iconTheme.color,
-            backgroundColor: Theme.of(context).accentIconTheme.color,
-            elevation: 4.0,
-            tooltip: "Add transaction",
-          ),
+          new PortfolioFAB(),
           null,
           null
         ][_tabIndex],

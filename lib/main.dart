@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'tabs.dart';
+import 'package:trace/portfolio/portfolio_tabs.dart';
 
 void main() {
   runApp(new TraceApp());
@@ -148,10 +149,8 @@ class TraceAppState extends State<TraceApp> {
       home: new Tabs(toggleTheme, savePreferences, handleUpdate, darkEnabled, themeMode),
       theme: darkEnabled ? darkTheme : lightTheme,
       routes: <String, WidgetBuilder> {
-//        "/portfolioTimeline": (BuildContext context) => new PortfolioTimelinePage(),
-//        "/portfolioBreakdown": (BuildContext context) => new PortfolioBreakdownPage(),
-//        "/addTransaction": (BuildContext context) => new AddTransactionPage(),
-//        "/settings": (BuildContext context) => new SettingsPage(),
+        "/portfolioTimeline": (BuildContext context) => new PortfolioTabs(0),
+        "/portfolioBreakdown": (BuildContext context) => new PortfolioTabs(1),
       },
     );
   }
