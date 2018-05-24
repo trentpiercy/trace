@@ -98,7 +98,6 @@ class AggregateStats extends StatefulWidget {
 //      historyType: historyType,
 //      historyTotal: historyTotal,
       toSym: toSym,
-      showSparkline: showSparkline,
   );
 }
 
@@ -111,11 +110,9 @@ class AggregateStatsState extends State<AggregateStats> {
 //    this.historyType,
 //    this.historyTotal,
     this.toSym,
-    this.showSparkline,
   });
 
   Map snapshot;
-  bool showSparkline;
 
 //  int currentOHLCVWidthSetting;
 //

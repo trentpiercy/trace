@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
 class PortfolioFAB extends StatefulWidget {
@@ -58,9 +59,29 @@ class TransactionSheet extends StatefulWidget {
 }
 
 class TransactionSheetState extends State<TransactionSheet> {
+  TextEditingController _symbolController = new TextEditingController();
+  TextEditingController _priceController = new TextEditingController();
+  TextEditingController _quantityController = new TextEditingController();
+  TextEditingController _exchangeController = new TextEditingController();
+
   int radioValue = 0;
   DateTime pickedDate = new DateTime.now();
   TimeOfDay pickedTime = new TimeOfDay.now();
+  int epochDate;
+
+  List marketListData;
+  List symbolList;
+  Color symbolTextColor = Colors.red;
+  String symbol;
+
+  Color quantityTextColor = Colors.red;
+  num quantity;
+
+  Color priceTextColor = Colors.red;
+  num price;
+
+  List exchangesList;
+  String exchange = "CCCAGG";
 
   _handleRadioValueChange(int value) {
     setState(() {
@@ -79,6 +100,7 @@ class TransactionSheetState extends State<TransactionSheet> {
       setState(() {
         pickedDate = pick;
       });
+      _makeEpoch();
     }
   }
 
@@ -91,22 +113,132 @@ class TransactionSheetState extends State<TransactionSheet> {
       setState(() {
         pickedTime = pick;
       });
+      _makeEpoch();
     }
   }
 
+  _makeEpoch() {
+    epochDate = new DateTime(
+        pickedDate.year,
+        pickedDate.month,
+        pickedDate.day,
+        pickedTime.hour,
+        pickedTime.minute
+    ).millisecondsSinceEpoch;
+
+    print(epochDate.toString());
+
+  }
+
+  _checkValidSymbol(String inputSymbol) async {
+    if (marketListData == null) {
+      await _getMarketData();
+    }
+    if (symbolList == null) {
+      symbolList = [];
+      marketListData.forEach((value) => symbolList.add(value["symbol"]));
+    }
+
+    if (symbolList.contains(inputSymbol.toUpperCase())) {
+      symbol = inputSymbol.toUpperCase();
+      _getExchangeList();
+      setState(() {
+        symbolTextColor = Colors.green;
+      });
+    } else {
+      symbol = null;
+      exchangesList = null;
+      setState(() {
+        symbolTextColor = Colors.red;
+      });
+    }
+  }
+
+  _checkValidQuantity(String quantityString) {
+    try {
+      quantity = num.parse(quantityString);
+      setState(() {
+        quantityTextColor = Colors.green;
+      });
+    } catch (e) {
+      quantity = null;
+      setState(() {
+        quantityTextColor = Colors.red;
+      });
+    }
+  }
+
+  _checkValidPrice(String priceString) {
+    try {
+      price = num.parse(priceString);
+      setState(() {
+        priceTextColor = Colors.green;
+      });
+    } catch (e) {
+      price = null;
+      setState(() {
+        priceTextColor = Colors.red;
+      });
+    }
+  }
+
+  _handleSave() {
+    
+  }
+
+  Future<Null> _getMarketData() async {
+    var response = await http.get(
+        Uri.encodeFull("https://api.coinmarketcap.com/v2/ticker"),
+        headers: {"Accept": "application/json"}
+    );
+
+    Map rawMarketListData = new JsonDecoder().convert(response.body)["data"];
+
+    marketListData = [];
+    rawMarketListData.forEach((key, value) => marketListData.add(value));
+
+    print(marketListData);
+  }
+
+  Future<Null> _getExchangeList() async {
+    var response = await http.get(
+        Uri.encodeFull("https://min-api.cryptocompare.com/data/top/exchanges?fsym="+symbol+"&tsym=USD&limit=100"),
+        headers: {"Accept": "application/json"}
+    );
+
+    List exchangeData = new JsonDecoder().convert(response.body)["Data"];
+
+    exchangesList = [];
+    exchangeData.forEach((value) => exchangesList.add(value["exchange"]));
+
+    print(exchangesList);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getMarketData();
+    _makeEpoch();
+  }
 
   @override
   Widget build(BuildContext context) {
     ThemeData overrideTheme = new ThemeData(
+      brightness: Theme.of(context).brightness,
       primaryColor: Theme.of(context).buttonColor,
       accentColor: Theme.of(context).accentColor,
       hintColor: Theme.of(context).hintColor,
-      unselectedWidgetColor: Theme.of(context).unselectedWidgetColor
+      unselectedWidgetColor: Theme.of(context).unselectedWidgetColor,
+      canvasColor: Theme.of(context).canvasColor,
+      cardColor: Theme.of(context).cardColor,
     );
 
     return new Container(
+        decoration: new BoxDecoration(
+          border: new Border(top: new BorderSide(color: Theme.of(context).dividerColor)),
+          color: Theme.of(context).primaryColor,
+        ),
         padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 20.0, left: 20.0),
-        color: Theme.of(context).primaryColor,
         child: new Theme(
             data: overrideTheme,
             child: new Column(
@@ -130,7 +262,7 @@ class TransactionSheetState extends State<TransactionSheet> {
                           onPressed: () => _selectDate(),
                           child: new Text(pickedDate.month.toString()
                               + "/" + pickedDate.day.toString()
-                              + "/" + pickedDate.year.toString()
+                              + "/" + pickedDate.year.toString().substring(2)
                           ),
                           textColor: Theme.of(context).accentColor,
                         ),
@@ -153,7 +285,9 @@ class TransactionSheetState extends State<TransactionSheet> {
                   children: <Widget>[
                     new Flexible(
                       child: new TextField(
-                        style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).accentColor),
+                        controller: _symbolController,
+                        onChanged: _checkValidSymbol,
+                        style: Theme.of(context).textTheme.body2.apply(color: symbolTextColor),
                         decoration: new InputDecoration(
                           labelText: "Symbol",
                           border: InputBorder.none,
@@ -163,7 +297,9 @@ class TransactionSheetState extends State<TransactionSheet> {
                     ),
                     new Flexible(
                         child: new TextField(
-                          style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).accentColor),
+                          controller: _quantityController,
+                          onChanged: _checkValidQuantity,
+                          style: Theme.of(context).textTheme.body2.apply(color: quantityTextColor),
                           keyboardType: TextInputType.number,
                           decoration: new InputDecoration(
                             border: InputBorder.none,
@@ -176,30 +312,73 @@ class TransactionSheetState extends State<TransactionSheet> {
                 ),
 //            new Padding(padding: const EdgeInsets.symmetric(vertical: 2.0)),
                 new Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     new Flexible(
-                      child: new TextField(
-                        style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).accentColor),
-                        decoration: new InputDecoration(
-                          labelText: "Exchange",
-                          border: InputBorder.none,
-                          hintText: "Coinbase",
+                      child: new PopupMenuButton(
+                        itemBuilder: (BuildContext context) {
+                          List<PopupMenuEntry<dynamic>> options = [
+                            new PopupMenuItem(
+                              child: new Text("Aggregated"),
+                              value: "CCCAGG",
+                            ),
+                          ];
+                          if (exchangesList != null) {
+                            options.add(new PopupMenuDivider());
+                            exchangesList.forEach((exchange) => options.add(
+                                new PopupMenuItem(
+                                  child: new Text(exchange),
+                                  value: exchange,
+                                )
+                            ));
+                          }
+                          return options;
+                        },
+                        onSelected: (selected) {
+                          setState(() {
+                            exchange = selected;
+                            _exchangeController.text = selected;
+                          });
+                        },
+                        child: new TextField(
+                          enabled: false,
+                          controller: _exchangeController,
+                          style: Theme.of(context).textTheme.body2.apply(color: Colors.green),
+                          decoration: new InputDecoration(
+                            labelText: "Exchange",
+                            border: InputBorder.none,
+                            labelStyle: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)
+                          ),
                         ),
-                      ),
+                      )
                     ),
                     new Flexible(
                       child: new TextField(
-                        style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).accentColor),
+                        controller: _priceController,
+                        onChanged: _checkValidPrice,
+                        style: Theme.of(context).textTheme.body2.apply(color: priceTextColor),
                         keyboardType: TextInputType.number,
                         decoration: new InputDecoration(
                             labelText: "Price",
                             border: InputBorder.none,
                             hintText: "Enter Price in USD",
                             prefixText: "\$",
-                            prefixStyle: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).accentColor)
+                            prefixStyle: Theme.of(context).textTheme.body2.apply(color: priceTextColor)
                         ),
                       ),
                     ),
+                  ],
+                ),
+                new Padding(padding: const EdgeInsets.symmetric(vertical: 1.0)),
+                new Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    new RaisedButton(
+                      onPressed: _handleSave,
+                      color: symbol != null && quantity != null && exchange != null && price != null ? Colors.green : Colors.red,
+                      textColor: Colors.white,
+                      child: new Text("Save"),
+                    )
                   ],
                 )
               ],
