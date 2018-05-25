@@ -25,7 +25,6 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        resizeToAvoidBottomPadding: false,
         appBar: new PreferredSize(
           preferredSize: const Size.fromHeight(75.0),
           child: new AppBar(

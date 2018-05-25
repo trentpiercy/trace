@@ -64,6 +64,9 @@ class TransactionSheetState extends State<TransactionSheet> {
   TextEditingController _quantityController = new TextEditingController();
   TextEditingController _exchangeController = new TextEditingController();
 
+  Color errorColor = Colors.red;
+  Color validColor;
+
   int radioValue = 0;
   DateTime pickedDate = new DateTime.now();
   TimeOfDay pickedTime = new TimeOfDay.now();
@@ -71,13 +74,13 @@ class TransactionSheetState extends State<TransactionSheet> {
 
   List marketListData;
   List symbolList;
-  Color symbolTextColor = Colors.red;
+  Color symbolTextColor;
   String symbol;
 
-  Color quantityTextColor = Colors.red;
+  Color quantityTextColor;
   num quantity;
 
-  Color priceTextColor = Colors.red;
+  Color priceTextColor ;
   num price;
 
   List exchangesList;
@@ -149,7 +152,7 @@ class TransactionSheetState extends State<TransactionSheet> {
         if (value["symbol"] == symbol) {
           price = value["quotes"]["USD"]["price"];
           _priceController.text = price.toString();
-          priceTextColor = Colors.green;
+          priceTextColor = validColor;
           break;
         }
       }
@@ -157,7 +160,7 @@ class TransactionSheetState extends State<TransactionSheet> {
       exchange = "CCCAGG";
       setState(() {
         _exchangeController.text = "Aggregated";
-        symbolTextColor = Colors.green;
+        symbolTextColor = validColor;
       });
 
     } else {
@@ -168,7 +171,7 @@ class TransactionSheetState extends State<TransactionSheet> {
       price = null;
       _priceController.text = "";
       setState(() {
-        symbolTextColor = Colors.red;
+        symbolTextColor = errorColor;
       });
     }
   }
@@ -177,12 +180,12 @@ class TransactionSheetState extends State<TransactionSheet> {
     try {
       quantity = num.parse(quantityString);
       setState(() {
-        quantityTextColor = Colors.green;
+        quantityTextColor = validColor;
       });
     } catch (e) {
       quantity = null;
       setState(() {
-        quantityTextColor = Colors.red;
+        quantityTextColor = errorColor;
       });
     }
   }
@@ -191,12 +194,12 @@ class TransactionSheetState extends State<TransactionSheet> {
     try {
       price = num.parse(priceString);
       setState(() {
-        priceTextColor = Colors.green;
+        priceTextColor = validColor;
       });
     } catch (e) {
       price = null;
       setState(() {
-        priceTextColor = Colors.red;
+        priceTextColor = errorColor;
       });
     }
   }
@@ -204,6 +207,47 @@ class TransactionSheetState extends State<TransactionSheet> {
   _handleSave() {
     if (symbol != null && quantity != null && exchange != null && price != null) {
       print("WRITING TO JSON...");
+
+      getApplicationDocumentsDirectory().then((Directory directory) {
+        File jsonFile = new File(directory.path + "/portfolio.json");
+        if (jsonFile.existsSync()) {
+          Map newEntry = {
+            "symbol":symbol,
+            "quantity":quantity,
+            "price_usd":price,
+            "exchange":exchange,
+            "time_epoch":epochDate,
+          };
+
+          List jsonContent = json.decode(jsonFile.readAsStringSync());
+          jsonContent.add(newEntry);
+
+          jsonFile.writeAsStringSync(json.encode(jsonContent));
+
+          print("WRITE SUCCESS");
+          print(jsonContent);
+
+          Navigator.of(context).pop();
+          Scaffold.of(context).showSnackBar(
+              new SnackBar(
+                duration: new Duration(seconds: 5),
+                content: new Text("Transaction Saved!"),
+                action: new SnackBarAction(
+                  label: "Undo",
+                  onPressed: () {
+                    jsonContent.removeLast();
+                    jsonFile.writeAsStringSync(json.encode(jsonContent));
+
+                    print("UNDID");
+                    print(jsonContent);
+                  },
+                ),
+              )
+          );
+        } else {
+          print("FAILED - file does not exist");
+        }
+      });
 
 
 
@@ -250,6 +294,10 @@ class TransactionSheetState extends State<TransactionSheet> {
     super.initState();
     _getMarketData();
     _makeEpoch();
+
+    symbolTextColor = errorColor;
+    quantityTextColor = errorColor;
+    priceTextColor = errorColor;
   }
 
   @override
@@ -263,6 +311,7 @@ class TransactionSheetState extends State<TransactionSheet> {
       canvasColor: Theme.of(context).canvasColor,
       cardColor: Theme.of(context).cardColor,
     );
+    validColor = Theme.of(context).buttonColor;
 
     return new Container(
         decoration: new BoxDecoration(
@@ -335,7 +384,7 @@ class TransactionSheetState extends State<TransactionSheet> {
                           decoration: new InputDecoration(
                             border: InputBorder.none,
                             labelText: "Quantity",
-                            hintText: "Enter Quantity",
+                            hintText: "9.876",
                           ),
                         )
                     ),
@@ -378,7 +427,7 @@ class TransactionSheetState extends State<TransactionSheet> {
                         child: new TextField(
                           enabled: false,
                           controller: _exchangeController,
-                          style: Theme.of(context).textTheme.body2.apply(color: Colors.green),
+                          style: Theme.of(context).textTheme.body2.apply(color: validColor),
                           decoration: new InputDecoration(
                             labelText: "Exchange",
                             border: InputBorder.none,
@@ -396,7 +445,7 @@ class TransactionSheetState extends State<TransactionSheet> {
                         decoration: new InputDecoration(
                             labelText: "Price",
                             border: InputBorder.none,
-                            hintText: "Enter Price in USD",
+                            hintText: "Price (USD)",
                             prefixText: "\$",
                             prefixStyle: Theme.of(context).textTheme.body2.apply(color: priceTextColor)
                         ),
@@ -409,8 +458,8 @@ class TransactionSheetState extends State<TransactionSheet> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     new RaisedButton(
-                      onPressed: _handleSave,
-                      color: symbol != null && quantity != null && exchange != null && price != null ? Colors.green : Colors.red,
+                      onPressed: symbol != null && quantity != null && exchange != null && price != null ? _handleSave : null,
+                      color: Theme.of(context).buttonColor,
                       textColor: Colors.white,
                       child: new Text("Save"),
                     )
@@ -425,35 +474,23 @@ class TransactionSheetState extends State<TransactionSheet> {
 
 
 class PortfolioPage extends StatefulWidget {
-  PortfolioPage({Key key}) : super(key: key);
+  PortfolioPage(this.portfolioList, {Key key}) : super(key: key);
+
+  final portfolioList;
 
   @override
-  PortfolioPageState createState() => new PortfolioPageState();
+  PortfolioPageState createState() => new PortfolioPageState(portfolioList);
 }
 
 class PortfolioPageState extends State<PortfolioPage> {
+  PortfolioPageState(this.portfolioList);
+  List portfolioList;
+
   final columnProps = [.2,.3,.3];
-
-  List<Map> portfolioList;
-
-  _loadProfile() async {
-    getApplicationDocumentsDirectory().then((Directory directory) {
-      File jsonFile = new File(directory.path + "/portfolio.json");
-//      jsonFile.delete();
-      if (jsonFile.existsSync()) {
-        print("file exists");
-        portfolioList = new JsonDecoder().convert(jsonFile.readAsStringSync());
-      } else {
-        print("creating file");
-        jsonFile.createSync();
-      }
-      print("contents: " + portfolioList.toString());
-    });
-  }
 
   void initState() {
     super.initState();
-    _loadProfile();
+    print("INIT PORTFOLIO");
   }
 
 

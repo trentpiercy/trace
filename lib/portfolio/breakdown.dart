@@ -6,8 +6,6 @@ class PortfolioBreakdown extends StatefulWidget {
 }
 
 class PortfolioBreakdownState extends State<PortfolioBreakdown> {
-
-
   @override
   Widget build(BuildContext context) {
     return new RefreshIndicator(

@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'main.dart';
 import 'portfolio_page.dart';
@@ -28,6 +32,8 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   TabController _tabController;
   TextEditingController _textController = new TextEditingController();
   int _tabIndex = 0;
+
+  List portfolioList;
 
   bool isSearching = false;
   String filter;
@@ -66,13 +72,29 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     }
   }
 
+  _loadProfileJson() async {
+    getApplicationDocumentsDirectory().then((Directory directory) {
+      File jsonFile = new File(directory.path + "/portfolio.json");
+      if (jsonFile.existsSync()) {
+        print("file exists");
+        portfolioList = json.decode(jsonFile.readAsStringSync());
+      } else {
+        print("creating file");
+        jsonFile.createSync();
+        jsonFile.writeAsStringSync("[]");
+      }
+      print("contents: " + portfolioList.toString());
+    });
+  }
+
   @override
   void initState() {
+    super.initState();
     print("INIT TABS");
 
-    super.initState();
-    _tabController = new TabController(length: 3, vsync: this);
+    _loadProfileJson();
 
+    _tabController = new TabController(length: 3, vsync: this);
     _tabController.animation.addListener(() {
       if (_tabController.animation.value.round() != _tabIndex) {
         _handleTabChange();
@@ -119,10 +141,11 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                 ),
                 body: new ListView(
                   children: <Widget>[
-//                    new ListTile(
-//                      leading: new Icon(Icons.settings),
-//                      title: new Text("Settings"),
-//                    ),
+                    new ListTile(
+                      leading: new Icon(Icons.settings),
+                      title: new Text("Settings"),
+                      onTap: () => Navigator.pushNamed(context, "/settings"),
+                    ),
                     new ListTile(
                       leading: new Icon(Icons.timeline),
                       title: new Text("Portfolio Timeline"),
@@ -230,9 +253,9 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           body: new TabBarView(
             controller: _tabController,
             children: <Widget>[
-              new PortfolioPage(key: _portfolioKey),
+              new PortfolioPage(portfolioList, key: _portfolioKey),
               new MarketPage(filter, isSearching, key: _marketKey),
-              new PortfolioPage(key: _portfolioKey2,)
+              new Container(),
             ],
           ),
         )
