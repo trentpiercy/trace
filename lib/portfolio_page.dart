@@ -81,7 +81,7 @@ class TransactionSheetState extends State<TransactionSheet> {
   num price;
 
   List exchangesList;
-  String exchange = "CCCAGG";
+  String exchange;
 
   _handleRadioValueChange(int value) {
     setState(() {
@@ -126,6 +126,7 @@ class TransactionSheetState extends State<TransactionSheet> {
         pickedTime.minute
     ).millisecondsSinceEpoch;
 
+    print("epoch ms timestamp");
     print(epochDate.toString());
 
   }
@@ -141,13 +142,31 @@ class TransactionSheetState extends State<TransactionSheet> {
 
     if (symbolList.contains(inputSymbol.toUpperCase())) {
       symbol = inputSymbol.toUpperCase();
+      exchangesList = null;
       _getExchangeList();
+
+      for (var value in marketListData) {
+        if (value["symbol"] == symbol) {
+          price = value["quotes"]["USD"]["price"];
+          _priceController.text = price.toString();
+          priceTextColor = Colors.green;
+          break;
+        }
+      }
+
+      exchange = "CCCAGG";
       setState(() {
+        _exchangeController.text = "Aggregated";
         symbolTextColor = Colors.green;
       });
+
     } else {
       symbol = null;
       exchangesList = null;
+      exchange = null;
+      _exchangeController.text = "";
+      price = null;
+      _priceController.text = "";
       setState(() {
         symbolTextColor = Colors.red;
       });
@@ -183,21 +202,32 @@ class TransactionSheetState extends State<TransactionSheet> {
   }
 
   _handleSave() {
-    
+    if (symbol != null && quantity != null && exchange != null && price != null) {
+      print("WRITING TO JSON...");
+
+
+
+    }
   }
 
   Future<Null> _getMarketData() async {
-    var response = await http.get(
-        Uri.encodeFull("https://api.coinmarketcap.com/v2/ticker"),
-        headers: {"Accept": "application/json"}
-    );
-
-    Map rawMarketListData = new JsonDecoder().convert(response.body)["data"];
-
     marketListData = [];
-    rawMarketListData.forEach((key, value) => marketListData.add(value));
 
-    print(marketListData);
+    for (int i = 0; i <= 4; i++) {
+      int start = i * 100 + 1;
+      int limit = i * 100 + 100;
+
+      var response = await http.get(
+          Uri.encodeFull("https://api.coinmarketcap.com/v2/ticker/" +
+              "?start=" + start.toString() +
+              "&limit=" + limit.toString()),
+          headers: {"Accept": "application/json"}
+      );
+
+      Map rawMarketListData = new JsonDecoder().convert(response.body)["data"];
+      rawMarketListData.forEach((key, value) => marketListData.add(value));
+
+    }
   }
 
   Future<Null> _getExchangeList() async {
@@ -206,11 +236,12 @@ class TransactionSheetState extends State<TransactionSheet> {
         headers: {"Accept": "application/json"}
     );
 
-    List exchangeData = new JsonDecoder().convert(response.body)["Data"];
-
     exchangesList = [];
+
+    List exchangeData = new JsonDecoder().convert(response.body)["Data"];
     exchangeData.forEach((value) => exchangesList.add(value["exchange"]));
 
+    print("exchanges:");
     print(exchangesList);
   }
 
@@ -226,7 +257,7 @@ class TransactionSheetState extends State<TransactionSheet> {
     ThemeData overrideTheme = new ThemeData(
       brightness: Theme.of(context).brightness,
       primaryColor: Theme.of(context).buttonColor,
-      accentColor: Theme.of(context).accentColor,
+      accentColor: Theme.of(context).buttonColor,
       hintColor: Theme.of(context).hintColor,
       unselectedWidgetColor: Theme.of(context).unselectedWidgetColor,
       canvasColor: Theme.of(context).canvasColor,
@@ -264,7 +295,7 @@ class TransactionSheetState extends State<TransactionSheet> {
                               + "/" + pickedDate.day.toString()
                               + "/" + pickedDate.year.toString().substring(2)
                           ),
-                          textColor: Theme.of(context).accentColor,
+                          textColor: Theme.of(context).buttonColor,
                         ),
 
                         new FlatButton(
@@ -274,7 +305,7 @@ class TransactionSheetState extends State<TransactionSheet> {
                                   (pickedTime.minute > 9 ? pickedTime.minute.toString() : "0" + pickedTime.minute.toString())
                                   + (pickedTime.hour >= 12 ? "PM" : "AM")
                           ),
-                          textColor: Theme.of(context).accentColor,
+                          textColor: Theme.of(context).buttonColor,
                         )
                       ],
                     )
@@ -323,7 +354,7 @@ class TransactionSheetState extends State<TransactionSheet> {
                               value: "CCCAGG",
                             ),
                           ];
-                          if (exchangesList != null) {
+                          if (exchangesList != null && exchangesList.isEmpty != true) {
                             options.add(new PopupMenuDivider());
                             exchangesList.forEach((exchange) => options.add(
                                 new PopupMenuItem(
@@ -337,7 +368,11 @@ class TransactionSheetState extends State<TransactionSheet> {
                         onSelected: (selected) {
                           setState(() {
                             exchange = selected;
-                            _exchangeController.text = selected;
+                            if (selected == "CCCAGG") {
+                              _exchangeController.text = "Aggregated";
+                            } else {
+                              _exchangeController.text = selected;
+                            }
                           });
                         },
                         child: new TextField(
@@ -401,12 +436,7 @@ class PortfolioPageState extends State<PortfolioPage> {
 
   List<Map> portfolioList;
 
-  void writeToLocal() {
-
-  }
-
-  void initState() {
-    super.initState();
+  _loadProfile() async {
     getApplicationDocumentsDirectory().then((Directory directory) {
       File jsonFile = new File(directory.path + "/portfolio.json");
 //      jsonFile.delete();
@@ -419,7 +449,11 @@ class PortfolioPageState extends State<PortfolioPage> {
       }
       print("contents: " + portfolioList.toString());
     });
+  }
 
+  void initState() {
+    super.initState();
+    _loadProfile();
   }
 
 
