@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 
 import 'main.dart';
 import 'portfolio_page.dart';
+import 'portfolio/transaction_sheet.dart';
 import 'market_page.dart';
 
 class Tabs extends StatefulWidget {
@@ -34,6 +35,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   int _tabIndex = 0;
 
   Map portfolioMap;
+  List portfolioTotalsList;
 
   bool isSearching = false;
   String filter;
@@ -85,7 +87,32 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
       }
 
       print("loaded contents: " + portfolioMap.toString());
+
+      _makeTotals();
+      setState(() {});
     });
+  }
+
+  _makeTotals() {
+    portfolioTotalsList = [];
+
+    if (portfolioMap != null) {
+      portfolioMap.forEach((coin, transactions) {
+        num quantityTotal = 0;
+
+        transactions.forEach((value) {
+          quantityTotal += value["quantity"];
+        });
+
+        portfolioTotalsList.add({
+          "symbol":coin,
+          "total_quantity":quantityTotal
+        });
+
+      });
+    }
+
+    print(portfolioTotalsList);
   }
 
   @override
@@ -113,7 +140,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
 
   final PageStorageKey _marketKey = new PageStorageKey("market");
   final PageStorageKey _portfolioKey = new PageStorageKey("portfolio");
-  final PageStorageKey _portfolioKey2 = new PageStorageKey("portfolio2");
 
   ScrollController _scrollController = new ScrollController();
 
@@ -122,7 +148,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
 
-    print("built tabs");
+    print("[T] built tabs");
 
     return new Scaffold(
       key: _scaffoldKey,
@@ -254,7 +280,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           body: new TabBarView(
             controller: _tabController,
             children: <Widget>[
-              new PortfolioPage(portfolioMap, key: _portfolioKey),
+              new PortfolioPage(portfolioMap, portfolioTotalsList, key: _portfolioKey),
               new MarketPage(filter, isSearching, key: _marketKey),
               new Container(),
             ],

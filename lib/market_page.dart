@@ -39,9 +39,7 @@ class MarketPageState extends State<MarketPage> {
         headers: {"Accept": "application/json"}
     );
 
-    setState(() {
-      globalData = new JsonDecoder().convert(response.body)["data"]["quotes"]["USD"];
-    });
+    globalData = new JsonDecoder().convert(response.body)["data"]["quotes"]["USD"];
   }
 
   Future<Null> getMarketData() async {
@@ -54,13 +52,20 @@ class MarketPageState extends State<MarketPage> {
 
     marketListData = rawMarketListData.values.toList();
     filteredMarketData = marketListData;
-
-    setState(() {});
   }
 
   Future<Null> refreshData() async {
-    getGlobalData();
-    getMarketData();
+    await getGlobalData();
+    await getMarketData();
+    setState(() {});
+  }
+  Future<Null> refreshGlobalData() async {
+    await getGlobalData();
+    setState(() {});
+  }
+  Future<Null> refreshMarketData() async {
+    await getMarketData();
+    setState(() {});
   }
 
   filterMarketData() {
@@ -82,13 +87,8 @@ class MarketPageState extends State<MarketPage> {
   void initState() {
     print("INIT MARKETS");
     super.initState();
-
-    if (marketListData == null) {
-      getMarketData();
-    }
-    if (globalData == null) {
-      getGlobalData();
-    }
+    if (marketListData == null) {refreshMarketData();}
+    if (globalData == null) {refreshGlobalData();}
   }
 
   @override
@@ -99,7 +99,7 @@ class MarketPageState extends State<MarketPage> {
   @override
   Widget build(BuildContext context) {
 
-    print("built markets & filtered***");
+    print("[M] built market page");
     filterMarketData();
     
     return filteredMarketData != null && globalData != null ? new RefreshIndicator(
