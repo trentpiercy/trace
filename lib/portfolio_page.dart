@@ -211,16 +211,25 @@ class TransactionSheetState extends State<TransactionSheet> {
       getApplicationDocumentsDirectory().then((Directory directory) {
         File jsonFile = new File(directory.path + "/portfolio.json");
         if (jsonFile.existsSync()) {
+          if (radioValue == 1) {
+            quantity = -quantity;
+          }
+
           Map newEntry = {
-            "symbol":symbol,
             "quantity":quantity,
             "price_usd":price,
             "exchange":exchange,
             "time_epoch":epochDate,
           };
 
-          List jsonContent = json.decode(jsonFile.readAsStringSync());
-          jsonContent.add(newEntry);
+          Map jsonContent = json.decode(jsonFile.readAsStringSync());
+
+          if (jsonContent[symbol] != null) {
+            jsonContent[symbol].add(newEntry);
+          } else {
+            jsonContent[symbol] = [];
+            jsonContent[symbol].add(newEntry);
+          }
 
           jsonFile.writeAsStringSync(json.encode(jsonContent));
 
@@ -235,7 +244,7 @@ class TransactionSheetState extends State<TransactionSheet> {
                 action: new SnackBarAction(
                   label: "Undo",
                   onPressed: () {
-                    jsonContent.removeLast();
+                    jsonContent[symbol].removeLast();
                     jsonFile.writeAsStringSync(json.encode(jsonContent));
 
                     print("UNDID");
@@ -318,7 +327,7 @@ class TransactionSheetState extends State<TransactionSheet> {
           border: new Border(top: new BorderSide(color: Theme.of(context).dividerColor)),
           color: Theme.of(context).primaryColor,
         ),
-        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 20.0, left: 20.0),
+        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
         child: new Theme(
             data: overrideTheme,
             child: new Column(
@@ -326,44 +335,46 @@ class TransactionSheetState extends State<TransactionSheet> {
               children: <Widget>[
                 new Text("Add Transaction", style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2)),
                 new Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    new Row(
-                      children: <Widget>[
-                        new Text("Buy", style: Theme.of(context).textTheme.caption),
-                        new Radio(value: 0, groupValue: radioValue, onChanged: _handleRadioValueChange),
-                        new Text("Sell", style: Theme.of(context).textTheme.caption),
-                        new Radio(value: 1, groupValue: radioValue, onChanged: _handleRadioValueChange),
-                      ],
+                    new Text("Buy", style: Theme.of(context).textTheme.caption),
+                    new Radio(value: 0, groupValue: radioValue, onChanged: _handleRadioValueChange),
+                    new Text("Sell", style: Theme.of(context).textTheme.caption),
+                    new Radio(value: 1, groupValue: radioValue, onChanged: _handleRadioValueChange),
+
+                    new Padding(padding: const EdgeInsets.symmetric(horizontal: 2.0)),
+                    new GestureDetector(
+                      onTap: () => _selectDate(),
+                      child: new Text(
+                          pickedDate.month.toString()
+                              + "/" + pickedDate.day.toString()
+                              + "/" + pickedDate.year.toString().substring(2),
+                          style: Theme.of(context).textTheme.button
+                      ),
                     ),
 
-                    new Row(
-                      children: <Widget>[
-                        new FlatButton(
-                          onPressed: () => _selectDate(),
-                          child: new Text(pickedDate.month.toString()
-                              + "/" + pickedDate.day.toString()
-                              + "/" + pickedDate.year.toString().substring(2)
-                          ),
-                          textColor: Theme.of(context).buttonColor,
-                        ),
+                    new Padding(padding: const EdgeInsets.symmetric(horizontal: 4.0)),
 
-                        new FlatButton(
-                          onPressed: () => _selectTime(),
-                          child: new Text(
-                              (pickedTime.hourOfPeriod == 0 ? "12" : pickedTime.hourOfPeriod.toString()) + ":" +
-                                  (pickedTime.minute > 9 ? pickedTime.minute.toString() : "0" + pickedTime.minute.toString())
-                                  + (pickedTime.hour >= 12 ? "PM" : "AM")
-                          ),
-                          textColor: Theme.of(context).buttonColor,
-                        )
-                      ],
-                    )
+                    new GestureDetector(
+                      onTap: () => _selectTime(),
+                      child: new Text(
+                        (pickedTime.hourOfPeriod == 0 ? "12" : pickedTime.hourOfPeriod.toString()) + ":" +
+                            (pickedTime.minute > 9 ? pickedTime.minute.toString() : "0" + pickedTime.minute.toString())
+                            + (pickedTime.hour >= 12 ? "PM" : "AM"),
+                        style: Theme.of(context).textTheme.button,
+                      ),
+                    ),
+
+                    new Padding(padding: const EdgeInsets.symmetric(horizontal: 6.0)),
 
                   ],
                 ),
                 new Row(
                   children: <Widget>[
-                    new Flexible(
+                    new Padding(padding: const EdgeInsets.only(left: 16.0)),
+                    new Container(
+                      width: MediaQuery.of(context).size.width * 0.15,
+                      padding: const EdgeInsets.only(right: 4.0),
                       child: new TextField(
                         controller: _symbolController,
                         onChanged: _checkValidSymbol,
@@ -375,26 +386,9 @@ class TransactionSheetState extends State<TransactionSheet> {
                         ),
                       ),
                     ),
-                    new Flexible(
-                        child: new TextField(
-                          controller: _quantityController,
-                          onChanged: _checkValidQuantity,
-                          style: Theme.of(context).textTheme.body2.apply(color: quantityTextColor),
-                          keyboardType: TextInputType.number,
-                          decoration: new InputDecoration(
-                            border: InputBorder.none,
-                            labelText: "Quantity",
-                            hintText: "9.876",
-                          ),
-                        )
-                    ),
-                  ],
-                ),
-//            new Padding(padding: const EdgeInsets.symmetric(vertical: 2.0)),
-                new Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    new Flexible(
+                    new Container(
+                      width: MediaQuery.of(context).size.width * 0.22,
+                      padding: const EdgeInsets.only(right: 4.0),
                       child: new PopupMenuButton(
                         itemBuilder: (BuildContext context) {
                           List<PopupMenuEntry<dynamic>> options = [
@@ -429,42 +423,63 @@ class TransactionSheetState extends State<TransactionSheet> {
                           controller: _exchangeController,
                           style: Theme.of(context).textTheme.body2.apply(color: validColor),
                           decoration: new InputDecoration(
-                            labelText: "Exchange",
-                            border: InputBorder.none,
-                            labelStyle: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)
+                              labelText: "Exchange",
+                              border: InputBorder.none,
+                              labelStyle: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)
+                          ),
+                        ),
+                      ),
+                    ),
+                    new Container(
+                      width: MediaQuery.of(context).size.width * 0.15,
+                      padding: const EdgeInsets.only(right: 4.0),
+                      child: new TextField(
+                        controller: _quantityController,
+                        onChanged: _checkValidQuantity,
+                        style: Theme.of(context).textTheme.body2.apply(color: quantityTextColor),
+                        keyboardType: TextInputType.number,
+                        decoration: new InputDecoration(
+                          border: InputBorder.none,
+                          labelText: "Quantity",
+                          hintText: "9.876",
+                        ),
+                      ),
+                    ),
+                    new Flexible(
+                      child: new Container(
+                        padding: const EdgeInsets.only(right: 4.0),
+                        child: new TextField(
+                          controller: _priceController,
+                          onChanged: _checkValidPrice,
+                          style: Theme.of(context).textTheme.body2.apply(color: priceTextColor),
+                          keyboardType: TextInputType.number,
+                          decoration: new InputDecoration(
+                              labelText: "Price",
+                              border: InputBorder.none,
+                              hintText: "Price (USD)",
+                              prefixText: "\$",
+                              prefixStyle: Theme.of(context).textTheme.body2.apply(color: priceTextColor)
                           ),
                         ),
                       )
                     ),
-                    new Flexible(
-                      child: new TextField(
-                        controller: _priceController,
-                        onChanged: _checkValidPrice,
-                        style: Theme.of(context).textTheme.body2.apply(color: priceTextColor),
-                        keyboardType: TextInputType.number,
-                        decoration: new InputDecoration(
-                            labelText: "Price",
-                            border: InputBorder.none,
-                            hintText: "Price (USD)",
-                            prefixText: "\$",
-                            prefixStyle: Theme.of(context).textTheme.body2.apply(color: priceTextColor)
-                        ),
+
+                    new Container(
+                      padding: const EdgeInsets.only(right: 16.0),
+                      child: new FloatingActionButton(
+                          child: Icon(Icons.check),
+                          elevation: symbol != null && quantity != null && exchange != null && price != null ?
+                          6.0 : 0.0,
+                          backgroundColor:
+                          symbol != null && quantity != null && exchange != null && price != null ?
+                          Colors.green : Theme.of(context).disabledColor,
+                          foregroundColor: Theme.of(context).iconTheme.color,
+                          onPressed: _handleSave
                       ),
-                    ),
+                    )
+
                   ],
                 ),
-                new Padding(padding: const EdgeInsets.symmetric(vertical: 1.0)),
-                new Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    new RaisedButton(
-                      onPressed: symbol != null && quantity != null && exchange != null && price != null ? _handleSave : null,
-                      color: Theme.of(context).buttonColor,
-                      textColor: Colors.white,
-                      child: new Text("Save"),
-                    )
-                  ],
-                )
               ],
             )
         )
@@ -474,19 +489,24 @@ class TransactionSheetState extends State<TransactionSheet> {
 
 
 class PortfolioPage extends StatefulWidget {
-  PortfolioPage(this.portfolioList, {Key key}) : super(key: key);
+  PortfolioPage(this.portfolioMap, {Key key}) : super(key: key);
 
-  final portfolioList;
+  final portfolioMap;
 
   @override
-  PortfolioPageState createState() => new PortfolioPageState(portfolioList);
+  PortfolioPageState createState() => new PortfolioPageState(portfolioMap);
 }
 
 class PortfolioPageState extends State<PortfolioPage> {
-  PortfolioPageState(this.portfolioList);
-  List portfolioList;
-
   final columnProps = [.2,.3,.3];
+
+  PortfolioPageState(this.portfolioList);
+  Map portfolioList;
+  List totalsList;
+
+  _makeTotals() {
+
+  }
 
   void initState() {
     super.initState();

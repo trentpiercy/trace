@@ -13,8 +13,8 @@ class SettingsPageState extends State<SettingsPage>{
   _clearPortfolio() {
     getApplicationDocumentsDirectory().then((Directory directory) {
       File jsonFile = new File(directory.path + "/portfolio.json");
-      print("WIPING PORTFOLIO...");
-      jsonFile.writeAsStringSync("[]");
+      print("DELETING PORTFOLIO...");
+      jsonFile.delete();
     });
   }
 
@@ -39,9 +39,25 @@ class SettingsPageState extends State<SettingsPage>{
             new Container(
               color: Theme.of(context).cardColor,
               child: new ListTile(
-                title: new Text("Clear portfolio"),
+                title: new Text("Delete portfolio file"),
                 leading: new Icon(Icons.delete),
                 onTap: _clearPortfolio,
+              ),
+            ),
+            new Container(
+              color: Theme.of(context).cardColor,
+              child: new ListTile(
+                title: new Text("Import portfolio file"),
+                leading: new Icon(Icons.file_download),
+                onTap: null,
+              ),
+            ),
+            new Container(
+              color: Theme.of(context).cardColor,
+              child: new ListTile(
+                title: new Text("Export portfolio file"),
+                leading: new Icon(Icons.file_upload),
+                onTap: null,
               ),
             ),
           ],

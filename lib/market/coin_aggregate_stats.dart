@@ -23,7 +23,9 @@ Map OHLCVWidthOptions = {
 };
 
 
-//TODO: probably figure out a better way to do this
+//TODO: have tabs handle data
+//TODO: and just clean up all this garbage
+
 Map generalStats;
 
 List historyOHLCV;

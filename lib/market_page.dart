@@ -51,11 +51,8 @@ class MarketPageState extends State<MarketPage> {
     );
 
     Map rawMarketListData = new JsonDecoder().convert(response.body)["data"];
-//    List marketListData = new JsonDecoder().convert(response.body);
 
-    marketListData = [];
-    rawMarketListData.forEach((key, value) => marketListData.add(value));
-
+    marketListData = rawMarketListData.values.toList();
     filteredMarketData = marketListData;
 
     setState(() {});

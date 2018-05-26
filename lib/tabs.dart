@@ -33,7 +33,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   TextEditingController _textController = new TextEditingController();
   int _tabIndex = 0;
 
-  List portfolioList;
+  Map portfolioMap;
 
   bool isSearching = false;
   String filter;
@@ -77,13 +77,14 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
       File jsonFile = new File(directory.path + "/portfolio.json");
       if (jsonFile.existsSync()) {
         print("file exists");
-        portfolioList = json.decode(jsonFile.readAsStringSync());
+        portfolioMap = json.decode(jsonFile.readAsStringSync());
       } else {
         print("creating file");
         jsonFile.createSync();
-        jsonFile.writeAsStringSync("[]");
+        jsonFile.writeAsStringSync("{}");
       }
-      print("contents: " + portfolioList.toString());
+
+      print("loaded contents: " + portfolioMap.toString());
     });
   }
 
@@ -253,7 +254,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           body: new TabBarView(
             controller: _tabController,
             children: <Widget>[
-              new PortfolioPage(portfolioList, key: _portfolioKey),
+              new PortfolioPage(portfolioMap, key: _portfolioKey),
               new MarketPage(filter, isSearching, key: _marketKey),
               new Container(),
             ],
