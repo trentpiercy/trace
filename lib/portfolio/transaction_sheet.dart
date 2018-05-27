@@ -137,7 +137,7 @@ class TransactionSheetState extends State<TransactionSheet> {
 
   _checkValidSymbol(String inputSymbol) async {
     if (marketListData == null) {
-      await _getMarketData();
+      await getMarketData();
     }
     if (symbolList == null) {
       symbolList = [];
@@ -261,26 +261,6 @@ class TransactionSheetState extends State<TransactionSheet> {
     }
   }
 
-  Future<Null> _getMarketData() async {
-    marketListData = [];
-
-    for (int i = 0; i <= 4; i++) {
-      int start = i * 100 + 1;
-      int limit = i * 100 + 100;
-
-      var response = await http.get(
-          Uri.encodeFull("https://api.coinmarketcap.com/v2/ticker/" +
-              "?start=" + start.toString() +
-              "&limit=" + limit.toString()),
-          headers: {"Accept": "application/json"}
-      );
-
-      Map rawMarketListData = new JsonDecoder().convert(response.body)["data"];
-      rawMarketListData.forEach((key, value) => marketListData.add(value));
-
-    }
-  }
-
   Future<Null> _getExchangeList() async {
     var response = await http.get(
         Uri.encodeFull("https://min-api.cryptocompare.com/data/top/exchanges?fsym="+symbol+"&tsym=USD&limit=100"),
@@ -300,7 +280,7 @@ class TransactionSheetState extends State<TransactionSheet> {
   void initState() {
     super.initState();
     if (marketListData == null) {
-      _getMarketData();
+      getMarketData();
     }
     _makeEpoch();
 
