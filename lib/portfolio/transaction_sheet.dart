@@ -5,6 +5,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
+import 'package:trace/market_page.dart';
+
 class PortfolioFAB extends StatefulWidget {
   PortfolioFAB(this.scaffoldKey);
   final GlobalKey<ScaffoldState> scaffoldKey;
@@ -72,7 +74,6 @@ class TransactionSheetState extends State<TransactionSheet> {
   TimeOfDay pickedTime = new TimeOfDay.now();
   int epochDate;
 
-  List marketListData;
   List symbolList;
   Color symbolTextColor;
   String symbol;
@@ -257,9 +258,6 @@ class TransactionSheetState extends State<TransactionSheet> {
           print("FAILED - file does not exist");
         }
       });
-
-
-
     }
   }
 
@@ -301,7 +299,9 @@ class TransactionSheetState extends State<TransactionSheet> {
   @override
   void initState() {
     super.initState();
-    _getMarketData();
+    if (marketListData == null) {
+      _getMarketData();
+    }
     _makeEpoch();
 
     symbolTextColor = errorColor;
@@ -377,6 +377,8 @@ class TransactionSheetState extends State<TransactionSheet> {
                       padding: const EdgeInsets.only(right: 4.0),
                       child: new TextField(
                         controller: _symbolController,
+                        autofocus: true,
+                        autocorrect: false,
                         onChanged: _checkValidSymbol,
                         style: Theme.of(context).textTheme.body2.apply(color: symbolTextColor),
                         decoration: new InputDecoration(
@@ -435,6 +437,7 @@ class TransactionSheetState extends State<TransactionSheet> {
                       padding: const EdgeInsets.only(right: 4.0),
                       child: new TextField(
                         controller: _quantityController,
+                        autocorrect: false,
                         onChanged: _checkValidQuantity,
                         style: Theme.of(context).textTheme.body2.apply(color: quantityTextColor),
                         keyboardType: TextInputType.number,
@@ -450,6 +453,7 @@ class TransactionSheetState extends State<TransactionSheet> {
                           padding: const EdgeInsets.only(right: 4.0),
                           child: new TextField(
                             controller: _priceController,
+                            autocorrect: false,
                             onChanged: _checkValidPrice,
                             style: Theme.of(context).textTheme.body2.apply(color: priceTextColor),
                             keyboardType: TextInputType.number,

@@ -33,7 +33,7 @@ class MarketPageState extends State<MarketPage> {
 
   int limit = 500;
 
-  Future<Null> getGlobalData() async {
+  Future<Null> _getGlobalData() async {
     var response = await http.get(
         Uri.encodeFull("https://api.coinmarketcap.com/v2/global/"),
         headers: {"Accept": "application/json"}
@@ -42,33 +42,43 @@ class MarketPageState extends State<MarketPage> {
     globalData = new JsonDecoder().convert(response.body)["data"]["quotes"]["USD"];
   }
 
-  Future<Null> getMarketData() async {
-    var response = await http.get(
-        Uri.encodeFull("https://api.coinmarketcap.com/v2/ticker/?limit="+limit.toString()),
-        headers: {"Accept": "application/json"}
-    );
+  Future<Null> _getMarketData() async {
+    marketListData = [];
+    for (int i = 0; i <= 4; i++) {
+      int start = i * 100 + 1;
+      int limit = i * 100 + 100;
 
-    Map rawMarketListData = new JsonDecoder().convert(response.body)["data"];
+      var response = await http.get(
+          Uri.encodeFull("https://api.coinmarketcap.com/v2/ticker/" +
+              "?start=" + start.toString() +
+              "&limit=" + limit.toString()),
+          headers: {"Accept": "application/json"}
+      );
 
-    marketListData = rawMarketListData.values.toList();
+      Map rawMarketListData = new JsonDecoder().convert(response.body)["data"];
+      rawMarketListData.forEach((key, value) => marketListData.add(value));
+
+    }
+
     filteredMarketData = marketListData;
+
   }
 
-  Future<Null> refreshData() async {
-    await getGlobalData();
-    await getMarketData();
+  Future<Null> _refreshData() async {
+    await _getGlobalData();
+    await _getMarketData();
     setState(() {});
   }
-  Future<Null> refreshGlobalData() async {
-    await getGlobalData();
+  Future<Null> _refreshGlobalData() async {
+    await _getGlobalData();
     setState(() {});
   }
-  Future<Null> refreshMarketData() async {
-    await getMarketData();
+  Future<Null> _refreshMarketData() async {
+    await _getMarketData();
     setState(() {});
   }
 
-  filterMarketData() {
+  _filterMarketData() {
     if (widget.filter == "" || widget.filter == null) {
       filteredMarketData = marketListData;
     } else {
@@ -87,8 +97,8 @@ class MarketPageState extends State<MarketPage> {
   void initState() {
     print("INIT MARKETS");
     super.initState();
-    if (marketListData == null) {refreshMarketData();}
-    if (globalData == null) {refreshGlobalData();}
+    if (marketListData == null) {_refreshMarketData();}
+    if (globalData == null) {_refreshGlobalData();}
   }
 
   @override
@@ -100,10 +110,10 @@ class MarketPageState extends State<MarketPage> {
   Widget build(BuildContext context) {
 
     print("[M] built market page");
-    filterMarketData();
+    _filterMarketData();
     
     return filteredMarketData != null && globalData != null ? new RefreshIndicator(
-        onRefresh: () => refreshData(),
+        onRefresh: () => _refreshData(),
         child: new CustomScrollView(
           slivers: <Widget>[
             widget.isSearching != true ? new SliverList(

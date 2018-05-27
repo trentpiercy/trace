@@ -19,30 +19,41 @@ class PortfolioPageState extends State<PortfolioPage> {
   final columnProps = [.2,.3,.3];
 
   int limit = 500;
-  Future<Null> getMarketData() async {
-    var response = await http.get(
-        Uri.encodeFull("https://api.coinmarketcap.com/v2/ticker/?limit="+limit.toString()),
-        headers: {"Accept": "application/json"}
-    );
+  Future<Null> _getMarketData() async {
+    marketListData = [];
 
-    Map rawMarketListData = new JsonDecoder().convert(response.body)["data"];
+    for (int i = 0; i <= 4; i++) {
+      int start = i * 100 + 1;
+      int limit = i * 100 + 100;
 
-    marketListData = rawMarketListData.values.toList();
+      var response = await http.get(
+          Uri.encodeFull("https://api.coinmarketcap.com/v2/ticker/" +
+              "?start=" + start.toString() +
+              "&limit=" + limit.toString()),
+          headers: {"Accept": "application/json"}
+      );
+
+      Map rawMarketListData = new JsonDecoder().convert(response.body)["data"];
+      rawMarketListData.forEach((key, value) => marketListData.add(value));
+
+    }
   }
 
-  Future<Null> refreshMarketData() async {
-    await getMarketData();
+  Future<Null> _refreshMarketData() async {
+    await _getMarketData();
     setState(() {});
   }
 
 
-
-
+  // func to make list<Map> of vars to display in portfolio list view
+  _makeDisplayList() {
+    
+  }
 
   void initState() {
     super.initState();
     print("INIT PORTFOLIO");
-    if (marketListData == null) {refreshMarketData();}
+    if (marketListData == null) {_refreshMarketData();}
   }
 
 
