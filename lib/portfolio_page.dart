@@ -8,14 +8,14 @@ class PortfolioPage extends StatefulWidget {
   PortfolioPage(
       this.portfolioMap,
       this.portfolioDisplay,
-      this.totalPortfolioValue,
+      this.totalPortfolioStats,
       this.makePortfolioDisplayList,
       {Key key}
   ) : super(key: key);
 
   final Map portfolioMap;
   final List portfolioDisplay;
-  final num totalPortfolioValue;
+  final Map totalPortfolioStats;
 
   final Function makePortfolioDisplayList;
 
@@ -43,7 +43,7 @@ class PortfolioPageState extends State<PortfolioPage> {
 
     return new RefreshIndicator(
       onRefresh: _refresh,
-      child: new CustomScrollView(
+      child: widget.totalPortfolioStats != null ? new CustomScrollView(
         slivers: <Widget>[
           new SliverList(
               delegate: new SliverChildListDelegate(<Widget>[
@@ -57,16 +57,21 @@ class PortfolioPageState extends State<PortfolioPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           new Text("Total Portfolio Value", style: Theme.of(context).textTheme.caption),
-                          new Text("\$"+ (widget.totalPortfolioValue != null ? widget.totalPortfolioValue.toStringAsFixed(2) : "0"),
+                          new Text("\$"+ widget.totalPortfolioStats["value_usd"].toStringAsFixed(2),
                               style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)
                           ),
                         ],
                       ),
-                      new Row(
+                      new Column(
                         children: <Widget>[
                           new Text("24h", style: Theme.of(context).textTheme.caption),
-                          new Padding(padding: const EdgeInsets.symmetric(horizontal: 2.0)),
-                          new Text("+99%", style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2)),
+                          new Text(
+                              widget.totalPortfolioStats["percent_change_24h"] >= 0 ? "+"+widget.totalPortfolioStats["percent_change_24h"].toStringAsFixed(2)+"%" : widget.totalPortfolioStats["percent_change_24h"].toStringAsFixed(2)+"%",
+                              style: Theme.of(context).primaryTextTheme.body2.apply(
+                                color: widget.totalPortfolioStats["percent_change_24h"] >= 0 ? Colors.green : Colors.red,
+                                fontSizeFactor: 1.6
+                              )
+                          )
                         ],
                       )
                     ],
@@ -109,7 +114,9 @@ class PortfolioPageState extends State<PortfolioPage> {
           ))
 
         ],
-      ),
+      ) : new Container(
+        child: new Center(child: new CircularProgressIndicator()),
+      )
     );
   }
 }

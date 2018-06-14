@@ -37,6 +37,8 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   Map portfolioMap;
   List portfolioDisplay;
   num totalPortfolioValue;
+  num total24hChange;
+  Map totalPortfolioStats;
 
   bool isSearching = false;
   String filter;
@@ -126,6 +128,19 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
 
       }
     });
+
+
+    total24hChange = 0;
+    portfolioDisplay.forEach((coin) {
+      total24hChange += (
+        coin["percent_change_24h"]*((coin["price_usd"]*coin["total_quantity"])/totalPortfolioValue)
+      );
+    });
+
+    totalPortfolioStats = {
+      "value_usd": totalPortfolioValue,
+      "percent_change_24h": total24hChange
+    };
 
     print("display list: " + portfolioDisplay.toString());
   }
@@ -295,7 +310,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           body: new TabBarView(
             controller: _tabController,
             children: <Widget>[
-              new PortfolioPage(portfolioMap, portfolioDisplay, totalPortfolioValue, _loadProfileJson, key: _portfolioKey),
+              new PortfolioPage(portfolioMap, portfolioDisplay, totalPortfolioStats, _loadProfileJson, key: _portfolioKey),
               new MarketPage(filter, isSearching, key: _marketKey),
               new Container(),
             ],
