@@ -8,8 +8,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:trace/market_page.dart';
 
 class PortfolioFAB extends StatefulWidget {
-  PortfolioFAB(this.scaffoldKey);
+  PortfolioFAB(this.scaffoldKey, this.makePortfolioDisplayList);
   final GlobalKey<ScaffoldState> scaffoldKey;
+  final Function makePortfolioDisplayList;
 
   PortfolioFABState createState() => new PortfolioFABState();
 }
@@ -24,7 +25,7 @@ class PortfolioFABState extends State<PortfolioFAB> {
       sheetOpen = true;
     });
     widget.scaffoldKey.currentState.showBottomSheet((BuildContext context) {
-      return new TransactionSheet(key: _sheetKey);
+      return new TransactionSheet(widget.makePortfolioDisplayList, key: _sheetKey);
     }).closed.whenComplete(() {
       setState(() {
         sheetOpen = false;
@@ -54,7 +55,8 @@ class PortfolioFABState extends State<PortfolioFAB> {
 }
 
 class TransactionSheet extends StatefulWidget {
-  TransactionSheet({Key key}) : super(key: key);
+  TransactionSheet(this.makePortfolioDisplayList, {Key key}) : super(key: key);
+  final Function makePortfolioDisplayList;
 
   @override
   TransactionSheetState createState() => new TransactionSheetState();
@@ -139,6 +141,7 @@ class TransactionSheetState extends State<TransactionSheet> {
     if (marketListData == null) {
       await getMarketData();
     }
+
     if (symbolList == null) {
       symbolList = [];
       marketListData.forEach((value) => symbolList.add(value["symbol"]));
@@ -205,11 +208,11 @@ class TransactionSheetState extends State<TransactionSheet> {
     }
   }
 
-  _handleSave() {
+  _handleSave() async {
     if (symbol != null && quantity != null && exchange != null && price != null) {
       print("WRITING TO JSON...");
 
-      getApplicationDocumentsDirectory().then((Directory directory) {
+      await getApplicationDocumentsDirectory().then((Directory directory) {
         File jsonFile = new File(directory.path + "/portfolio.json");
         if (jsonFile.existsSync()) {
           if (radioValue == 1) {
@@ -250,6 +253,8 @@ class TransactionSheetState extends State<TransactionSheet> {
 
                     print("UNDID");
                     print(jsonContent);
+
+                    widget.makePortfolioDisplayList();
                   },
                 ),
               )
@@ -258,6 +263,7 @@ class TransactionSheetState extends State<TransactionSheet> {
           print("FAILED - file does not exist");
         }
       });
+      widget.makePortfolioDisplayList();
     }
   }
 
@@ -300,7 +306,7 @@ class TransactionSheetState extends State<TransactionSheet> {
       canvasColor: Theme.of(context).canvasColor,
       cardColor: Theme.of(context).cardColor,
     );
-    validColor = Theme.of(context).buttonColor;
+    validColor = Theme.of(context).textTheme.body2.color;
 
     return new Container(
         decoration: new BoxDecoration(
@@ -362,9 +368,8 @@ class TransactionSheetState extends State<TransactionSheet> {
                         onChanged: _checkValidSymbol,
                         style: Theme.of(context).textTheme.body2.apply(color: symbolTextColor),
                         decoration: new InputDecoration(
-                          labelText: "Symbol",
                           border: InputBorder.none,
-                          hintText: "BTC",
+                          hintText: "Symbol",
                         ),
                       ),
                     ),
@@ -400,20 +405,16 @@ class TransactionSheetState extends State<TransactionSheet> {
                             }
                           });
                         },
-                        child: new TextField(
-                          enabled: false,
-                          controller: _exchangeController,
-                          style: Theme.of(context).textTheme.body2.apply(color: validColor),
-                          decoration: new InputDecoration(
-                              labelText: "Exchange",
-                              border: InputBorder.none,
-                              labelStyle: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)
+                        child: new Text(
+                          _exchangeController.text == "" ? "Exchange" : _exchangeController.text,
+                          style: Theme.of(context).textTheme.body2.apply(color:
+                            _exchangeController.text == "" ? Theme.of(context).hintColor : validColor
                           ),
                         ),
                       ),
                     ),
                     new Container(
-                      width: MediaQuery.of(context).size.width * 0.15,
+                      width: MediaQuery.of(context).size.width * 0.18,
                       padding: const EdgeInsets.only(right: 4.0),
                       child: new TextField(
                         controller: _quantityController,
@@ -423,8 +424,7 @@ class TransactionSheetState extends State<TransactionSheet> {
                         keyboardType: TextInputType.number,
                         decoration: new InputDecoration(
                           border: InputBorder.none,
-                          labelText: "Quantity",
-                          hintText: "9.876",
+                          hintText: "Quantity",
                         ),
                       ),
                     ),
@@ -438,9 +438,8 @@ class TransactionSheetState extends State<TransactionSheet> {
                             style: Theme.of(context).textTheme.body2.apply(color: priceTextColor),
                             keyboardType: TextInputType.number,
                             decoration: new InputDecoration(
-                                labelText: "Price",
                                 border: InputBorder.none,
-                                hintText: "Price (USD)",
+                                hintText: "Price",
                                 prefixText: "\$",
                                 prefixStyle: Theme.of(context).textTheme.body2.apply(color: priceTextColor)
                             ),

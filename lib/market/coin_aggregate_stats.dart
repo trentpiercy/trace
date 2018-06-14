@@ -129,6 +129,18 @@ class AggregateStatsState extends State<AggregateStats> {
 
   final ScrollController _scrollController = new ScrollController();
 
+  _shortenText(input) {
+    String returnString;
+    if (input.toString().length > 7) {
+      returnString = input.toString()[7] != "."
+          ? input.toString().substring(0, 8)
+          : input.toString().substring(0, 7);
+    } else {
+      returnString = input.toString();
+    }
+    return returnString;
+  }
+
   Future<Null> getGeneralStats() async {
     var response = await http.get(
         Uri.encodeFull("https://api.coinmarketcap.com/v2/ticker/"+ snapshot["id"].toString()),
@@ -179,9 +191,8 @@ class AggregateStatsState extends State<AggregateStats> {
       }
     }
 
-    _high = highReturn.toStringAsFixed(2);
-    _low = lowReturn.toStringAsFixed(2);
-
+    _high = _shortenText(highReturn);
+    _low = _shortenText(lowReturn);
 
     var start = historyOHLCV[0]["open"] == 0 ? 1 : historyOHLCV[0]["open"];
     var end = historyOHLCV.last["close"];

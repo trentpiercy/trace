@@ -35,7 +35,8 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   int _tabIndex = 0;
 
   Map portfolioMap;
-  List portfolioTotalsList;
+  List portfolioDisplay;
+  num totalPortfolioValue;
 
   bool isSearching = false;
   String filter;
@@ -75,7 +76,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   }
 
   _loadProfileJson() async {
-    getApplicationDocumentsDirectory().then((Directory directory) {
+    await getApplicationDocumentsDirectory().then((Directory directory) async {
       File jsonFile = new File(directory.path + "/portfolio.json");
       if (jsonFile.existsSync()) {
         print("file exists");
@@ -86,33 +87,47 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         jsonFile.writeAsStringSync("{}");
       }
 
-      print("loaded contents: " + portfolioMap.toString());
+      if (marketListData == null) {
+        await getMarketData();
+      }
 
-      _makeTotals();
-      setState(() {});
+      print("loaded contents: " + portfolioMap.toString());
     });
+
+    _makePortfolioDisplayList();
+    setState(() {});
   }
 
-  _makeTotals() {
-    portfolioTotalsList = [];
+  _makePortfolioDisplayList() async {
+    Map portfolioTotals = {};
+    List neededPriceSymbols = [];
 
-    if (portfolioMap != null) {
-      portfolioMap.forEach((coin, transactions) {
-        num quantityTotal = 0;
-
-        transactions.forEach((value) {
-          quantityTotal += value["quantity"];
-        });
-
-        portfolioTotalsList.add({
-          "symbol":coin,
-          "total_quantity":quantityTotal
-        });
-
+    portfolioMap.forEach((coin, transactions) {
+      num quantityTotal = 0;
+      transactions.forEach((value) {
+        quantityTotal += value["quantity"];
       });
-    }
+      portfolioTotals[coin] = quantityTotal;
+      neededPriceSymbols.add(coin);
+    });
 
-    print(portfolioTotalsList);
+    portfolioDisplay = [];
+    totalPortfolioValue = 0;
+    marketListData.forEach((coin) {
+      if (neededPriceSymbols.contains(coin["symbol"])) {
+        portfolioDisplay.add({
+          "symbol": coin["symbol"],
+          "price_usd": coin["quotes"]["USD"]["price"],
+          "percent_change_24h": coin["quotes"]["USD"]["percent_change_24h"],
+          "total_quantity": portfolioTotals[coin["symbol"]],
+        });
+
+        totalPortfolioValue += (portfolioTotals[coin["symbol"]]*coin["quotes"]["USD"]["price"]);
+
+      }
+    });
+
+    print("display list: " + portfolioDisplay.toString());
   }
 
   @override
@@ -203,7 +218,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
 //          null,
 //          null
 //        ][_tabIndex],
-        floatingActionButton: new PortfolioFAB(_scaffoldKey),
+        floatingActionButton: new PortfolioFAB(_scaffoldKey, _loadProfileJson),
 
         body: new NestedScrollView(
           controller: _scrollController,
@@ -280,7 +295,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           body: new TabBarView(
             controller: _tabController,
             children: <Widget>[
-              new PortfolioPage(portfolioMap, portfolioTotalsList, key: _portfolioKey),
+              new PortfolioPage(portfolioMap, portfolioDisplay, totalPortfolioValue, _loadProfileJson, key: _portfolioKey),
               new MarketPage(filter, isSearching, key: _marketKey),
               new Container(),
             ],

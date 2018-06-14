@@ -292,4 +292,3 @@ class CoinListItem extends StatelessWidget {
     );
   }
 }
-

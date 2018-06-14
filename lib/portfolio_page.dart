@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:trace/main.dart';
 import 'dart:async';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 
 import 'market_page.dart';
 
 class PortfolioPage extends StatefulWidget {
-  PortfolioPage(this.portfolioMap, this.totalsList, {Key key}) : super(key: key);
+  PortfolioPage(
+      this.portfolioMap,
+      this.portfolioDisplay,
+      this.totalPortfolioValue,
+      this.makePortfolioDisplayList,
+      {Key key}
+  ) : super(key: key);
 
   final Map portfolioMap;
-  final List totalsList;
+  final List portfolioDisplay;
+  final num totalPortfolioValue;
+
+  final Function makePortfolioDisplayList;
 
   @override
   PortfolioPageState createState() => new PortfolioPageState();
@@ -18,21 +26,13 @@ class PortfolioPage extends StatefulWidget {
 class PortfolioPageState extends State<PortfolioPage> {
   final columnProps = [.2,.3,.3];
 
-  Future<Null> _refreshMarketData() async {
-    await getMarketData();
-    setState(() {});
-  }
-
-
-  // func to make list<Map> of vars to display in portfolio list view
-  _makeDisplayList() {
-    
+  Future<Null> _refresh() async {
+    widget.makePortfolioDisplayList();
   }
 
   void initState() {
     super.initState();
     print("INIT PORTFOLIO");
-    if (marketListData == null) {_refreshMarketData();}
   }
 
 
@@ -41,7 +41,9 @@ class PortfolioPageState extends State<PortfolioPage> {
 
     print("[P] built portfolio page");
 
-    return new CustomScrollView(
+    return new RefreshIndicator(
+      onRefresh: _refresh,
+      child: new CustomScrollView(
         slivers: <Widget>[
           new SliverList(
               delegate: new SliverChildListDelegate(<Widget>[
@@ -55,7 +57,9 @@ class PortfolioPageState extends State<PortfolioPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           new Text("Total Portfolio Value", style: Theme.of(context).textTheme.caption),
-                          new Text("\$"+"VALUE", style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)),
+                          new Text("\$"+ (widget.totalPortfolioValue != null ? widget.totalPortfolioValue.toStringAsFixed(2) : "0"),
+                              style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)
+                          ),
                         ],
                       ),
                       new Row(
@@ -85,7 +89,7 @@ class PortfolioPageState extends State<PortfolioPage> {
                       new Container(
                         alignment: Alignment.centerRight,
                         width: MediaQuery.of(context).size.width * columnProps[1],
-                        child: new Text("Holdings/24h", style: Theme.of(context).textTheme.body2),
+                        child: new Text("Holdings", style: Theme.of(context).textTheme.body2),
                       ),
                       new Container(
                         alignment: Alignment.centerRight,
@@ -100,12 +104,98 @@ class PortfolioPageState extends State<PortfolioPage> {
           ),
 
           new SliverList(delegate: new SliverChildBuilderDelegate(
-            (context, index) => new ListTile(
-              title: new Text("placeholder $index"),
-            ))
-          )
+                  (context, index) => new PortfolioListItem(widget.portfolioDisplay[index]),
+              childCount: widget.portfolioDisplay != null ? widget.portfolioDisplay.length : 0
+          ))
 
         ],
+      ),
+    );
+  }
+}
+
+class PortfolioListItem extends StatelessWidget {
+  PortfolioListItem(this.snapshot);
+  final snapshot;
+
+  final columnProps = [.2,.3,.3];
+
+  _getImage() {
+    if (assetImages.contains(snapshot["symbol"].toLowerCase())) {
+      return new Image.asset(
+          "assets/images/" + snapshot["symbol"].toLowerCase() +
+              ".png", height: 28.0);
+
+    } else {
+      return new Container();
+    }
+  }
+
+  _shortenText(input) {
+    String returnString;
+    if (input.toString().length > 7) {
+      returnString = input.toString()[7] != "."
+          ? input.toString().substring(0, 8)
+          : input.toString().substring(0, 7);
+    } else {
+      returnString = input.toString();
+    }
+    return returnString;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new GestureDetector(
+        onTap: () {},
+        child: new Container(
+          decoration: new BoxDecoration(),
+          padding: const EdgeInsets.all(8.0),
+          child: new Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              new Container(
+                width: MediaQuery.of(context).size.width * columnProps[0],
+                child: new Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    _getImage(),
+                    new Padding(padding: const EdgeInsets.only(right: 10.0)),
+                    new Text(snapshot["symbol"], style: Theme.of(context).textTheme.body2),
+                  ],
+                ),
+              ),
+              new Container(
+                  width: MediaQuery.of(context).size.width * columnProps[1],
+                  child: new Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      new Text("\$"+_shortenText(snapshot["total_quantity"]*snapshot["price_usd"]), style: Theme.of(context).textTheme.body2),
+                      new Padding(padding: const EdgeInsets.only(bottom: 4.0)),
+                      new Text(_shortenText(snapshot["total_quantity"]), style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor))
+                    ],
+                  )
+              ),
+              new Container(
+                width: MediaQuery.of(context).size.width * columnProps[2],
+                child: new Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    new Text("\$"+snapshot["price_usd"].toString()),
+                    new Padding(padding: const EdgeInsets.only(bottom: 4.0)),
+                    new Text(
+                        snapshot["percent_change_24h"] >= 0 ? "+"+snapshot["percent_change_24h"].toString()+"%" : snapshot["percent_change_24h"].toString()+"%",
+                        style: Theme.of(context).primaryTextTheme.body1.apply(
+                            color: snapshot["percent_change_24h"] >= 0 ? Colors.green : Colors.red
+                        )
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        )
     );
   }
 }
