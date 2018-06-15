@@ -36,8 +36,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
 
   Map portfolioMap;
   List portfolioDisplay;
-  num totalPortfolioValue;
-  num total24hChange;
   Map totalPortfolioStats;
 
   bool isSearching = false;
@@ -114,32 +112,41 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     });
 
     portfolioDisplay = [];
-    totalPortfolioValue = 0;
+    num totalPortfolioValue = 0;
     marketListData.forEach((coin) {
       if (neededPriceSymbols.contains(coin["symbol"])) {
         portfolioDisplay.add({
           "symbol": coin["symbol"],
           "price_usd": coin["quotes"]["USD"]["price"],
           "percent_change_24h": coin["quotes"]["USD"]["percent_change_24h"],
+          "percent_change_7d": coin["quotes"]["USD"]["percent_change_7d"],
           "total_quantity": portfolioTotals[coin["symbol"]],
         });
-
         totalPortfolioValue += (portfolioTotals[coin["symbol"]]*coin["quotes"]["USD"]["price"]);
-
       }
     });
 
+    portfolioDisplay.sort(
+      (a, b) => (b["total_quantity"]*b["price_usd"]).compareTo(a["total_quantity"]*a["price_usd"])
+    );
 
-    total24hChange = 0;
+
+    num total24hChange = 0;
+    num total7dChange = 0;
     portfolioDisplay.forEach((coin) {
       total24hChange += (
         coin["percent_change_24h"]*((coin["price_usd"]*coin["total_quantity"])/totalPortfolioValue)
       );
+      total7dChange += (
+        coin["percent_change_7d"]*((coin["price_usd"]*coin["total_quantity"])/totalPortfolioValue)
+      );
+
     });
 
     totalPortfolioStats = {
       "value_usd": totalPortfolioValue,
-      "percent_change_24h": total24hChange
+      "percent_change_24h": total24hChange,
+      "percent_change_7d": total7dChange
     };
 
     print("display list: " + portfolioDisplay.toString());
@@ -177,7 +184,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-
     print("[T] built tabs");
 
     return new Scaffold(

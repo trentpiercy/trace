@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:trace/main.dart';
 import 'dart:async';
 
@@ -38,8 +39,17 @@ class PortfolioPageState extends State<PortfolioPage> {
 
   @override
   Widget build(BuildContext context) {
-
     print("[P] built portfolio page");
+
+//    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
+//        systemNavigationBarIconBrightness: Brightness.light,
+//        systemNavigationBarColor: Colors.blue,
+//
+//        statusBarColor: Colors.white,
+//        statusBarIconBrightness: Brightness.light,
+//        statusBarBrightness: Brightness.light
+//    ));
+    SystemChrome.setEnabledSystemUIOverlays;
 
     return new RefreshIndicator(
       onRefresh: _refresh,
@@ -51,29 +61,41 @@ class PortfolioPageState extends State<PortfolioPage> {
                   padding: const EdgeInsets.all(10.0),
                   child: new Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       new Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           new Text("Total Portfolio Value", style: Theme.of(context).textTheme.caption),
-                          new Text("\$"+ widget.totalPortfolioStats["value_usd"].toStringAsFixed(2),
+                          new Text("\$"+ numCommaParseNoRound(widget.totalPortfolioStats["value_usd"].toStringAsFixed(2)),
                               style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)
                           ),
                         ],
                       ),
                       new Column(
                         children: <Widget>[
-                          new Text("24h", style: Theme.of(context).textTheme.caption),
+                          new Text("7D Change", style: Theme.of(context).textTheme.caption),
+                          new Text(
+                              widget.totalPortfolioStats["percent_change_7d"] >= 0 ? "+"+widget.totalPortfolioStats["percent_change_7d"].toStringAsFixed(2)+"%" : widget.totalPortfolioStats["percent_change_7d"].toStringAsFixed(2)+"%",
+                              style: Theme.of(context).primaryTextTheme.body2.apply(
+                                color: widget.totalPortfolioStats["percent_change_7d"] >= 0 ? Colors.green : Colors.red,
+                                fontSizeFactor: 1.8,
+                              )
+                          )
+                        ],
+                      ),
+                      new Column(
+                        children: <Widget>[
+                          new Text("24h Change", style: Theme.of(context).textTheme.caption),
                           new Text(
                               widget.totalPortfolioStats["percent_change_24h"] >= 0 ? "+"+widget.totalPortfolioStats["percent_change_24h"].toStringAsFixed(2)+"%" : widget.totalPortfolioStats["percent_change_24h"].toStringAsFixed(2)+"%",
                               style: Theme.of(context).primaryTextTheme.body2.apply(
                                 color: widget.totalPortfolioStats["percent_change_24h"] >= 0 ? Colors.green : Colors.red,
-                                fontSizeFactor: 1.6
+                                fontSizeFactor: 1.8
                               )
                           )
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -138,18 +160,6 @@ class PortfolioListItem extends StatelessWidget {
     }
   }
 
-  _shortenText(input) {
-    String returnString;
-    if (input.toString().length > 7) {
-      returnString = input.toString()[7] != "."
-          ? input.toString().substring(0, 8)
-          : input.toString().substring(0, 7);
-    } else {
-      returnString = input.toString();
-    }
-    return returnString;
-  }
-
   @override
   Widget build(BuildContext context) {
     return new GestureDetector(
@@ -177,9 +187,9 @@ class PortfolioListItem extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
-                      new Text("\$"+_shortenText(snapshot["total_quantity"]*snapshot["price_usd"]), style: Theme.of(context).textTheme.body2),
+                      new Text("\$"+numCommaParseNoRound((snapshot["total_quantity"]*snapshot["price_usd"]).toStringAsFixed(3)), style: Theme.of(context).textTheme.body2),
                       new Padding(padding: const EdgeInsets.only(bottom: 4.0)),
-                      new Text(_shortenText(snapshot["total_quantity"]), style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor))
+                      new Text(snapshot["total_quantity"].toString(), style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor))
                     ],
                   )
               ),
