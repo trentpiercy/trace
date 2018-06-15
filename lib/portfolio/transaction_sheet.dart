@@ -138,11 +138,14 @@ class TransactionSheetState extends State<TransactionSheet> {
   }
 
   _checkValidSymbol(String inputSymbol) async {
-    if (marketListData == null) {
-      await getMarketData();
-    }
 
-    if (symbolList == null) {
+    //TODO: why is this not using global market data
+    print("transaction_sheet marketListData: " + marketListData.toString());
+
+    if (symbolList == null || symbolList.isEmpty) {
+      if (marketListData == null || marketListData.isEmpty) {
+        await getMarketData();
+      }
       symbolList = [];
       marketListData.forEach((value) => symbolList.add(value["symbol"]));
     }
@@ -285,9 +288,7 @@ class TransactionSheetState extends State<TransactionSheet> {
   @override
   void initState() {
     super.initState();
-    if (marketListData == null) {
-      getMarketData();
-    }
+    _checkValidSymbol("");
     _makeEpoch();
 
     symbolTextColor = errorColor;

@@ -85,6 +85,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         print("creating file");
         jsonFile.createSync();
         jsonFile.writeAsStringSync("{}");
+        portfolioMap = json.decode(jsonFile.readAsStringSync());
       }
 
       if (marketListData == null) {
@@ -98,7 +99,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     setState(() {});
   }
 
-  _makePortfolioDisplayList() async {
+  _makePortfolioDisplayList() {
     Map portfolioTotals = {};
     List neededPriceSymbols = [];
 
