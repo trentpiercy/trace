@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'main.dart';
-import 'market/coin_tabs.dart';
-import 'market_page.dart';
-import 'market/coin_aggregate_stats.dart';
+import 'package:trace/market/coin_tabs.dart';
+import 'package:trace/market_page.dart';
+import 'package:trace/market/coin_aggregate_stats.dart';
 
 class PortfolioPage extends StatefulWidget {
   PortfolioPage(
