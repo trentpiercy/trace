@@ -83,15 +83,7 @@ class AggregateStats extends StatefulWidget {
 
 class AggregateStatsState extends State<AggregateStats> {
   _shortenText(input) {
-    String returnString;
-    if (input.toString().length > 7) {
-      returnString = input.toString()[7] != "."
-          ? input.toString().substring(0, 8)
-          : input.toString().substring(0, 7);
-    } else {
-      returnString = input.toString();
-    }
-    return returnString;
+    return num.parse(input.toStringAsPrecision(9)).toString();
   }
 
   Future<Null> getGeneralStats() async {

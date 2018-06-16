@@ -29,8 +29,6 @@ class Tabs extends StatefulWidget {
   TabsState createState() => new TabsState();
 }
 
-Map portfolioMap;
-
 class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   TabController _tabController;
   TextEditingController _textController = new TextEditingController();

@@ -8,7 +8,6 @@ import 'package:trace/market/coin_tabs.dart';
 import 'package:trace/market/coin_aggregate_stats.dart';
 
 final columnProps = [.3,.3,.25];
-
 final assetImages = ["cdt","exp","lun","ppp","tnb","abt","chips","fair","maid","ppt","tnc","act","cix","fct","mana","prl","tnt","ada","clam","fil","mcap","pura","trig","adx","cloak","fldc","mco","qash","trx","ae","cmt","flo","mda","qiwi","tzc","agi","cnd","fsn","mds","qlc","ubq","agrs","cnx","ftc","med","qrl","unity","aion","cny","fuel","miota","qsp","usd","amb","cob","fun","mkr","qtum","usdt","amp","cred","game","mln","r","utk","ant","crpt","gas","mnx","rads","ven","appc","cs","gbp","mod","rcn","veri","ardr","ctr","gbx","mona","rdd","via","ark","cvc","gbyte","mth","rdn","vib","arn","dash","generic","mtl","rep","vibe","ary","dat","gno","music","req","vivo","ast","data.pg","gnt","mzc","rhoc","vrc","atm","dbc","grc","nano","ric","vtc","auto","dcn","grs","nas","rise","wabi","bat","dcr","gto","nav","rlc","waves","bay","dent","gup","ncash","rpx","wax","bcc","dew","gvt","ndz","rub","wgr","bcd","dgb","gxs","nebl","rvn","wings","bch","dgd","hpb","neo","salt","wpr","bcn","dlt","hr","neos","san","wtc","bco","dnt","html","ngc","sbd","xas","bcpt","doge","huc","nlc2","sberbank","xbc","bdl","drgn","hush","nlg","sc","xby","bela","dta","icn","nmc","sky","xcp","bix","dtr","icx","nuls","slr","xdn","blcn","ebst","ignis","nxs","sls","xem","blk","edg","ink","nxt","smart","xlm","block","edo","ins","oax","sngls","xmg","blz","edoge","ion","omg","snm","xmr","bnb","elf","iop","omni","snt","xmy","bnt","elix","iost","ont","spank","xp","bnty","ella","itc","ost","sphtx","xpa","bos","emc","jnt","ox","srn","xpm","bpt","emc2","jpy","part","start","xrp","bq","eng","kcs","pasl","steem","xtz","brd","enj","kin","pay","storj","xuc","btc","eos","kmd","pink","storm","xvc","btcd","equa","knc","pirl","strat","xvg","btcp","etc","krb","pivx","sub","xzc","btcz","eth","lbc","plr","sys","yoyow","btg","ethos","lend","poa","taas","zcl","btm","etn","link","poe","tau","zec","bts","etp","lkk","poly","tel","zen","btx","eur","lrc","pot","theta","zil","burst","evx","lsk","powr","tix","zrx","cdn","exmo","ltc","ppc","tkn"];
 
 class MarketPage extends StatefulWidget {
@@ -23,10 +22,6 @@ class MarketPage extends StatefulWidget {
   @override
   MarketPageState createState() => new MarketPageState();
 }
-
-
-List marketListData;
-Map globalData;
 
 Future<Null> getMarketData() async {
   marketListData = [];

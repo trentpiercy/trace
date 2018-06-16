@@ -14,6 +14,10 @@ const double appBarElevation = 1.0;
 
 bool shortenOn = false;
 
+List marketListData;
+Map globalData;
+Map portfolioMap;
+
 numCommaParse(numString) {
   if (shortenOn) {
     String str = num.parse(numString).round().toString().replaceAllMapped(new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
@@ -34,7 +38,7 @@ numCommaParseNoDollar(numString) {
 }
 
 numCommaParseNoRound(numString) {
-  return num.parse(numString).toString().replaceAllMapped(new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
+  return numString.replaceAllMapped(new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
 }
 
 
