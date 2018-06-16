@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:trace/main.dart';
 import 'dart:async';
 
+import 'main.dart';
+import 'market/coin_tabs.dart';
 import 'market_page.dart';
+import 'market/coin_aggregate_stats.dart';
 
 class PortfolioPage extends StatefulWidget {
   PortfolioPage(
@@ -40,16 +41,6 @@ class PortfolioPageState extends State<PortfolioPage> {
   @override
   Widget build(BuildContext context) {
     print("[P] built portfolio page");
-
-//    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
-//        systemNavigationBarIconBrightness: Brightness.light,
-//        systemNavigationBarColor: Colors.blue,
-//
-//        statusBarColor: Colors.white,
-//        statusBarIconBrightness: Brightness.light,
-//        statusBarBrightness: Brightness.light
-//    ));
-    SystemChrome.setEnabledSystemUIOverlays;
 
     return new RefreshIndicator(
       onRefresh: _refresh,
@@ -163,7 +154,15 @@ class PortfolioListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new GestureDetector(
-        onTap: () {},
+        onTap: () {
+          resetCoinStats();
+          resetExchangeData();
+          Navigator.of(context).push(
+              new MaterialPageRoute(
+                  builder: (BuildContext context) => new CoinDetails(snapshot: snapshot, enableTransactions: true)
+              )
+          );
+        },
         child: new Container(
           decoration: new BoxDecoration(),
           padding: const EdgeInsets.all(8.0),

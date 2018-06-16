@@ -29,12 +29,13 @@ class Tabs extends StatefulWidget {
   TabsState createState() => new TabsState();
 }
 
+Map portfolioMap;
+
 class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   TabController _tabController;
   TextEditingController _textController = new TextEditingController();
   int _tabIndex = 0;
 
-  Map portfolioMap;
   List portfolioDisplay;
   Map totalPortfolioStats;
 
@@ -115,13 +116,15 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     portfolioDisplay = [];
     num totalPortfolioValue = 0;
     marketListData.forEach((coin) {
-      if (neededPriceSymbols.contains(coin["symbol"])) {
+      if (neededPriceSymbols.contains(coin["symbol"]) && portfolioTotals[coin["symbol"]] != 0) {
         portfolioDisplay.add({
           "symbol": coin["symbol"],
           "price_usd": coin["quotes"]["USD"]["price"],
           "percent_change_24h": coin["quotes"]["USD"]["percent_change_24h"],
           "percent_change_7d": coin["quotes"]["USD"]["percent_change_7d"],
           "total_quantity": portfolioTotals[coin["symbol"]],
+          "id": coin["id"],
+          "name": coin["name"]
         });
         totalPortfolioValue += (portfolioTotals[coin["symbol"]]*coin["quotes"]["USD"]["price"]);
       }

@@ -3,9 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:trace/main.dart';
 import 'package:trace/market/coin_aggregate_stats.dart';
 import 'package:trace/market/coin_exchanges_list.dart';
+import 'package:trace/portfolio/transactions_page.dart';
 
 class CoinDetails extends StatefulWidget {
-  CoinDetails({this.snapshot});
+  CoinDetails({
+    this.snapshot,
+    this.enableTransactions = false,
+  });
+
+  final bool enableTransactions;
   final snapshot;
 
   @override
@@ -18,7 +24,7 @@ class CoinDetailsState extends State<CoinDetails> {
   @override
   Widget build(BuildContext context) {
     return new DefaultTabController(
-        length: 2,
+        length: widget.enableTransactions ? 3 : 2,
         child: new Scaffold(
             resizeToAvoidBottomPadding: false,
             appBar: new PreferredSize(
@@ -32,23 +38,45 @@ class CoinDetailsState extends State<CoinDetails> {
                     preferredSize: const Size.fromHeight(25.0),
                     child: new Container(
                         height: 30.0,
-                        child: new TabBar(
+                        child: widget.enableTransactions ?
+                        new TabBar(
+                          indicatorColor: Theme.of(context).accentIconTheme.color,
+                          indicatorWeight: 2.0,
+                          unselectedLabelColor: Theme.of(context).disabledColor,
+                          labelColor: Theme.of(context).primaryIconTheme.color,
+                          tabs: <Widget>[
+                            new Tab(text: "Stats"),
+                            new Tab(text: "Markets"),
+                            new Tab(text: "Transactions")
+                          ],
+                        ) :
+                        new TabBar(
                           indicatorColor: Theme.of(context).accentIconTheme.color,
                           indicatorWeight: 2.0,
                           unselectedLabelColor: Theme.of(context).disabledColor,
                           labelColor: Theme.of(context).primaryIconTheme.color,
                           tabs: <Widget>[
                             new Tab(text: "Aggregate Stats"),
-                            new Tab(text: "Markets"),
+                            new Tab(text: "Markets")
                           ],
                         ))),
               ),
             ),
-            body: new TabBarView(
+            body: widget.enableTransactions ?
+            new TabBarView(
               children: <Widget>[
-                new AggregateStats(snapshot: widget.snapshot, toSym: toSym),
-                new MarketList(snapshot: widget.snapshot, toSym: toSym, key: new PageStorageKey("exchanges"))
+                new AggregateStats(symbol: widget.snapshot["symbol"], id: widget.snapshot["id"].toString(), toSym: toSym),
+                new MarketList(symbol: widget.snapshot["symbol"], toSym: toSym, key: new PageStorageKey("exchanges")),
+                new TransactionsPage(symbol: widget.snapshot["symbol"])
               ],
-            )));
+            ) :
+            new TabBarView(
+              children: <Widget>[
+                new AggregateStats(symbol: widget.snapshot["symbol"], id: widget.snapshot["id"].toString(), toSym: toSym),
+                new MarketList(symbol: widget.snapshot["symbol"], toSym: toSym, key: new PageStorageKey("exchanges"))
+              ],
+            )
+        )
+    );
   }
 }

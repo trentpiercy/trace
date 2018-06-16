@@ -27,37 +27,26 @@ percentTrim(percent) {
 class MarketList extends StatefulWidget {
   MarketList({
     Key key,
-    this.snapshot,
+    this.symbol,
     this.toSym = "USD",
-  })  : assert(snapshot != null),
+  })  : assert(symbol != null),
         super(key: key);
 
-  final snapshot;
-  final toSym;
+  final String symbol;
+  final String toSym;
 
   @override
-  MarketListState createState() => new MarketListState(
-    snapshot: snapshot,
-    toSym: toSym
-  );
+  MarketListState createState() => new MarketListState();
 }
 
 List exchangeData;
 
 class MarketListState extends State<MarketList> {
-  MarketListState({
-    this.snapshot,
-    this.toSym,
-  });
-  
-  Map snapshot;
-  String toSym;
-
   Future<Null> getExchangeData(String toSym) async {
     var response = await http.get(
         Uri.encodeFull(
             "https://min-api.cryptocompare.com/data/top/exchanges/full?fsym=" +
-                snapshot["symbol"] +
+                widget.symbol +
                 "&tsym=" + toSym +
                 "&limit=1000"),
         headers: {"Accept": "application/json"});
@@ -87,14 +76,14 @@ class MarketListState extends State<MarketList> {
   void initState() {
     super.initState();
     if (exchangeData == null) {
-      getExchangeData(toSym);
+      getExchangeData(widget.toSym);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return exchangeData != null ? new RefreshIndicator(
-        onRefresh: () => getExchangeData(toSym),
+        onRefresh: () => getExchangeData(widget.toSym),
         child: exchangeData.isEmpty != true ? new CustomScrollView(
             slivers: <Widget>[
             new SliverList(

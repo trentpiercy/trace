@@ -66,69 +66,22 @@ void resetExchangeData() {
 class AggregateStats extends StatefulWidget {
   AggregateStats({
     Key key,
-    this.snapshot,
-//    this.currentOHLCVWidthSetting = 0,
-//    this.historyAmt = "720",
-//    this.historyAgg = "2",
-//    this.historyType = "minute",
-//    this.historyTotal = "24h",
+    this.id,
+    this.symbol,
     this.toSym = "USD",
-    this.showSparkline = true,
-  })  : assert(snapshot != null),
+  })  : assert(id != null),
+        assert(symbol != null),
         super(key: key);
 
-  final snapshot;
-  final showSparkline;
-
-//  final currentOHLCVWidthSetting;
-//
-//  final historyAmt;
-//  final historyType;
-//  final historyTotal;
-//  final historyAgg;
-
-  final toSym;
-
-  List historyOHLCVTimeAggregated;
+  final String id;
+  final String symbol;
+  final String toSym;
 
   @override
-  AggregateStatsState createState() => new AggregateStatsState(
-      snapshot: snapshot,
-//      currentOHLCVWidthSetting: currentOHLCVWidthSetting,
-//      historyAmt: historyAmt,
-//      historyAgg: historyAgg,
-//      historyType: historyType,
-//      historyTotal: historyTotal,
-      toSym: toSym,
-  );
+  AggregateStatsState createState() => new AggregateStatsState();
 }
 
 class AggregateStatsState extends State<AggregateStats> {
-  AggregateStatsState({
-    this.snapshot,
-//    this.currentOHLCVWidthSetting,
-//    this.historyAmt ,
-//    this.historyAgg,
-//    this.historyType,
-//    this.historyTotal,
-    this.toSym,
-  });
-
-  Map snapshot;
-
-//  int currentOHLCVWidthSetting;
-//
-//  String historyAmt;
-//  String historyType;
-//  String historyTotal;
-//  String historyAgg;
-
-  String toSym;
-
-//  Map generalStats;
-
-  final ScrollController _scrollController = new ScrollController();
-
   _shortenText(input) {
     String returnString;
     if (input.toString().length > 7) {
@@ -143,7 +96,7 @@ class AggregateStatsState extends State<AggregateStats> {
 
   Future<Null> getGeneralStats() async {
     var response = await http.get(
-        Uri.encodeFull("https://api.coinmarketcap.com/v2/ticker/"+ snapshot["id"].toString()),
+        Uri.encodeFull("https://api.coinmarketcap.com/v2/ticker/"+ widget.id),
         headers: {"Accept": "application/json"}
     );
     setState(() {
@@ -156,7 +109,7 @@ class AggregateStatsState extends State<AggregateStats> {
     var response = await http.get(
         Uri.encodeFull(
             "https://min-api.cryptocompare.com/data/histo"+OHLCVWidthOptions[historyTotal][currentOHLCVWidthSetting][3]+
-            "?fsym="+snapshot["symbol"]+
+            "?fsym="+widget.symbol+
             "&tsym=USD&limit="+(OHLCVWidthOptions[historyTotal][currentOHLCVWidthSetting][1] - 1).toString()+
             "&aggregate="+OHLCVWidthOptions[historyTotal][currentOHLCVWidthSetting][2].toString()
         ),
@@ -400,7 +353,11 @@ class AggregateStatsState extends State<AggregateStats> {
         ),
         bottomNavigationBar: new BottomAppBar(
           elevation: appBarElevation,
-          child: new QuickPercentChangeBar(snapshot: snapshot),
+          child: generalStats != null
+            ? new QuickPercentChangeBar(snapshot: generalStats)
+            : new Container(
+              height: 0.0,
+            ),
         ),
     );
   }
@@ -425,9 +382,9 @@ class QuickPercentChangeBar extends StatelessWidget {
               new Text("1h", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
               new Padding(padding: const EdgeInsets.only(right: 3.0)),
               new Text(
-                  snapshot["quotes"]["USD"]["percent_change_1h"] >= 0 ? "+"+snapshot["quotes"]["USD"]["percent_change_1h"].toString()+"%" : snapshot["quotes"]["USD"]["percent_change_1h"].toString()+"%",
+                  snapshot["percent_change_1h"] >= 0 ? "+"+snapshot["percent_change_1h"].toString()+"%" : snapshot["percent_change_1h"].toString()+"%",
                   style: Theme.of(context).primaryTextTheme.body2.apply(
-                      color: snapshot["quotes"]["USD"]["percent_change_1h"] >= 0 ? Colors.green : Colors.red
+                      color: snapshot["percent_change_1h"] >= 0 ? Colors.green : Colors.red
                   )
               )
             ],
@@ -438,9 +395,9 @@ class QuickPercentChangeBar extends StatelessWidget {
               new Text("24h", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
               new Padding(padding: const EdgeInsets.only(right: 3.0)),
               new Text(
-                  snapshot["quotes"]["USD"]["percent_change_24h"] >= 0 ? "+"+snapshot["quotes"]["USD"]["percent_change_24h"].toString()+"%" : snapshot["quotes"]["USD"]["percent_change_24h"].toString()+"%",
+                  snapshot["percent_change_24h"] >= 0 ? "+"+snapshot["percent_change_24h"].toString()+"%" : snapshot["percent_change_24h"].toString()+"%",
                   style: Theme.of(context).primaryTextTheme.body2.apply(
-                      color: snapshot["quotes"]["USD"]["percent_change_24h"] >= 0 ? Colors.green : Colors.red
+                      color: snapshot["percent_change_24h"] >= 0 ? Colors.green : Colors.red
                   )
               )
             ],
@@ -451,9 +408,9 @@ class QuickPercentChangeBar extends StatelessWidget {
               new Text("7D", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
               new Padding(padding: const EdgeInsets.only(right: 3.0)),
               new Text(
-                  snapshot["quotes"]["USD"]["percent_change_7d"] >= 0 ? "+"+snapshot["quotes"]["USD"]["percent_change_7d"].toString()+"%" : snapshot["quotes"]["USD"]["percent_change_7d"].toString()+"%",
+                  snapshot["percent_change_7d"] >= 0 ? "+"+snapshot["percent_change_7d"].toString()+"%" : snapshot["percent_change_7d"].toString()+"%",
                   style: Theme.of(context).primaryTextTheme.body2.apply(
-                      color: snapshot["quotes"]["USD"]["percent_change_7d"] >= 0 ? Colors.green : Colors.red
+                      color: snapshot["percent_change_7d"] >= 0 ? Colors.green : Colors.red
                   )
               ),
             ],
