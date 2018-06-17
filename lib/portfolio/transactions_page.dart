@@ -51,7 +51,12 @@ class TransactionsPageState extends State<TransactionsPage> {
     }
 
     net = value - cost;
-    netPercent = ((value - cost) / cost)*100;
+
+    if (cost > 0) {
+      netPercent = ((value - cost) / cost)*100;
+    } else {
+      netPercent = 999.99;
+    }
   }
 
   @override
@@ -75,28 +80,23 @@ class TransactionsPageState extends State<TransactionsPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     new Text("Total Value", style: Theme.of(context).textTheme.caption),
-                    new Row(
-                      children: <Widget>[
-                        new Text("\$"+ numCommaParseNoRound(value.toStringAsFixed(2)),
-                            style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)
-                        ),
-                        new Padding(padding: const EdgeInsets.symmetric(horizontal: 4.0)),
-                        new Column(
-                          children: <Widget>[
-                            redGreenParse(context, net.toStringAsFixed(2), 1.1),
-                            redGreenParsePercent(context, netPercent.toStringAsFixed(2), 1.1)
-                          ],
-                        )
-                      ],
-                    ),
+                    new Text("\$"+ numCommaParseNoRound(value.toStringAsFixed(2)),
+                        style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)),
                     new Text(num.parse(holdings.toStringAsPrecision(9)).toString() + " " + widget.symbol,
                         style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2)),
                   ],
                 ),
                 new Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    new Text("Net Cost", style: Theme.of(context).textTheme.caption),
+                    new Text("Total Net", style: Theme.of(context).textTheme.caption),
+                    redGreenParse(context, net.toStringAsFixed(2), 1.2),
+                    redGreenParsePercent(context, netPercent.toStringAsFixed(2), 1.2)
+                  ],
+                ),
+                new Column(
+//                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    new Text("Total Cost", style: Theme.of(context).textTheme.caption),
                     new Text("\$"+cost.toStringAsFixed(2),
                         style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.8))
                   ],
@@ -104,11 +104,66 @@ class TransactionsPageState extends State<TransactionsPage> {
               ],
             ),
           ),
+          new Divider(height: 0.0),
+        ])),
 
-          new Divider(height: 0.0)
+        new SliverList(delegate: new SliverChildBuilderDelegate(
+                (context, index) => new TransactionItem(portfolioMap[widget.symbol][portfolioMap[widget.symbol].length-index-1]),
+            childCount: portfolioMap[widget.symbol].length
+        )),
 
-        ]))
       ],
+    );
+  }
+}
+
+class TransactionItem extends StatelessWidget {
+  TransactionItem(this.snapshot);
+  final snapshot;
+
+  @override
+  Widget build(BuildContext context) {
+    print(snapshot);
+    final DateTime time = new DateTime.fromMillisecondsSinceEpoch(snapshot["time_epoch"]);
+
+    return new Container(
+      decoration: new BoxDecoration(),
+      padding: const EdgeInsets.all(8.0),
+      child: new Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          new Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              new Text(snapshot["quantity"] >= 0 ? "Buy" : "Sell", style: Theme.of(context).textTheme.caption),
+              new Text(snapshot["quantity"].toString(),
+                  style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.1))
+          ]),
+          new Column(
+            children: <Widget>[
+              new Text("Price", style: Theme.of(context).textTheme.caption),
+              new Text(snapshot["price_usd"].toStringAsFixed(2),
+                  style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.1))
+            ],
+          ),
+          new Column(children: <Widget>[
+            new Text(snapshot["quantity"] >= 0 ? "Cost" : "Proceeds", style: Theme.of(context).textTheme.caption),
+            new Text((snapshot["quantity"]*snapshot["price_usd"]).abs().toStringAsFixed(2),
+                style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.1))
+          ]),
+          new Column(children: <Widget>[
+            new Text("Exchange", style: Theme.of(context).textTheme.caption),
+            new Text(snapshot["exchange"],
+                style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.1))
+          ]),
+          new Column(children: <Widget>[
+            new Text("Time", style: Theme.of(context).textTheme.caption),
+            new Text(time.month.toString()+"/"+time.day.toString()+"/"+time.year.toString().substring(2)
+                +" "+time.hour.toString()+":"+time.minute.toString(),
+                style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.1))
+          ])
+        ],
+      ),
     );
   }
 }

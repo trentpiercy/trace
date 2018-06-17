@@ -120,7 +120,7 @@ class PortfolioPageState extends State<PortfolioPage> {
           ),
 
           new SliverList(delegate: new SliverChildBuilderDelegate(
-                  (context, index) => new PortfolioListItem(widget.portfolioDisplay[index]),
+              (context, index) => new PortfolioListItem(widget.portfolioDisplay[index]),
               childCount: widget.portfolioDisplay != null ? widget.portfolioDisplay.length : 0
           ))
 
@@ -162,6 +162,7 @@ class PortfolioListItem extends StatelessWidget {
           );
         },
         child: new Container(
+          decoration: new BoxDecoration(),
           padding: const EdgeInsets.all(8.0),
           child: new Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
