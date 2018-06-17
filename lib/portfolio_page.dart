@@ -162,7 +162,6 @@ class PortfolioListItem extends StatelessWidget {
           );
         },
         child: new Container(
-          decoration: new BoxDecoration(),
           padding: const EdgeInsets.all(8.0),
           child: new Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
