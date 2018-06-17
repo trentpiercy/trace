@@ -318,7 +318,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           body: new TabBarView(
             controller: _tabController,
             children: <Widget>[
-              new PortfolioPage(portfolioMap, portfolioDisplay, totalPortfolioStats, _loadProfileJson, key: _portfolioKey),
+              new PortfolioPage(portfolioDisplay, totalPortfolioStats, _loadProfileJson, key: _portfolioKey),
               new MarketPage(filter, isSearching, key: _marketKey),
               new Container(),
             ],

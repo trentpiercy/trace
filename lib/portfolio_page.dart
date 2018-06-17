@@ -2,24 +2,22 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'main.dart';
-import 'package:trace/market/coin_tabs.dart';
-import 'package:trace/market_page.dart';
-import 'package:trace/market/coin_aggregate_stats.dart';
+import 'market/coin_tabs.dart';
+import 'market_page.dart';
+import 'market/coin_aggregate_stats.dart';
 
 class PortfolioPage extends StatefulWidget {
   PortfolioPage(
-      this.portfolioMap,
       this.portfolioDisplay,
       this.totalPortfolioStats,
-      this.makePortfolioDisplayList,
+      this.loadPortfolio,
       {Key key}
   ) : super(key: key);
 
-  final Map portfolioMap;
   final List portfolioDisplay;
   final Map totalPortfolioStats;
 
-  final Function makePortfolioDisplayList;
+  final Function loadPortfolio;
 
   @override
   PortfolioPageState createState() => new PortfolioPageState();
@@ -29,7 +27,7 @@ class PortfolioPageState extends State<PortfolioPage> {
   final columnProps = [.2,.3,.3];
 
   Future<Null> _refresh() async {
-    widget.makePortfolioDisplayList();
+    widget.loadPortfolio();
   }
 
   void initState() {

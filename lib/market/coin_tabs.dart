@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:trace/main.dart';
-import 'package:trace/market/coin_aggregate_stats.dart';
-import 'package:trace/market/coin_exchanges_list.dart';
-import 'package:trace/portfolio/transactions_page.dart';
+import '../main.dart';
+import 'coin_aggregate_stats.dart';
+import 'coin_exchanges_list.dart';
+import '../portfolio/transactions_page.dart';
 
 class CoinDetails extends StatefulWidget {
   CoinDetails({
@@ -23,6 +23,9 @@ class CoinDetailsState extends State<CoinDetails> {
 
   @override
   Widget build(BuildContext context) {
+
+    print("built coin tabs");
+
     return new DefaultTabController(
         length: widget.enableTransactions ? 3 : 2,
         child: new Scaffold(

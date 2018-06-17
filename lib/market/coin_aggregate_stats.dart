@@ -27,7 +27,6 @@ Map OHLCVWidthOptions = {
 //TODO: and just clean up all this garbage
 
 Map generalStats;
-
 List historyOHLCV;
 
 String _high = "0";

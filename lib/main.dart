@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'tabs.dart';
-import 'package:trace/portfolio/portfolio_tabs.dart';
+import 'portfolio/portfolio_tabs.dart';
 import 'settings_page.dart';
 
 void main() {

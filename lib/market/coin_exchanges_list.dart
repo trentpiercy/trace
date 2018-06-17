@@ -86,9 +86,7 @@ class MarketListState extends State<MarketList> {
         onRefresh: () => getExchangeData(widget.toSym),
         child: exchangeData.isEmpty != true ? new CustomScrollView(
             slivers: <Widget>[
-            new SliverList(
-                delegate: new SliverChildListDelegate(
-                  <Widget>[
+            new SliverList(delegate: new SliverChildListDelegate(<Widget>[
                     new Container(
                       margin: const EdgeInsets.only(left: 6.0, right: 6.0, top: 8.0),
                       decoration: new BoxDecoration(
