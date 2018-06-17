@@ -5,8 +5,7 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'package:trace/main.dart';
-import 'package:trace/market/coin_exchanges_list.dart';
+import '../main.dart';
 
 
 Map OHLCVWidthOptions = {
@@ -91,6 +90,14 @@ class AggregateStatsState extends State<AggregateStats> {
     });
   }
 
+  _getInitialGeneralStats() {
+    for (Map coin in marketListData) {
+      if (coin["symbol"] == widget.symbol) {
+        generalStats = coin["quotes"]["USD"];
+        break;
+      }
+    }
+  }
 
   Future<Null> getHistoryOHLCV() async {
     var response = await http.get(
@@ -161,7 +168,8 @@ class AggregateStatsState extends State<AggregateStats> {
 
   void initState() {
     super.initState();
-    if (historyOHLCV == null || generalStats == null) {
+    _getInitialGeneralStats();
+    if (historyOHLCV == null) {
       changeHistory(historyType, historyAmt, historyTotal, historyAgg);
     }
   }

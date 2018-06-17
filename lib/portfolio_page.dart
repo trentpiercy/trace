@@ -28,6 +28,7 @@ class PortfolioPageState extends State<PortfolioPage> {
   final columnProps = [.2,.3,.3];
 
   Future<Null> _refresh() async {
+    await getMarketData();
     widget.loadPortfolio();
   }
 

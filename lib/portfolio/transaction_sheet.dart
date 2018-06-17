@@ -358,7 +358,7 @@ class TransactionSheetState extends State<TransactionSheet> {
                 ),
                 new Row(
                   children: <Widget>[
-                    new Padding(padding: const EdgeInsets.only(left: 16.0)),
+                    new Padding(padding: const EdgeInsets.only(left: 10.0)),
                     new Container(
                       width: MediaQuery.of(context).size.width * 0.15,
                       padding: const EdgeInsets.only(right: 4.0),
@@ -466,7 +466,7 @@ class TransactionSheetState extends State<TransactionSheet> {
                 ),
                 new Flexible(
                     child: new Container(
-//                      padding: const EdgeInsets.only(right: 4.0),
+                      padding: const EdgeInsets.only(left: 10.0),
                       child: new TextField(
                         controller: _notesController,
                         autocorrect: false,
