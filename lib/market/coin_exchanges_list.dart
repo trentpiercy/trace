@@ -41,6 +41,10 @@ class MarketList extends StatefulWidget {
 
 List exchangeData;
 
+void resetExchangeData() {
+  exchangeData = null;
+}
+
 class MarketListState extends State<MarketList> {
   Future<Null> getExchangeData(String toSym) async {
     var response = await http.get(
@@ -157,7 +161,7 @@ class ExchangeListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new GestureDetector(
+    return new InkWell(
         onTap: () {
           resetCoinStats();
           Navigator.of(context).push(

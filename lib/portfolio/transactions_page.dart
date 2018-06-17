@@ -9,6 +9,25 @@ class TransactionsPage extends StatefulWidget {
   TransactionsPageState createState() => new TransactionsPageState();
 }
 
+redGreenParse(context, input, double fontSize) {
+  return new Text(
+      num.parse(input) >= 0 ? "+\$"+input : "\$"+input,
+      style: Theme.of(context).primaryTextTheme.body2.apply(
+        color: num.parse(input) >= 0 ? Colors.green : Colors.red,
+        fontSizeFactor: fontSize,
+      )
+  );
+}
+redGreenParsePercent(context, input, double fontSize) {
+  return new Text(
+      num.parse(input) >= 0 ? "+"+input+"%" : input+"%",
+      style: Theme.of(context).primaryTextTheme.body2.apply(
+        color: num.parse(input) >= 0 ? Colors.green : Colors.red,
+        fontSizeFactor: fontSize,
+      )
+  );
+}
+
 class TransactionsPageState extends State<TransactionsPage> {
   num value = 0;
   num cost = 0;
@@ -17,25 +36,6 @@ class TransactionsPageState extends State<TransactionsPage> {
   num netPercent = 0;
 
   num currentPrice;
-
-  redGreenParse(context, input, double fontSize) {
-    return new Text(
-        num.parse(input) >= 0 ? "+\$"+input : "\$"+input,
-        style: Theme.of(context).primaryTextTheme.body2.apply(
-          color: num.parse(input) >= 0 ? Colors.green : Colors.red,
-          fontSizeFactor: fontSize,
-        )
-    );
-  }
-  redGreenParsePercent(context, input, double fontSize) {
-    return new Text(
-        num.parse(input) >= 0 ? "+"+input+"%" : input+"%",
-        style: Theme.of(context).primaryTextTheme.body2.apply(
-          color: num.parse(input) >= 0 ? Colors.green : Colors.red,
-          fontSizeFactor: fontSize,
-        )
-    );
-  }
 
   _getTotals() {
     for (Map coin in marketListData) {
@@ -108,7 +108,11 @@ class TransactionsPageState extends State<TransactionsPage> {
         ])),
 
         new SliverList(delegate: new SliverChildBuilderDelegate(
-                (context, index) => new TransactionItem(portfolioMap[widget.symbol][portfolioMap[widget.symbol].length-index-1]),
+                (context, index) => new TransactionItem(
+                  snapshot: portfolioMap[widget.symbol][portfolioMap[widget.symbol].length-index-1],
+                  currentPrice: currentPrice,
+                  symbol: widget.symbol,
+                ),
             childCount: portfolioMap[widget.symbol].length
         )),
 
@@ -118,52 +122,86 @@ class TransactionsPageState extends State<TransactionsPage> {
 }
 
 class TransactionItem extends StatelessWidget {
-  TransactionItem(this.snapshot);
-  final snapshot;
+  TransactionItem({this.snapshot, this.symbol, this.currentPrice});
+  final Map snapshot;
+  final String symbol;
+  final num currentPrice;
 
   @override
   Widget build(BuildContext context) {
     print(snapshot);
     final DateTime time = new DateTime.fromMillisecondsSinceEpoch(snapshot["time_epoch"]);
 
-    return new Container(
-      decoration: new BoxDecoration(),
-      padding: const EdgeInsets.all(8.0),
-      child: new Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          new Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              new Text(snapshot["quantity"] >= 0 ? "Buy" : "Sell", style: Theme.of(context).textTheme.caption),
-              new Text(snapshot["quantity"].toString(),
-                  style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.1))
-          ]),
-          new Column(
-            children: <Widget>[
-              new Text("Price", style: Theme.of(context).textTheme.caption),
-              new Text(snapshot["price_usd"].toStringAsFixed(2),
-                  style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.1))
-            ],
-          ),
-          new Column(children: <Widget>[
-            new Text(snapshot["quantity"] >= 0 ? "Cost" : "Proceeds", style: Theme.of(context).textTheme.caption),
-            new Text((snapshot["quantity"]*snapshot["price_usd"]).abs().toStringAsFixed(2),
-                style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.1))
-          ]),
-          new Column(children: <Widget>[
-            new Text("Exchange", style: Theme.of(context).textTheme.caption),
-            new Text(snapshot["exchange"],
-                style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.1))
-          ]),
-          new Column(children: <Widget>[
-            new Text("Time", style: Theme.of(context).textTheme.caption),
-            new Text(time.month.toString()+"/"+time.day.toString()+"/"+time.year.toString().substring(2)
-                +" "+time.hour.toString()+":"+time.minute.toString(),
-                style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.1))
-          ])
-        ],
-      ),
+    return new InkWell(
+      onTap: () {},
+      child: new Container(
+        decoration: new BoxDecoration(),
+        padding: const EdgeInsets.all(8.0),
+        child: new Column(
+          children: <Widget>[
+            new Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                new Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      new Text(snapshot["quantity"] >= 0 ? "Buy" : "Sell",
+                          style: Theme.of(context).textTheme.caption.apply(
+                              color: snapshot["quantity"] >= 0 ? Colors.green : Colors.red
+                          )
+                      ),
+                      new Text(snapshot["quantity"].toString() + " " + symbol,
+                          style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.1))
+                    ]),
+                new Column(
+                  children: <Widget>[
+                    new Text("Price", style: Theme.of(context).textTheme.caption),
+                    new Row(
+                      children: <Widget>[
+                        new Text(snapshot["price_usd"].toStringAsFixed(2),
+                            style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.1)),
+                        redGreenParsePercent(
+                            context,
+                            (currentPrice - snapshot["price_usd"]) / snapshot["price_usd"],
+                            1.0
+                        )
+                      ],
+                    )
+                  ],
+                ),
+                new Column(children: <Widget>[
+                  new Text(snapshot["quantity"] >= 0 ? "Cost" : "Proceeds", style: Theme.of(context).textTheme.caption),
+                  new Text((snapshot["quantity"]*snapshot["price_usd"]).abs().toStringAsFixed(2),
+                      style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.1))
+                ]),
+              ],
+            ),
+            new Row(
+              children: <Widget>[
+                new Column(
+                  children: <Widget>[
+                    new Row(children: <Widget>[
+                      new Text("Exchange", style: Theme.of(context).textTheme.caption),
+                      new Padding(padding: const EdgeInsets.symmetric(horizontal: 4.0)),
+                      new Text(snapshot["exchange"],
+                          style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.1))
+                    ]),
+                    new Text(time.month.toString()+"/"+time.day.toString()+"/"+time.year.toString().substring(2)
+                        +" "+time.hour.toString()+":"+time.minute.toString(),
+                        style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.1))
+                  ],
+                ),
+                snapshot["notes"] != "" ? new Column(
+                  children: <Widget>[
+                    new Text("Notes", style: Theme.of(context).textTheme.caption),
+                    new Text(snapshot["notes"])
+                  ],
+                ) : new Container()
+              ],
+            )
+          ],
+        )
+      )
     );
   }
 }

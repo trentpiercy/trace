@@ -9,9 +9,9 @@ import '../main.dart';
 import '../market_page.dart';
 
 class PortfolioFAB extends StatefulWidget {
-  PortfolioFAB(this.scaffoldKey, this.makePortfolioDisplayList);
+  PortfolioFAB(this.scaffoldKey, this.loadPortfolio);
   final GlobalKey<ScaffoldState> scaffoldKey;
-  final Function makePortfolioDisplayList;
+  final Function loadPortfolio;
 
   PortfolioFABState createState() => new PortfolioFABState();
 }
@@ -26,7 +26,7 @@ class PortfolioFABState extends State<PortfolioFAB> {
       sheetOpen = true;
     });
     widget.scaffoldKey.currentState.showBottomSheet((BuildContext context) {
-      return new TransactionSheet(widget.makePortfolioDisplayList, key: _sheetKey);
+      return new TransactionSheet(widget.loadPortfolio, key: _sheetKey);
     }).closed.whenComplete(() {
       setState(() {
         sheetOpen = false;
@@ -56,8 +56,8 @@ class PortfolioFABState extends State<PortfolioFAB> {
 }
 
 class TransactionSheet extends StatefulWidget {
-  TransactionSheet(this.makePortfolioDisplayList, {Key key}) : super(key: key);
-  final Function makePortfolioDisplayList;
+  TransactionSheet(this.loadPortfolio, {Key key}) : super(key: key);
+  final Function loadPortfolio;
 
   @override
   TransactionSheetState createState() => new TransactionSheetState();
@@ -68,6 +68,7 @@ class TransactionSheetState extends State<TransactionSheet> {
   TextEditingController _priceController = new TextEditingController();
   TextEditingController _quantityController = new TextEditingController();
   TextEditingController _exchangeController = new TextEditingController();
+  TextEditingController _notesController = new TextEditingController();
 
   Color errorColor = Colors.red;
   Color validColor;
@@ -223,6 +224,7 @@ class TransactionSheetState extends State<TransactionSheet> {
             "price_usd":price,
             "exchange":exchange,
             "time_epoch":epochDate,
+            "notes":_notesController.text //TODO: make sure this works
           };
 
           Map jsonContent = json.decode(jsonFile.readAsStringSync());
@@ -253,7 +255,7 @@ class TransactionSheetState extends State<TransactionSheet> {
                     print("UNDID");
                     print(jsonContent);
 
-                    widget.makePortfolioDisplayList();
+                    widget.loadPortfolio();
                   },
                 ),
               )
@@ -262,7 +264,7 @@ class TransactionSheetState extends State<TransactionSheet> {
           print("FAILED - file does not exist");
         }
       });
-      widget.makePortfolioDisplayList();
+      widget.loadPortfolio();
     }
   }
 
@@ -461,6 +463,21 @@ class TransactionSheetState extends State<TransactionSheet> {
                     )
 
                   ],
+                ),
+                new Flexible(
+                    child: new Container(
+//                      padding: const EdgeInsets.only(right: 4.0),
+                      child: new TextField(
+                        controller: _notesController,
+                        autocorrect: false,
+                        style: Theme.of(context).textTheme.body2.apply(color: validColor),
+                        keyboardType: TextInputType.text,
+                        decoration: new InputDecoration(
+                            border: InputBorder.none,
+                            hintText: "Notes"
+                        ),
+                      ),
+                    )
                 ),
               ],
             )

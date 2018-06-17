@@ -58,10 +58,6 @@ void resetCoinStats() {
   historyTotal = "24h";
 }
 
-void resetExchangeData() {
-  exchangeData = null;
-}
-
 class AggregateStats extends StatefulWidget {
   AggregateStats({
     Key key,

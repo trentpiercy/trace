@@ -5,6 +5,7 @@ import 'main.dart';
 import 'market/coin_tabs.dart';
 import 'market_page.dart';
 import 'market/coin_aggregate_stats.dart';
+import 'market/coin_exchanges_list.dart';
 
 class PortfolioPage extends StatefulWidget {
   PortfolioPage(
@@ -151,7 +152,7 @@ class PortfolioListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new GestureDetector(
+    return new InkWell(
         onTap: () {
           resetCoinStats();
           resetExchangeData();
