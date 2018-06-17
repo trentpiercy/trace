@@ -160,6 +160,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     print("INIT TABS");
 
     _loadProfileJson();
+    if (globalData == null) {getGlobalData();}
 
     _tabController = new TabController(length: 3, vsync: this);
     _tabController.animation.addListener(() {

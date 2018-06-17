@@ -29,6 +29,15 @@ Future<Null> getMarketData() async {
   }
 }
 
+Future<Null> getGlobalData() async {
+  var response = await http.get(
+      Uri.encodeFull("https://api.coinmarketcap.com/v2/global/"),
+      headers: {"Accept": "application/json"}
+  );
+
+  globalData = new JsonDecoder().convert(response.body)["data"]["quotes"]["USD"];
+}
+
 class MarketPage extends StatefulWidget {
   MarketPage(
       this.filter,
@@ -47,24 +56,13 @@ class MarketPageState extends State<MarketPage> {
 
   int limit = 500;
 
-  Future<Null> _getGlobalData() async {
-    var response = await http.get(
-        Uri.encodeFull("https://api.coinmarketcap.com/v2/global/"),
-        headers: {"Accept": "application/json"}
-    );
-
-    globalData = new JsonDecoder().convert(response.body)["data"]["quotes"]["USD"];
-  }
-
-
-
   Future<Null> _refreshData() async {
-    await _getGlobalData();
+    await getGlobalData();
     await getMarketData();
     setState(() {});
   }
   Future<Null> _refreshGlobalData() async {
-    await _getGlobalData();
+    await getGlobalData();
     setState(() {});
   }
   Future<Null> _refreshMarketData() async {

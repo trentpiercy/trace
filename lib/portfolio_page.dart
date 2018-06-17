@@ -173,7 +173,7 @@ class PortfolioListItem extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     _getImage(),
-                    new Padding(padding: const EdgeInsets.only(right: 10.0)),
+                    new Padding(padding: const EdgeInsets.only(right: 8.0)),
                     new Text(snapshot["symbol"], style: Theme.of(context).textTheme.body2),
                   ],
                 ),

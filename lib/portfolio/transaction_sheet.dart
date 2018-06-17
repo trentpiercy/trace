@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
 import '../main.dart';
-import 'package:trace/market_page.dart';
+import '../market_page.dart';
 
 class PortfolioFAB extends StatefulWidget {
   PortfolioFAB(this.scaffoldKey, this.makePortfolioDisplayList);
