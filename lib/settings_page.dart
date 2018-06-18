@@ -10,12 +10,57 @@ class SettingsPage extends StatefulWidget {
 }
 
 class SettingsPageState extends State<SettingsPage>{
-  _clearPortfolio() {
+  _confirmDeletePortfolio() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return new AlertDialog(
+          title: new Text("Delete Portfolio File?"),
+          content: new Text("This cannot be undone."),
+          actions: <Widget>[
+            new FlatButton(onPressed: () {
+              Navigator.of(context).pop();
+              _deletePortfolio;
+              }, child: new Text("Delete")),
+            new FlatButton(onPressed: () => Navigator.of(context).pop(), child: new Text("Cancel"))
+          ],
+        );
+      }
+    );
+  }
+
+  _deletePortfolio() {
     getApplicationDocumentsDirectory().then((Directory directory) {
       File jsonFile = new File(directory.path + "/portfolio.json");
       print("DELETING PORTFOLIO...");
       jsonFile.delete();
     });
+  }
+
+  _exportPortfolio() {
+    TextEditingController _portfolioExportController = new TextEditingController();
+    _portfolioExportController.text = portfolioMap.toString();
+    Navigator.of(context).push(
+      new MaterialPageRoute(builder: (context) {
+        return new Scaffold(
+          appBar: new PreferredSize(
+            preferredSize: const Size.fromHeight(appBarHeight),
+            child: new AppBar(
+              titleSpacing: 0.0,
+              elevation: appBarElevation,
+              title: new Text("Portfolio JSON"),
+            ),
+          ),
+          body: new Container(
+            padding: const EdgeInsets.all(8.0),
+            child: new TextField(
+              controller: _portfolioExportController,
+              maxLines: 99,
+            ),
+          )
+        );
+      })
+    );
   }
 
   @override
@@ -41,13 +86,13 @@ class SettingsPageState extends State<SettingsPage>{
               child: new ListTile(
                 title: new Text("Delete portfolio file"),
                 leading: new Icon(Icons.delete),
-                onTap: _clearPortfolio,
+                onTap: _confirmDeletePortfolio,
               ),
             ),
             new Container(
               color: Theme.of(context).cardColor,
               child: new ListTile(
-                title: new Text("Import portfolio file"),
+                title: new Text("Import portfolio JSON"),
                 leading: new Icon(Icons.file_download),
                 onTap: null,
               ),
@@ -55,9 +100,9 @@ class SettingsPageState extends State<SettingsPage>{
             new Container(
               color: Theme.of(context).cardColor,
               child: new ListTile(
-                title: new Text("Export portfolio file"),
+                title: new Text("Export portfolio JSON"),
                 leading: new Icon(Icons.file_upload),
-                onTap: null,
+                onTap: _exportPortfolio,
               ),
             ),
           ],
