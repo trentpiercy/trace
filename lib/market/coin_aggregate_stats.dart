@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../main.dart';
+import 'package:trace/market_page.dart';
 
 
 Map OHLCVWidthOptions = {
@@ -80,17 +81,12 @@ class AggregateStatsState extends State<AggregateStats> {
     return num.parse(input.toStringAsPrecision(9)).toString();
   }
 
-  Future<Null> getGeneralStats() async {
-    var response = await http.get(
-        Uri.encodeFull("https://api.coinmarketcap.com/v2/ticker/"+ widget.id),
-        headers: {"Accept": "application/json"}
-    );
-    setState(() {
-      generalStats = new JsonDecoder().convert(response.body)["data"]["quotes"]["USD"];
-    });
+  _getGeneralStats() async {
+    await getMarketData();
+    _getGeneralStats();
   }
 
-  _getInitialGeneralStats() {
+  _makeGeneralStats() {
     for (Map coin in marketListData) {
       if (coin["symbol"] == widget.symbol) {
         generalStats = coin["quotes"]["USD"];
@@ -161,14 +157,14 @@ class AggregateStatsState extends State<AggregateStats> {
       historyOHLCV = null;
 
     });
-    getGeneralStats();
+    _getGeneralStats();
     await getHistoryOHLCV();
     _getHL();
   }
 
   void initState() {
     super.initState();
-    _getInitialGeneralStats();
+    _makeGeneralStats();
     if (historyOHLCV == null) {
       changeHistory(historyType, historyAmt, historyTotal, historyAgg);
     }

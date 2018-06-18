@@ -21,7 +21,7 @@ redGreenParse(context, input, double fontSize) {
 redGreenParsePercent(context, input, double fontSize) {
   return new Text(
       num.parse(input) >= 0 ? "+"+input+"%" : input+"%",
-      style: Theme.of(context).primaryTextTheme.body2.apply(
+      style: Theme.of(context).primaryTextTheme.body1.apply(
         color: num.parse(input) >= 0 ? Colors.green : Colors.red,
         fontSizeFactor: fontSize,
       )
@@ -90,7 +90,7 @@ class TransactionsPageState extends State<TransactionsPage> {
                   children: <Widget>[
                     new Text("Total Net", style: Theme.of(context).textTheme.caption),
                     redGreenParse(context, net.toStringAsFixed(2), 1.2),
-                    redGreenParsePercent(context, netPercent.toStringAsFixed(2), 1.2)
+                    redGreenParsePercent(context, netPercent.toStringAsFixed(2), 1.15)
                   ],
                 ),
                 new Column(
@@ -106,7 +106,6 @@ class TransactionsPageState extends State<TransactionsPage> {
           ),
           new Divider(height: 0.0),
         ])),
-
         new SliverList(delegate: new SliverChildBuilderDelegate(
                 (context, index) => new TransactionItem(
                   snapshot: portfolioMap[widget.symbol][portfolioMap[widget.symbol].length-index-1],
@@ -115,7 +114,6 @@ class TransactionsPageState extends State<TransactionsPage> {
                 ),
             childCount: portfolioMap[widget.symbol].length
         )),
-
       ],
     );
   }
@@ -131,7 +129,6 @@ class TransactionItem extends StatelessWidget {
   Widget build(BuildContext context) {
     print(snapshot);
     final DateTime time = new DateTime.fromMillisecondsSinceEpoch(snapshot["time_epoch"]);
-
     return new InkWell(
       onTap: () {},
       child: new Container(
@@ -192,19 +189,14 @@ class TransactionItem extends StatelessWidget {
                       new Text("Exchange", style: Theme.of(context).textTheme.caption),
                       new Padding(padding: const EdgeInsets.symmetric(horizontal: 2.0)),
                       new Text(snapshot["exchange"],
-                          style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.1))
+                          style: Theme.of(context).primaryTextTheme.body2)
                     ]),
                     new Text(time.month.toString()+"/"+time.day.toString()+"/"+time.year.toString().substring(2)
                         +" "+time.hour.toString()+":"+time.minute.toString(),
-                        style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.1))
+                        style: Theme.of(context).primaryTextTheme.body1)
                   ],
                 ),
-                snapshot["notes"] != "" ? new Column(
-                  children: <Widget>[
-                    new Text("Notes", style: Theme.of(context).textTheme.caption),
-                    new Text(snapshot["notes"])
-                  ],
-                ) : new Container()
+                snapshot["notes"] != "" ? new Text(snapshot["notes"]) : new Container()
               ],
             ),
           ],
