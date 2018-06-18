@@ -132,11 +132,6 @@ class TransactionItem extends StatelessWidget {
     return new InkWell(
       onTap: () {},
       child: new Container(
-        decoration: new BoxDecoration(
-          border: new Border(
-            bottom: new BorderSide(color: Theme.of(context).dividerColor, width: 0.5)
-          )
-        ),
         padding: const EdgeInsets.all(8.0),
         child: new Column(
           children: <Widget>[
@@ -146,19 +141,17 @@ class TransactionItem extends StatelessWidget {
                 new Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      new Text(snapshot["quantity"] >= 0 ? "Buy" : "Sell",
-                          style: Theme.of(context).textTheme.caption.apply(
+                      new Text(snapshot["quantity"] >= 0 ? "Bought" : "Sold",
+                          style: Theme.of(context).textTheme.body1.apply(
                               color: snapshot["quantity"] >= 0 ? Colors.green : Colors.red
                           )
                       ),
-                      new Text(snapshot["quantity"].toString() + " " + symbol,
-                          style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.1))
-                    ]),
-                new Column(
-                  children: <Widget>[
-                    new Text("Price", style: Theme.of(context).textTheme.caption),
-                    new Row(
-                      children: <Widget>[
+                      new Row(children: <Widget>[
+                        new Text(snapshot["quantity"].toString() + " " + symbol,
+                            style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.1)),
+                        new Padding(padding: const EdgeInsets.symmetric(horizontal: 1.0)),
+                        new Text("at", style: Theme.of(context).textTheme.caption),
+                        new Padding(padding: const EdgeInsets.symmetric(horizontal: 1.0)),
                         new Text("\$"+snapshot["price_usd"].toStringAsFixed(2),
                             style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.1)),
                         new Padding(padding: const EdgeInsets.symmetric(horizontal: 1.0)),
@@ -167,15 +160,16 @@ class TransactionItem extends StatelessWidget {
                             ((currentPrice - snapshot["price_usd"]) / snapshot["price_usd"] * 100).toStringAsFixed(2),
                             1.0
                         )
-                      ],
-                    )
-                  ],
+                      ],)
+                    ]),
+                new Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    new Text(snapshot["quantity"] >= 0 ? "Cost" : "Profit", style: Theme.of(context).textTheme.caption),
+                    new Text("\$"+(snapshot["quantity"]*snapshot["price_usd"]).abs().toStringAsFixed(2),
+                      style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.2))
+                  ]
                 ),
-                new Column(children: <Widget>[
-                  new Text(snapshot["quantity"] >= 0 ? "Cost" : "Proceeds", style: Theme.of(context).textTheme.caption),
-                  new Text("\$"+(snapshot["quantity"]*snapshot["price_usd"]).abs().toStringAsFixed(2),
-                      style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.1))
-                ]),
               ],
             ),
             new Padding(padding: const EdgeInsets.symmetric(vertical: 1.0)),
@@ -187,9 +181,9 @@ class TransactionItem extends StatelessWidget {
                   children: <Widget>[
                     new Row(children: <Widget>[
                       new Text("Exchange", style: Theme.of(context).textTheme.caption),
-                      new Padding(padding: const EdgeInsets.symmetric(horizontal: 2.0)),
+                      new Padding(padding: const EdgeInsets.symmetric(horizontal: 1.0)),
                       new Text(snapshot["exchange"],
-                          style: Theme.of(context).primaryTextTheme.body2)
+                          style: Theme.of(context).primaryTextTheme.body1)
                     ]),
                     new Text(time.month.toString()+"/"+time.day.toString()+"/"+time.year.toString().substring(2)
                         +" "+time.hour.toString()+":"+time.minute.toString(),

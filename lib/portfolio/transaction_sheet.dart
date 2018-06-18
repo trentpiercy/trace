@@ -352,7 +352,6 @@ class TransactionSheetState extends State<TransactionSheet> {
                     new Padding(padding: const EdgeInsets.symmetric(horizontal: 6.0)),
                   ],
                 ),
-
                 new Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -363,10 +362,9 @@ class TransactionSheetState extends State<TransactionSheet> {
                       new Row(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          new Padding(padding: const EdgeInsets.only(left: 16.0)),
                           new Container(
-                            width: MediaQuery.of(context).size.width * 0.25,
-                            padding: const EdgeInsets.only(right: 4.0),
+                            width: MediaQuery.of(context).size.width * 0.275,
+                            padding: const EdgeInsets.only(right: 4.0, left: 16.0),
                             child: new TextField(
                               controller: _symbolController,
                               autofocus: true,
@@ -380,7 +378,7 @@ class TransactionSheetState extends State<TransactionSheet> {
                             ),
                           ),
                           new Container(
-                            width: MediaQuery.of(context).size.width * 0.25,
+                            width: MediaQuery.of(context).size.width * 0.225,
                             padding: const EdgeInsets.only(right: 4.0),
                             child: new TextField(
                               controller: _quantityController,
@@ -414,9 +412,10 @@ class TransactionSheetState extends State<TransactionSheet> {
                         ],
                       ),
                       new Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           new Container(
-                            width: MediaQuery.of(context).size.width * 0.25,
+                            width: MediaQuery.of(context).size.width * 0.275,
                             padding: const EdgeInsets.only(left: 16.0),
                             child: new PopupMenuButton(
                               itemBuilder: (BuildContext context) {
@@ -457,7 +456,6 @@ class TransactionSheetState extends State<TransactionSheet> {
                           ),
                           new Container(
                             width: MediaQuery.of(context).size.width*0.5,
-                            padding: const EdgeInsets.only(left: 10.0),
                             child: new TextField(
                               controller: _notesController,
                               autocorrect: false,
