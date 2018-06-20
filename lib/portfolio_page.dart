@@ -68,9 +68,9 @@ class PortfolioPageState extends State<PortfolioPage> {
                           new Text("7D Change", style: Theme.of(context).textTheme.caption),
                           new Text(
                               widget.totalPortfolioStats["percent_change_7d"] >= 0 ? "+"+widget.totalPortfolioStats["percent_change_7d"].toStringAsFixed(2)+"%" : widget.totalPortfolioStats["percent_change_7d"].toStringAsFixed(2)+"%",
-                              style: Theme.of(context).primaryTextTheme.body2.apply(
+                              style: Theme.of(context).primaryTextTheme.body1.apply(
                                 color: widget.totalPortfolioStats["percent_change_7d"] >= 0 ? Colors.green : Colors.red,
-                                fontSizeFactor: 1.8,
+                                fontSizeFactor: 1.6,
                               )
                           )
                         ],
@@ -80,9 +80,9 @@ class PortfolioPageState extends State<PortfolioPage> {
                           new Text("24h Change", style: Theme.of(context).textTheme.caption),
                           new Text(
                               widget.totalPortfolioStats["percent_change_24h"] >= 0 ? "+"+widget.totalPortfolioStats["percent_change_24h"].toStringAsFixed(2)+"%" : widget.totalPortfolioStats["percent_change_24h"].toStringAsFixed(2)+"%",
-                              style: Theme.of(context).primaryTextTheme.body2.apply(
+                              style: Theme.of(context).primaryTextTheme.body1.apply(
                                 color: widget.totalPortfolioStats["percent_change_24h"] >= 0 ? Colors.green : Colors.red,
-                                fontSizeFactor: 1.8
+                                fontSizeFactor: 1.6
                               )
                           )
                         ],

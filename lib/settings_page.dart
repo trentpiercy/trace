@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -18,9 +19,9 @@ class SettingsPageState extends State<SettingsPage>{
           title: new Text("Delete Portfolio File?"),
           content: new Text("This cannot be undone."),
           actions: <Widget>[
-            new FlatButton(onPressed: () {
+            new FlatButton(onPressed: () async {
+              await _deletePortfolio();
               Navigator.of(context).pop();
-              _deletePortfolio;
               }, child: new Text("Delete")),
             new FlatButton(onPressed: () => Navigator.of(context).pop(), child: new Text("Cancel"))
           ],
@@ -29,7 +30,7 @@ class SettingsPageState extends State<SettingsPage>{
     );
   }
 
-  _deletePortfolio() {
+  Future<Null> _deletePortfolio() async {
     getApplicationDocumentsDirectory().then((Directory directory) {
       File jsonFile = new File(directory.path + "/portfolio.json");
       print("DELETING PORTFOLIO...");

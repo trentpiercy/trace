@@ -89,8 +89,8 @@ class TransactionsPageState extends State<TransactionsPage> {
                 new Column(
                   children: <Widget>[
                     new Text("Total Net", style: Theme.of(context).textTheme.caption),
-                    redGreenParse(context, net.toStringAsFixed(2), 1.2),
-                    redGreenParsePercent(context, netPercent.toStringAsFixed(2), 1.15)
+                    redGreenParse(context, net.toStringAsFixed(2), 1.5),
+                    redGreenParsePercent(context, netPercent.toStringAsFixed(2), 1.2)
                   ],
                 ),
                 new Column(
@@ -98,7 +98,7 @@ class TransactionsPageState extends State<TransactionsPage> {
                   children: <Widget>[
                     new Text("Total Cost", style: Theme.of(context).textTheme.caption),
                     new Text("\$"+cost.toStringAsFixed(2),
-                        style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.8))
+                        style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.5))
                   ],
                 ),
               ],
