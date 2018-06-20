@@ -237,12 +237,11 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
             )
         ),
 
-//        floatingActionButton: [
-//          new PortfolioFAB(),
-//          null,
-//          null
-//        ][_tabIndex],
-        floatingActionButton: new PortfolioFAB(_scaffoldKey, _loadProfileJson),
+        floatingActionButton: new PortfolioFAB(_scaffoldKey, () {
+          setState(() {
+            _makePortfolioDisplayList();
+          });
+        }),
 
         body: new NestedScrollView(
           controller: _scrollController,

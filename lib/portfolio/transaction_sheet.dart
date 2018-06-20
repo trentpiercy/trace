@@ -236,6 +236,7 @@ class TransactionSheetState extends State<TransactionSheet> {
             jsonContent[symbol].add(newEntry);
           }
 
+          portfolioMap = jsonContent;
           jsonFile.writeAsStringSync(json.encode(jsonContent));
 
           print("WRITE SUCCESS");
