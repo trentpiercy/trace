@@ -140,8 +140,6 @@ class TransactionSheetState extends State<TransactionSheet> {
   }
 
   _checkValidSymbol(String inputSymbol) async {
-    print("transaction_sheet marketListData: " + marketListData.toString());
-
     if (symbolList == null || symbolList.isEmpty) {
       symbolList = [];
       marketListData.forEach((value) => symbolList.add(value["symbol"]));

@@ -67,6 +67,9 @@ class TransactionsPageState extends State<TransactionsPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    print("built transactions page");
+
     return new CustomScrollView(
       slivers: <Widget>[
         new SliverList(delegate: new SliverChildListDelegate(<Widget>[

@@ -23,7 +23,6 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
   TabController _tabController;
   int _tabAmt;
   List<Widget> _tabBarChildren;
-  List<Widget> _tabViewChildren;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -37,24 +36,11 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
         new Tab(text: "Markets"),
         new Tab(text: "Transactions")
       ];
-      _tabViewChildren = [
-        new AggregateStats(symbol: widget.snapshot["symbol"], id: widget.snapshot["id"].toString(), toSym: toSym),
-        new MarketList(symbol: widget.snapshot["symbol"], toSym: toSym, key: new PageStorageKey("exchanges")),
-        new TransactionsPage(symbol: widget.snapshot["symbol"])
-      ];
     } else {
       _tabAmt = 2;
       _tabBarChildren = [
         new Tab(text: "Aggregate Stats"),
         new Tab(text: "Markets")
-      ];
-      _tabViewChildren = [
-        new AggregateStats(symbol: widget.snapshot["symbol"],
-            id: widget.snapshot["id"].toString(),
-            toSym: toSym),
-        new MarketList(symbol: widget.snapshot["symbol"],
-            toSym: toSym,
-            key: new PageStorageKey("exchanges"))
       ];
     }
   }
@@ -66,10 +52,8 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
     _makeTabs();
     _tabController = new TabController(length: _tabAmt, vsync: this);
     _tabController.addListener(() {
-      if (_tabController.animation.value.round() != _tabIndex) {
-        _tabIndex = _tabController.animation.value.round();
-        setState(() {});
-      }
+      _tabIndex = _tabController.index;
+      setState(() {});
     });
   }
 
@@ -105,7 +89,18 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
         ),
         body: new TabBarView(
           controller: _tabController,
-          children: _tabViewChildren,
+          children: widget.enableTransactions ? [
+            new AggregateStats(symbol: widget.snapshot["symbol"], id: widget.snapshot["id"].toString(), toSym: toSym),
+            new MarketList(symbol: widget.snapshot["symbol"], toSym: toSym, key: new PageStorageKey("exchanges")),
+            new TransactionsPage(symbol: widget.snapshot["symbol"])
+          ] : [
+            new AggregateStats(symbol: widget.snapshot["symbol"],
+                id: widget.snapshot["id"].toString(),
+                toSym: toSym),
+            new MarketList(symbol: widget.snapshot["symbol"],
+                toSym: toSym,
+                key: new PageStorageKey("exchanges"))
+          ]
         ),
       floatingActionButton: _tabIndex == 2 ?
       new PortfolioFAB(_scaffoldKey, (){setState(() {});})
