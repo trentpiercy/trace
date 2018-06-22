@@ -123,7 +123,8 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           "percent_change_7d": coin["quotes"]["USD"]["percent_change_7d"],
           "total_quantity": portfolioTotals[coin["symbol"]],
           "id": coin["id"],
-          "name": coin["name"]
+          "name": coin["name"],
+          "current_price_usd": coin["quotes"]["USD"]["price"]
         });
         totalPortfolioValue += (portfolioTotals[coin["symbol"]]*coin["quotes"]["USD"]["price"]);
       }

@@ -15,7 +15,19 @@ class PortfolioBreakdown extends StatefulWidget {
 }
 
 class PortfolioBreakdownState extends State<PortfolioBreakdown> {
-  List <CircularStackEntry> portions;
+  List <CircularSegmentEntry> segments = [];
+
+  List colors = [
+    Colors.red[400],
+    Colors.pink[400],
+    Colors.purple[400],
+    Colors.deepPurple[400],
+    Colors.indigo[400],
+    Colors.blue[400],
+    Colors.lightBlue[400],
+    Colors.cyan[400],
+    Colors.teal[400]
+  ];
 
   num value = 0;
   num cost = 0;
@@ -40,10 +52,22 @@ class PortfolioBreakdownState extends State<PortfolioBreakdown> {
     }
   }
 
+  _makePortions() {
+    int colorInt = 0;
+    widget.portfolioDisplay.forEach((coin) {
+      colorInt += 1;
+      segments.add(new CircularSegmentEntry(
+          coin["total_quantity"] * coin["current_price_usd"],
+          colors[colorInt]
+      ));
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     _getTotals();
+    _makePortions();
   }
 
   @override
@@ -85,8 +109,13 @@ class PortfolioBreakdownState extends State<PortfolioBreakdown> {
                 ),
               ),
 
-
-
+              new AnimatedCircularChart(
+                initialChartData: <CircularStackEntry>[
+                  new CircularStackEntry(segments, rankKey: "Portfolio Breakdown")
+                ],
+                size: new Size.square(MediaQuery.of(context).size.width*0.75),
+                duration: new Duration(milliseconds: 500),
+              )
             ])),
 
           ],
