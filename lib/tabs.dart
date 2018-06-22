@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'portfolio/portfolio_tabs.dart';
 import 'main.dart';
@@ -75,7 +76,9 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     }
   }
 
-  _loadProfileJson() async {
+  _loadPortfolioJson({firstRun = false}) async {
+    print("started JSON load...");
+
     await getApplicationDocumentsDirectory().then((Directory directory) async {
       File jsonFile = new File(directory.path + "/portfolio.json");
       if (jsonFile.existsSync()) {
@@ -88,15 +91,33 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         portfolioMap = json.decode(jsonFile.readAsStringSync());
       }
 
-      if (marketListData == null) {
-        await getMarketData();
-      }
+      print("finished JSON load");
 
-      print("loaded contents: " + portfolioMap.toString());
+      if (firstRun) {await _loadCachedMarketData(directory);}
     });
+
+    if (marketListData == null) {
+      print("marketListData == null after loading cached");
+      await getMarketData();
+    }
 
     _makePortfolioDisplayList();
     setState(() {});
+
+    if (firstRun) {
+      await getMarketData();
+      setState(() {});
+    }
+
+    print("FINISHED loadPortfolioJson");
+  }
+
+  _loadCachedMarketData(directory) async {
+    print("loading cached market data...");
+    File jsonFile = new File(directory.path + "/marketData.json");
+    if (jsonFile.existsSync()) {
+      marketListData = json.decode(jsonFile.readAsStringSync());
+    }
   }
 
   _makePortfolioDisplayList() {
@@ -160,7 +181,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     super.initState();
     print("INIT TABS");
 
-    _loadProfileJson();
+    _loadPortfolioJson(firstRun: true);
     if (globalData == null) {getGlobalData();}
 
     _tabController = new TabController(length: 3, vsync: this);
@@ -323,7 +344,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           body: new TabBarView(
             controller: _tabController,
             children: <Widget>[
-              new PortfolioPage(portfolioDisplay, totalPortfolioStats, _loadProfileJson, key: _portfolioKey),
+              new PortfolioPage(portfolioDisplay, totalPortfolioStats, _loadPortfolioJson, key: _portfolioKey),
               new MarketPage(filter, isSearching, key: _marketKey),
               new Container(),
             ],

@@ -59,7 +59,7 @@ class PortfolioBreakdownState extends State<PortfolioBreakdown> {
     int colorInt = 0;
     widget.portfolioDisplay.forEach((coin) {
       segments.add(new CircularSegmentEntry(
-          coin["total_quantity"] * coin["current_price_usd"],
+          coin["total_quantity"] * coin["price_usd"],
           colors[colorInt]
       ));
       colorInt += 1;

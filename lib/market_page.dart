@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
 
 import 'main.dart';
@@ -28,6 +31,13 @@ Future<Null> getMarketData() async {
     rawMarketListData.forEach((key, value) => marketListData.add(value));
 
   }
+
+  getApplicationDocumentsDirectory().then((Directory directory) async {
+    File jsonFile = new File(directory.path + "/marketData.json");
+    jsonFile.writeAsStringSync(json.encode(marketListData));
+  });
+
+  print("\$\$\$\$ GOT NEW MARKET DATA");
 }
 
 Future<Null> getGlobalData() async {
