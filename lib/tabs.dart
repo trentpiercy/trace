@@ -99,10 +99,12 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     });
 
     _makePortfolioDisplay();
+    setState(() {});
 
     if (firstRun || marketListData == null) {
       await getMarketData();
-      _makeTabChildren();
+      _makePortfolioDisplay();
+      setState(() {});
     }
 
     print("FINISHED loadPortfolioJson function");
@@ -273,7 +275,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
 
         floatingActionButton: _tabIndex == 0 ?
         new PortfolioFAB(_scaffoldKey, () {
-          setState(() {});
+          setState(() {_makePortfolioDisplay();});
         }) : null,
 
         body: new NestedScrollView(

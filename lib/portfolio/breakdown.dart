@@ -21,15 +21,15 @@ class PortfolioBreakdownState extends State<PortfolioBreakdown> {
   final columnProps = [.2,.3,.3];
   List <CircularSegmentEntry> segments = [];
 
-  List colors = [
+  final List colors = [
     Colors.red[400],
     Colors.purple[400],
-    Colors.deepPurple[400],
     Colors.indigo[400],
     Colors.blue[400],
-    Colors.lightBlue[400],
-    Colors.cyan[400],
-    Colors.teal[400]
+    Colors.teal[400],
+    Colors.green[400],
+    Colors.lime[400],
+    Colors.orange[400],
   ];
 
   num value = 0;
@@ -57,7 +57,12 @@ class PortfolioBreakdownState extends State<PortfolioBreakdown> {
 
   _makePortions() {
     int colorInt = 0;
+
     widget.portfolioDisplay.forEach((coin) {
+      if (colorInt > (colors.length-1)) {
+        colorInt = 1;
+      }
+
       segments.add(new CircularSegmentEntry(
           coin["total_quantity"] * coin["price_usd"],
           colors[colorInt]
@@ -113,7 +118,7 @@ class PortfolioBreakdownState extends State<PortfolioBreakdown> {
             initialChartData: <CircularStackEntry>[
               new CircularStackEntry(segments, rankKey: "Portfolio Breakdown")
             ],
-            size: new Size.square(MediaQuery.of(context).size.width*0.75),
+            size: new Size.square(MediaQuery.of(context).size.width*0.65),
             duration: new Duration(milliseconds: 500),
           ),
           new Container(
@@ -144,11 +149,17 @@ class PortfolioBreakdownState extends State<PortfolioBreakdown> {
           ),
         ])),
         new SliverList(delegate: new SliverChildBuilderDelegate(
-                (context, index) => new PortfolioBreakdownItem(
-                widget.portfolioDisplay[index],
-                widget.totalStats["value_usd"],
-                colors[index]
-            ),
+                (context, index) {
+                  int colorIndex = index;
+                  if (colorIndex > (colors.length-1)) {
+                    colorIndex = index-((index/(colors.length-1)).floor()*(colors.length-1));
+                  }
+                  return new PortfolioBreakdownItem(
+                      widget.portfolioDisplay[index],
+                      widget.totalStats["value_usd"],
+                      colors[colorIndex]
+                  );
+                },
             childCount: widget.portfolioDisplay.length
         )),
       ],
