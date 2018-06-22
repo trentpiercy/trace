@@ -11,14 +11,14 @@ class PortfolioPage extends StatefulWidget {
   PortfolioPage(
       this.portfolioDisplay,
       this.totalPortfolioStats,
-      this.loadPortfolio,
+      this.makePortfolioDisplay,
       {Key key}
   ) : super(key: key);
 
   final List portfolioDisplay;
   final Map totalPortfolioStats;
 
-  final Function loadPortfolio;
+  final Function makePortfolioDisplay;
 
   @override
   PortfolioPageState createState() => new PortfolioPageState();
@@ -29,7 +29,7 @@ class PortfolioPageState extends State<PortfolioPage> {
 
   Future<Null> _refresh() async {
     await getMarketData();
-    widget.loadPortfolio();
+    widget.makePortfolioDisplay();
   }
 
   void initState() {

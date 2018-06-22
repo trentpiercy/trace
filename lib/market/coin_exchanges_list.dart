@@ -4,7 +4,6 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'package:trace/market_page.dart';
 import 'coin_exchange_stats.dart';
 import 'coin_aggregate_stats.dart';
 import 'package:trace/main.dart';
@@ -46,6 +45,8 @@ void resetExchangeData() {
 }
 
 class MarketListState extends State<MarketList> {
+  final columnProps = [.3,.3,.25];
+
   Future<Null> getExchangeData(String toSym) async {
     var response = await http.get(
         Uri.encodeFull(
@@ -127,11 +128,8 @@ class MarketListState extends State<MarketList> {
             ),
             new SliverList(
                 delegate: new SliverChildBuilderDelegate(
-                  (BuildContext context, int index) {
-                      return new ExchangeListItem(
-                        exchangeDataSnapshot: exchangeData[index]
-                      );
-                  },
+                  (BuildContext context, int index) =>
+                      new ExchangeListItem(exchangeData[index], columnProps),
                   childCount: exchangeData == null ? 0 : exchangeData.length,
                 )
             )
@@ -156,7 +154,8 @@ class MarketListState extends State<MarketList> {
 }
 
 class ExchangeListItem extends StatelessWidget {
-  ExchangeListItem({this.exchangeDataSnapshot});
+  ExchangeListItem(this.exchangeDataSnapshot, this.columnProps);
+  final columnProps;
   final exchangeDataSnapshot;
 
   @override

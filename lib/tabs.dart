@@ -35,6 +35,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   TabController _tabController;
   TextEditingController _textController = new TextEditingController();
   int _tabIndex = 0;
+  List<Widget> _tabChildren;
 
   List portfolioDisplay;
   Map totalPortfolioStats;
@@ -82,7 +83,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     await getApplicationDocumentsDirectory().then((Directory directory) async {
       File jsonFile = new File(directory.path + "/portfolio.json");
       if (jsonFile.existsSync()) {
-        print("file exists");
         portfolioMap = json.decode(jsonFile.readAsStringSync());
       } else {
         print("creating file");
@@ -102,14 +102,14 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     }
 
     _makePortfolioDisplayList();
-    setState(() {});
+    _makeTabChildren();
 
     if (firstRun) {
       await getMarketData();
-      setState(() {});
+      _makeTabChildren();
     }
 
-    print("FINISHED loadPortfolioJson");
+    print("FINISHED loadPortfolioJson function");
   }
 
   _loadCachedMarketData(directory) async {
@@ -176,10 +176,27 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     print("display list: " + portfolioDisplay.toString());
   }
 
+  _makeTabChildren() {
+    print("MADE TAB CHILDREN");
+    setState(() {
+      _tabChildren = [
+        new PortfolioPage(portfolioDisplay, totalPortfolioStats, _makePortfolioDisplayList, key: _portfolioKey),
+        new MarketPage(filter, isSearching, key: _marketKey),
+        new Container(),
+      ];
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     print("INIT TABS");
+
+    _tabChildren = [
+      new PortfolioPage(portfolioDisplay, totalPortfolioStats, _makePortfolioDisplayList, key: _portfolioKey),
+      new MarketPage(filter, isSearching, key: _marketKey),
+      new Container(),
+    ];
 
     _loadPortfolioJson(firstRun: true);
     if (globalData == null) {getGlobalData();}
@@ -263,11 +280,10 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
             )
         ),
 
-        floatingActionButton: new PortfolioFAB(_scaffoldKey, () {
-          setState(() {
-            _makePortfolioDisplayList();
-          });
-        }),
+        floatingActionButton: _tabIndex == 0 ?
+        new PortfolioFAB(_scaffoldKey, () {
+          setState(() {_makePortfolioDisplayList();});
+        }) : null,
 
         body: new NestedScrollView(
           controller: _scrollController,
@@ -343,11 +359,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
 
           body: new TabBarView(
             controller: _tabController,
-            children: <Widget>[
-              new PortfolioPage(portfolioDisplay, totalPortfolioStats, _loadPortfolioJson, key: _portfolioKey),
-              new MarketPage(filter, isSearching, key: _marketKey),
-              new Container(),
-            ],
+            children: _tabChildren,
           ),
         )
 
