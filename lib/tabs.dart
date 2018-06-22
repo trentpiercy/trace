@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'portfolio/portfolio_tabs.dart';
 import 'main.dart';
@@ -37,9 +36,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   int _tabIndex = 0;
   List<Widget> _tabChildren;
 
-  List portfolioDisplay;
-  Map totalPortfolioStats;
-
   bool isSearching = false;
   String filter;
 
@@ -51,21 +47,19 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
       filter = value;
       isSearching = true;
     }
-    setState(() {});
+    _makeTabChildren();
   }
 
   _startSearch() {
-    setState(() {
-      isSearching = true;
-    });
+    isSearching = true;
+    _makeTabChildren();
   }
 
   _stopSearch() {
-    setState(() {
-      isSearching = false;
-      filter = null;
-      _textController.clear();
-    });
+    isSearching = false;
+    filter = null;
+    _textController.clear();
+    _makeTabChildren();
   }
 
   _handleTabChange() {
@@ -93,18 +87,20 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
 
       print("finished JSON load");
 
-      if (firstRun) {await _loadCachedMarketData(directory);}
+      if (firstRun) {
+        print("loading cached market data...");
+        File jsonFile = new File(directory.path + "/marketData.json");
+        if (jsonFile.existsSync()) {
+          marketListData = json.decode(jsonFile.readAsStringSync());
+        }
+        print("marketListData at load: " + marketListData.toString());
+        print("finished loading cached market data");
+      }
     });
 
-    if (marketListData == null) {
-      print("marketListData == null after loading cached");
-      await getMarketData();
-    }
+    _makePortfolioDisplay();
 
-    _makePortfolioDisplayList();
-    _makeTabChildren();
-
-    if (firstRun) {
+    if (firstRun || marketListData == null) {
       await getMarketData();
       _makeTabChildren();
     }
@@ -112,15 +108,10 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     print("FINISHED loadPortfolioJson function");
   }
 
-  _loadCachedMarketData(directory) async {
-    print("loading cached market data...");
-    File jsonFile = new File(directory.path + "/marketData.json");
-    if (jsonFile.existsSync()) {
-      marketListData = json.decode(jsonFile.readAsStringSync());
-    }
-  }
+  _makePortfolioDisplay() {
+    print("portfolioMap: " + portfolioMap.toString());
+    print("marketListData: " + marketListData.toString());
 
-  _makePortfolioDisplayList() {
     Map portfolioTotals = {};
     List neededPriceSymbols = [];
 
@@ -151,7 +142,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     });
 
     portfolioDisplay.sort(
-      (a, b) => (b["total_quantity"]*b["price_usd"]).compareTo(a["total_quantity"]*a["price_usd"])
+            (a, b) => (b["total_quantity"]*b["price_usd"]).compareTo(a["total_quantity"]*a["price_usd"])
     );
 
 
@@ -159,10 +150,10 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     num total7dChange = 0;
     portfolioDisplay.forEach((coin) {
       total24hChange += (
-        coin["percent_change_24h"]*((coin["price_usd"]*coin["total_quantity"])/totalPortfolioValue)
+          coin["percent_change_24h"]*((coin["price_usd"]*coin["total_quantity"])/totalPortfolioValue)
       );
       total7dChange += (
-        coin["percent_change_7d"]*((coin["price_usd"]*coin["total_quantity"])/totalPortfolioValue)
+          coin["percent_change_7d"]*((coin["price_usd"]*coin["total_quantity"])/totalPortfolioValue)
       );
 
     });
@@ -180,7 +171,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     print("MADE TAB CHILDREN");
     setState(() {
       _tabChildren = [
-        new PortfolioPage(portfolioDisplay, totalPortfolioStats, _makePortfolioDisplayList, key: _portfolioKey),
+        new PortfolioPage(_makePortfolioDisplay, key: _portfolioKey),
         new MarketPage(filter, isSearching, key: _marketKey),
         new Container(),
       ];
@@ -193,7 +184,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     print("INIT TABS");
 
     _tabChildren = [
-      new PortfolioPage(portfolioDisplay, totalPortfolioStats, _makePortfolioDisplayList, key: _portfolioKey),
+      new PortfolioPage(_makePortfolioDisplay, key: _portfolioKey),
       new MarketPage(filter, isSearching, key: _marketKey),
       new Container(),
     ];
@@ -282,7 +273,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
 
         floatingActionButton: _tabIndex == 0 ?
         new PortfolioFAB(_scaffoldKey, () {
-          setState(() {_makePortfolioDisplayList();});
+          setState(() {});
         }) : null,
 
         body: new NestedScrollView(

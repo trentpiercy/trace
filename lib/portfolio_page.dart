@@ -8,15 +8,9 @@ import 'market/coin_aggregate_stats.dart';
 import 'market/coin_exchanges_list.dart';
 
 class PortfolioPage extends StatefulWidget {
-  PortfolioPage(
-      this.portfolioDisplay,
-      this.totalPortfolioStats,
-      this.makePortfolioDisplay,
+  PortfolioPage(this.makePortfolioDisplay,
       {Key key}
   ) : super(key: key);
-
-  final List portfolioDisplay;
-  final Map totalPortfolioStats;
 
   final Function makePortfolioDisplay;
 
@@ -30,21 +24,25 @@ class PortfolioPageState extends State<PortfolioPage> {
   Future<Null> _refresh() async {
     await getMarketData();
     widget.makePortfolioDisplay();
+    setState(() {});
   }
 
   void initState() {
     super.initState();
     print("INIT PORTFOLIO");
+    if (marketListData != null && portfolioMap != null
+    && marketListData.isNotEmpty && portfolioMap.isNotEmpty) {
+      widget.makePortfolioDisplay();
+    }
   }
 
 
   @override
   Widget build(BuildContext context) {
     print("[P] built portfolio page");
-
     return new RefreshIndicator(
       onRefresh: _refresh,
-      child: widget.totalPortfolioStats != null ? new CustomScrollView(
+      child: totalPortfolioStats != null ? new CustomScrollView(
         slivers: <Widget>[
           new SliverList(
               delegate: new SliverChildListDelegate(<Widget>[
@@ -58,7 +56,7 @@ class PortfolioPageState extends State<PortfolioPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           new Text("Total Portfolio Value", style: Theme.of(context).textTheme.caption),
-                          new Text("\$"+ numCommaParseNoRound(widget.totalPortfolioStats["value_usd"].toStringAsFixed(2)),
+                          new Text("\$"+ numCommaParseNoRound(totalPortfolioStats["value_usd"].toStringAsFixed(2)),
                               style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)
                           ),
                         ],
@@ -67,9 +65,9 @@ class PortfolioPageState extends State<PortfolioPage> {
                         children: <Widget>[
                           new Text("7D Change", style: Theme.of(context).textTheme.caption),
                           new Text(
-                              widget.totalPortfolioStats["percent_change_7d"] >= 0 ? "+"+widget.totalPortfolioStats["percent_change_7d"].toStringAsFixed(2)+"%" : widget.totalPortfolioStats["percent_change_7d"].toStringAsFixed(2)+"%",
+                              totalPortfolioStats["percent_change_7d"] >= 0 ? "+"+totalPortfolioStats["percent_change_7d"].toStringAsFixed(2)+"%" : totalPortfolioStats["percent_change_7d"].toStringAsFixed(2)+"%",
                               style: Theme.of(context).primaryTextTheme.body1.apply(
-                                color: widget.totalPortfolioStats["percent_change_7d"] >= 0 ? Colors.green : Colors.red,
+                                color: totalPortfolioStats["percent_change_7d"] >= 0 ? Colors.green : Colors.red,
                                 fontSizeFactor: 1.6,
                               )
                           )
@@ -79,9 +77,9 @@ class PortfolioPageState extends State<PortfolioPage> {
                         children: <Widget>[
                           new Text("24h Change", style: Theme.of(context).textTheme.caption),
                           new Text(
-                              widget.totalPortfolioStats["percent_change_24h"] >= 0 ? "+"+widget.totalPortfolioStats["percent_change_24h"].toStringAsFixed(2)+"%" : widget.totalPortfolioStats["percent_change_24h"].toStringAsFixed(2)+"%",
+                              totalPortfolioStats["percent_change_24h"] >= 0 ? "+"+totalPortfolioStats["percent_change_24h"].toStringAsFixed(2)+"%" : totalPortfolioStats["percent_change_24h"].toStringAsFixed(2)+"%",
                               style: Theme.of(context).primaryTextTheme.body1.apply(
-                                color: widget.totalPortfolioStats["percent_change_24h"] >= 0 ? Colors.green : Colors.red,
+                                color: totalPortfolioStats["percent_change_24h"] >= 0 ? Colors.green : Colors.red,
                                 fontSizeFactor: 1.6
                               )
                           )
@@ -122,8 +120,8 @@ class PortfolioPageState extends State<PortfolioPage> {
           ),
 
           new SliverList(delegate: new SliverChildBuilderDelegate(
-              (context, index) => new PortfolioListItem(widget.portfolioDisplay[index]),
-              childCount: widget.portfolioDisplay != null ? widget.portfolioDisplay.length : 0
+              (context, index) => new PortfolioListItem(portfolioDisplay[index]),
+              childCount: portfolioDisplay != null ? portfolioDisplay.length : 0
           ))
 
         ],

@@ -16,7 +16,10 @@ bool shortenOn = false;
 
 List marketListData;
 Map globalData;
+
 Map portfolioMap;
+List portfolioDisplay;
+Map totalPortfolioStats;
 
 numCommaParse(numString) {
   if (shortenOn) {
@@ -40,7 +43,6 @@ numCommaParseNoDollar(numString) {
 numCommaParseNoRound(numString) {
   return numString.replaceAllMapped(new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
 }
-
 
 class TraceApp extends StatefulWidget {
   @override
