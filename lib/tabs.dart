@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'portfolio/portfolio_tabs.dart';
 import 'main.dart';
 import 'portfolio_page.dart';
 import 'portfolio/transaction_sheet.dart';
@@ -215,12 +216,16 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                     new ListTile(
                       leading: new Icon(Icons.timeline),
                       title: new Text("Portfolio Timeline"),
-                      onTap: () => Navigator.pushNamed(context, "/portfolioTimeline"),
+                      onTap: () => Navigator.push(context, new MaterialPageRoute(
+                          builder: (context) => new PortfolioTabs(0, totalPortfolioStats, portfolioDisplay)
+                      )),
                     ),
                     new ListTile(
                       leading: new Icon(Icons.pie_chart_outlined),
                       title: new Text("Portfolio Breakdown"),
-                      onTap: () => Navigator.pushNamed(context, "/portfolioBreakdown"),
+                      onTap: () => Navigator.push(context, new MaterialPageRoute(
+                          builder: (context) => new PortfolioTabs(1, totalPortfolioStats, portfolioDisplay)
+                      )),
                     ),
                     new ListTile(
                       leading: new Icon(Icons.short_text),

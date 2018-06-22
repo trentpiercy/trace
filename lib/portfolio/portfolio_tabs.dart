@@ -5,8 +5,10 @@ import 'timeline.dart';
 import 'breakdown.dart';
 
 class PortfolioTabs extends StatefulWidget {
-  PortfolioTabs(this.tab);
+  PortfolioTabs(this.tab, this.totalStats, this.portfolioDisplay);
   final int tab;
+  final Map totalStats;
+  final List portfolioDisplay;
 
   @override
   PortfolioTabsState createState() => new PortfolioTabsState();
@@ -53,7 +55,7 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
           controller: _tabController,
           children: <Widget>[
             new PortfolioTimeline(),
-            new PortfolioBreakdown()
+            new PortfolioBreakdown(widget.totalStats, widget.portfolioDisplay)
           ],
         )
     );

@@ -159,8 +159,6 @@ class TraceAppState extends State<TraceApp> {
       home: new Tabs(toggleTheme, savePreferences, handleUpdate, darkEnabled, themeMode),
       theme: darkEnabled ? darkTheme : lightTheme,
       routes: <String, WidgetBuilder> {
-        "/portfolioTimeline": (BuildContext context) => new PortfolioTabs(0),
-        "/portfolioBreakdown": (BuildContext context) => new PortfolioTabs(1),
         "/settings": (BuildContext context) => new SettingsPage(),
       },
     );

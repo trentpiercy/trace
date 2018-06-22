@@ -55,7 +55,7 @@ class TransactionsPageState extends State<TransactionsPage> {
     if (cost > 0) {
       netPercent = ((value - cost) / cost)*100;
     } else {
-      netPercent = 999.99;
+      netPercent = 0.0;
     }
   }
 
