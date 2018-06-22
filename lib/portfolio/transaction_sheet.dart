@@ -297,67 +297,57 @@ class TransactionSheetState extends State<TransactionSheet> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData overrideTheme = new ThemeData(
-      brightness: Theme.of(context).brightness,
-      primaryColor: Theme.of(context).buttonColor,
-      accentColor: Theme.of(context).buttonColor,
-      hintColor: Theme.of(context).hintColor,
-      unselectedWidgetColor: Theme.of(context).unselectedWidgetColor,
-      canvasColor: Theme.of(context).canvasColor,
-      cardColor: Theme.of(context).cardColor,
-    );
     validColor = Theme.of(context).textTheme.body2.color;
-
     return new Container(
         decoration: new BoxDecoration(
           border: new Border(top: new BorderSide(color: Theme.of(context).dividerColor)),
           color: Theme.of(context).primaryColor,
         ),
         padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-        child: new Theme(
-            data: overrideTheme,
-            child: new Column(
-              mainAxisSize: MainAxisSize.min,
+        child: new Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            new Text("Add Transaction", style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2)),
+            new Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                new Text("Add Transaction", style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2)),
-                new Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    new Text("Buy", style: Theme.of(context).textTheme.caption),
-                    new Radio(value: 0, groupValue: radioValue, onChanged: _handleRadioValueChange),
-                    new Text("Sell", style: Theme.of(context).textTheme.caption),
-                    new Radio(value: 1, groupValue: radioValue, onChanged: _handleRadioValueChange),
+                new Text("Buy", style: Theme.of(context).textTheme.caption),
+                new Radio(value: 0, groupValue: radioValue, onChanged: _handleRadioValueChange,
+                    activeColor: Theme.of(context).buttonColor),
+                new Text("Sell", style: Theme.of(context).textTheme.caption),
+                new Radio(value: 1, groupValue: radioValue, onChanged: _handleRadioValueChange,
+                    activeColor: Theme.of(context).buttonColor),
 
-                    new Padding(padding: const EdgeInsets.symmetric(horizontal: 2.0)),
-                    new GestureDetector(
-                      onTap: () => _selectDate(),
-                      child: new Text(
-                          pickedDate.month.toString()
-                              + "/" + pickedDate.day.toString()
-                              + "/" + pickedDate.year.toString().substring(2),
-                          style: Theme.of(context).textTheme.button
-                      ),
-                    ),
-                    new Padding(padding: const EdgeInsets.symmetric(horizontal: 4.0)),
-                    new GestureDetector(
-                      onTap: () => _selectTime(),
-                      child: new Text(
-                        (pickedTime.hourOfPeriod == 0 ? "12" : pickedTime.hourOfPeriod.toString()) + ":" +
-                            (pickedTime.minute > 9 ? pickedTime.minute.toString() : "0" + pickedTime.minute.toString())
-                            + (pickedTime.hour >= 12 ? "PM" : "AM"),
-                        style: Theme.of(context).textTheme.button,
-                      ),
-                    ),
-                    new Padding(padding: const EdgeInsets.symmetric(horizontal: 6.0)),
-                  ],
+                new Padding(padding: const EdgeInsets.symmetric(horizontal: 2.0)),
+                new GestureDetector(
+                  onTap: () => _selectDate(),
+                  child: new Text(
+                      pickedDate.month.toString()
+                          + "/" + pickedDate.day.toString()
+                          + "/" + pickedDate.year.toString().substring(2),
+                      style: Theme.of(context).textTheme.button
+                  ),
                 ),
-                new Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    new Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
+                new Padding(padding: const EdgeInsets.symmetric(horizontal: 4.0)),
+                new GestureDetector(
+                  onTap: () => _selectTime(),
+                  child: new Text(
+                    (pickedTime.hourOfPeriod == 0 ? "12" : pickedTime.hourOfPeriod.toString()) + ":" +
+                        (pickedTime.minute > 9 ? pickedTime.minute.toString() : "0" + pickedTime.minute.toString())
+                        + (pickedTime.hour >= 12 ? "PM" : "AM"),
+                    style: Theme.of(context).textTheme.button,
+                  ),
+                ),
+                new Padding(padding: const EdgeInsets.symmetric(horizontal: 6.0)),
+              ],
+            ),
+            new Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                new Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
                       new Row(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
@@ -469,23 +459,22 @@ class TransactionSheetState extends State<TransactionSheet> {
                         ],
                       ),
                     ]),
-                    new Container(
-                      padding: const EdgeInsets.only(right: 16.0),
-                      child: new FloatingActionButton(
-                          child: Icon(Icons.check),
-                          elevation: symbol != null && quantity != null && exchange != null && price != null ?
-                          6.0 : 0.0,
-                          backgroundColor:
-                          symbol != null && quantity != null && exchange != null && price != null ?
-                          Colors.green : Theme.of(context).disabledColor,
-                          foregroundColor: Theme.of(context).iconTheme.color,
-                          onPressed: _handleSave
-                      ),
-                    )
-                  ],
-                ),
+                new Container(
+                  padding: const EdgeInsets.only(right: 16.0),
+                  child: new FloatingActionButton(
+                      child: Icon(Icons.check),
+                      elevation: symbol != null && quantity != null && exchange != null && price != null ?
+                      6.0 : 0.0,
+                      backgroundColor:
+                      symbol != null && quantity != null && exchange != null && price != null ?
+                      Colors.green : Theme.of(context).disabledColor,
+                      foregroundColor: Theme.of(context).iconTheme.color,
+                      onPressed: _handleSave
+                  ),
+                )
               ],
-            )
+            ),
+          ],
         )
     );
   }

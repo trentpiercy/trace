@@ -83,7 +83,7 @@ class AggregateStatsState extends State<AggregateStats> {
 
   _getGeneralStats() async {
     await getMarketData();
-    _getGeneralStats();
+    _makeGeneralStats();
   }
 
   _makeGeneralStats() {
