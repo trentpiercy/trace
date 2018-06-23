@@ -6,10 +6,10 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../main.dart';
-import 'package:trace/market_page.dart';
+import '../market_page.dart';
 
 
-Map OHLCVWidthOptions = {
+final Map OHLCVWidthOptions = {
   "1h":[["1m", 60, 1, "minute"], ["2m", 30, 2, "minute"], ["3m", 20, 3, "minute"]],
   "6h":[["5m", 72, 5, "minute"], ["10m", 36, 10, "minute"], ["15m", 24, 15, "minute"]],
   "12h":[["10m", 72, 10, "minute"], ["15m", 48, 15, "minute"], ["30m", 24, 30, "minute"]],
@@ -107,11 +107,9 @@ class AggregateStatsState extends State<AggregateStats> {
     );
     setState(() {
       historyOHLCV = new JsonDecoder().convert(response.body)["Data"];
-
       if (historyOHLCV == null) {
         historyOHLCV = [];
       }
-
     });
   }
 

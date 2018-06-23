@@ -93,27 +93,23 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         if (jsonFile.existsSync()) {
           marketListData = json.decode(jsonFile.readAsStringSync());
         }
-        print("marketListData at load: " + marketListData.toString());
         print("finished loading cached market data");
       }
     });
 
     _makePortfolioDisplay();
-    setState(() {});
+    _makeTabChildren();
 
     if (firstRun || marketListData == null) {
       await getMarketData();
       _makePortfolioDisplay();
-      setState(() {});
+      _makeTabChildren();
     }
 
     print("FINISHED loadPortfolioJson function");
   }
 
   _makePortfolioDisplay() {
-    print("portfolioMap: " + portfolioMap.toString());
-    print("marketListData: " + marketListData.toString());
-
     Map portfolioTotals = {};
     List neededPriceSymbols = [];
 

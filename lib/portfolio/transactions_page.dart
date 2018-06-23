@@ -145,7 +145,7 @@ class TransactionItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       new Text(snapshot["quantity"] >= 0 ? "Bought" : "Sold",
-                          style: Theme.of(context).textTheme.body1.apply(
+                          style: Theme.of(context).textTheme.body2.apply(
                               color: snapshot["quantity"] >= 0 ? Colors.green : Colors.red
                           )
                       ),

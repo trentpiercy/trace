@@ -19,9 +19,9 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
 
   @override
   void initState() {
+    super.initState();
     _tabController = new TabController(length: 2, vsync: this);
     _tabController.animateTo(widget.tab);
-    super.initState();
   }
 
   @override
@@ -54,7 +54,7 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
         body: new TabBarView(
           controller: _tabController,
           children: <Widget>[
-            new PortfolioTimeline(),
+            new PortfolioTimeline(widget.totalStats),
             new PortfolioBreakdown(widget.totalStats, widget.portfolioDisplay)
           ],
         )

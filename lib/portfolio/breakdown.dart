@@ -74,12 +74,14 @@ class PortfolioBreakdownState extends State<PortfolioBreakdown> {
   @override
   void initState() {
     super.initState();
+    print("INIT breakdown");
     _getTotals();
     _makePortions();
   }
 
   @override
   Widget build(BuildContext context) {
+    print("built breakdown");
     return new CustomScrollView(
       slivers: <Widget>[
         new SliverList(delegate: new SliverChildListDelegate(<Widget>[
