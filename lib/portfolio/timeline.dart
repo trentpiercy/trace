@@ -6,6 +6,12 @@ import 'dart:convert';
 
 import '../main.dart';
 
+List<double> timelineData;
+num high = 0;
+num low = 0;
+num changePercent = 0;
+String periodSetting = "7D";
+
 class PortfolioTimeline extends StatefulWidget {
   PortfolioTimeline(this.totalStats);
   final Map totalStats;
@@ -16,11 +22,7 @@ class PortfolioTimeline extends StatefulWidget {
 
 class PortfolioTimelineState extends State<PortfolioTimeline> {
   num value = 0;
-  num high = 0;
-  num low = 0;
-  num changePercent = 0;
 
-  String periodSetting = "7D";
   final Map periodOptions = {
     "24h":{
       "limit": 96,
@@ -67,8 +69,6 @@ class PortfolioTimelineState extends State<PortfolioTimeline> {
 
   };
 
-  List<double> timelineData;
-
   redGreenParsePercent(context, input, double fontSize) {
     return new Text(
         num.parse(input) >= 0 ? "+"+input+"%" : input+"%",
@@ -79,7 +79,10 @@ class PortfolioTimelineState extends State<PortfolioTimeline> {
     );
   }
 
+  Map timedData;
   _getTimelineData() async {
+    timedData = {};
+
     List<Map> needed = [];
     portfolioMap.forEach((symbol, transactions) {
       num oldest = double.infinity;
@@ -96,9 +99,12 @@ class PortfolioTimelineState extends State<PortfolioTimeline> {
       });
     });
 
-    Map timedData = await _pullData(needed);
-    print("timedData FINAL: " + timedData.toString());
 
+    for (Map coin in needed) {
+      await _pullData(coin);
+    }
+
+    print("timedData FINAL: " + timedData.toString());
 
     timelineData = [];
     high = -double.infinity;
@@ -120,52 +126,46 @@ class PortfolioTimelineState extends State<PortfolioTimeline> {
     setState(() {});
   }
 
-  _pullData(needed) async {
+  Future<Null> _pullData(coin) async {
     //TODO: make this pull all data at once
     /// can be done with .forEach(() async {})
     /// but doesn't wait for all data before returning
 
-    Map timedData = {};
-
-    for (Map coin in needed) {
-      int limit = periodOptions[periodSetting]["limit"];
-      int msAgo = new DateTime.now().millisecondsSinceEpoch - coin["oldest"];
-      int periodInMs =
-          limit * periodOptions[periodSetting]["unit_in_ms"];
-      if (msAgo < periodInMs) {
-        limit = limit - ((periodInMs - msAgo) ~/ periodOptions[periodSetting]["unit_in_ms"]);
-      }
-
-      var response = await http.get(
-          Uri.encodeFull(
-            "https://min-api.cryptocompare.com/data/histo"+
-            periodOptions[periodSetting]["hist_type"].toString() +
-            "?fsym=" + coin["symbol"] +
-            "&tsym=USD&limit="+ limit.toString() +
-            "&aggregate=" + periodOptions[periodSetting]["aggregate_by"].toString()
-          ),
-          headers: {"Accept": "application/json"}
-      );
-
-      List responseData = json.decode(response.body)["Data"];
-
-      responseData.forEach((point) {
-        num averagePrice = (point["open"] + point["close"]) / 2;
-        portfolioMap[coin["symbol"]].forEach((transaction) {
-          if (transaction["time_epoch"] < point["time"]*1000) {
-            if (timedData[point["time"]*1000] == null) {
-              timedData[point["time"]*1000] = 0;
-            }
-            timedData[point["time"]*1000] += transaction["quantity"] * averagePrice;
-          }
-        });
-      });
-
-      print("ran on " + coin["symbol"]);
-      print("timedData: " + timedData.toString());
+    int limit = periodOptions[periodSetting]["limit"];
+    int msAgo = new DateTime.now().millisecondsSinceEpoch - coin["oldest"];
+    int periodInMs =
+        limit * periodOptions[periodSetting]["unit_in_ms"];
+    if (msAgo < periodInMs) {
+      limit = limit - ((periodInMs - msAgo) ~/ periodOptions[periodSetting]["unit_in_ms"]);
     }
 
-    return timedData;
+    var response = await http.get(
+        Uri.encodeFull(
+          "https://min-api.cryptocompare.com/data/histo"+
+          periodOptions[periodSetting]["hist_type"].toString() +
+          "?fsym=" + coin["symbol"] +
+          "&tsym=USD&limit="+ limit.toString() +
+          "&aggregate=" + periodOptions[periodSetting]["aggregate_by"].toString()
+        ),
+        headers: {"Accept": "application/json"}
+    );
+
+    List responseData = json.decode(response.body)["Data"];
+
+    responseData.forEach((point) {
+      num averagePrice = (point["open"] + point["close"]) / 2;
+      portfolioMap[coin["symbol"]].forEach((transaction) {
+        if (transaction["time_epoch"] < point["time"]*1000) {
+          if (timedData[point["time"]*1000] == null) {
+            timedData[point["time"]*1000] = 0;
+          }
+          timedData[point["time"]*1000] += transaction["quantity"] * averagePrice;
+        }
+      });
+    });
+
+    print("ran on " + coin["symbol"]);
+    print("timedData: " + timedData.toString());
 
   }
 
@@ -173,7 +173,9 @@ class PortfolioTimelineState extends State<PortfolioTimeline> {
   void initState() {
     super.initState();
     value = widget.totalStats["value_usd"];
-    _getTimelineData();
+    if (timelineData == null) {
+      _getTimelineData();
+    }
   }
 
 
@@ -205,11 +207,14 @@ class PortfolioTimelineState extends State<PortfolioTimeline> {
                               new Row(
                                 children: <Widget>[
                                   new Text(periodSetting, style: Theme.of(context).textTheme.body2),
-                                  redGreenParsePercent(context, changePercent.toStringAsFixed(2), 1.1),
+                                  new Padding(padding: const EdgeInsets.symmetric(horizontal: 1.0)),
+                                  timelineData != null ?
+                                    redGreenParsePercent(context, changePercent.toStringAsFixed(2), 1.1)
+                                    : new Container(),
                                 ],
                               ),
                               new Padding(padding: const EdgeInsets.symmetric(vertical: 1.0)),
-                              new Row(
+                              timelineData != null ? new Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
                                   new Text("High", style: Theme.of(context).textTheme.caption),
@@ -218,8 +223,8 @@ class PortfolioTimelineState extends State<PortfolioTimeline> {
                                       style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)
                                   )
                                 ],
-                              ),
-                              new Row(
+                              ) : new Container(),
+                              timelineData != null ? new Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
                                   new Text("Low", style: Theme.of(context).textTheme.caption),
@@ -228,15 +233,28 @@ class PortfolioTimelineState extends State<PortfolioTimeline> {
                                       style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)
                                   )
                                 ],
-                              ),
+                              ) : new Container(),
                             ],
                           ),
                           new Container(
                             padding: const EdgeInsets.only(left: 10.0),
-                            child: new IconButton(
-                                color: Theme.of(context).buttonColor,
-                                onPressed: (){},
-                                icon: new Icon(Icons.access_time)
+                            child: new PopupMenuButton(
+                              icon: new Icon(Icons.access_time, color: Theme.of(context).buttonColor),
+                              tooltip: "Select Period",
+                              itemBuilder: (context) {
+                                List<PopupMenuEntry<dynamic>> options = [];
+                                periodOptions.forEach((K, V) => options.add(
+                                  new PopupMenuItem(child: new Text(K), value: K)
+                                ));
+                                return options;
+                              },
+                              onSelected: (chosen) {
+                                setState(() {
+                                  periodSetting = chosen;
+                                  timelineData = null;
+                                });
+                                _getTimelineData();
+                              }
                             ),
                           )
                         ],
@@ -244,13 +262,16 @@ class PortfolioTimelineState extends State<PortfolioTimeline> {
                     ])
             ),
 
-            timelineData != null ? new Sparkline(
-              data: timelineData,
-
-            ) : new Container(
-              alignment: Alignment.center,
-              padding: const EdgeInsets.all(64.0),
-              child: new CircularProgressIndicator()
+            new Container(
+              padding: const EdgeInsets.only(top: 16.0),
+              height: MediaQuery.of(context).size.height*.6,
+              child: timelineData != null ? new Sparkline(
+                data: timelineData,
+                lineGradient: new LinearGradient(colors: [Theme.of(context).buttonColor, Colors.purpleAccent[100]]),
+              ) : new Container(
+                  alignment: Alignment.center,
+                  child: new CircularProgressIndicator()
+              ),
             )
 
           ]))

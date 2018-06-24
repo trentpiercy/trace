@@ -233,11 +233,11 @@ class AggregateStatsState extends State<AggregateStats> {
                                                 new Padding(padding: const EdgeInsets.only(right: 3.0)),
                                                 new Text(historyTotal, style: Theme.of(context).textTheme.body2.apply(fontWeightDelta: 2)),
                                                 new Padding(padding: const EdgeInsets.only(right: 4.0)),
-                                                new Text(num.parse(_change) > 0 ? "+" + _change+"%" : _change+"%",
+                                                historyOHLCV != null ? new Text(num.parse(_change) > 0 ? "+" + _change+"%" : _change+"%",
                                                     style: Theme.of(context).primaryTextTheme.body2.apply(
                                                         color: num.parse(_change) >= 0 ? Colors.green : Colors.red
                                                     )
-                                                )
+                                                ) : new Container()
                                               ],
                                             ),
                                             new Row(
@@ -249,7 +249,7 @@ class AggregateStatsState extends State<AggregateStats> {
                                             ),
                                           ],
                                         ),
-                                        new Row(
+                                        historyOHLCV != null ? new Row(
 //                                          mainAxisSize: MainAxisSize.min,
                                           children: <Widget>[
                                             new Column(
@@ -263,12 +263,12 @@ class AggregateStatsState extends State<AggregateStats> {
                                             new Column(
                                               crossAxisAlignment: CrossAxisAlignment.end,
                                               children: <Widget>[
-                                                new Text("\$"+_high),
-                                                new Text("\$"+_low)
+                                                new Text("\$"+_high, style: Theme.of(context).textTheme.body2),
+                                                new Text("\$"+_low, style: Theme.of(context).textTheme.body2)
                                               ],
                                             ),
                                           ],
-                                        )
+                                        ) : new Container()
                                       ],
                                     ),
                                   ],

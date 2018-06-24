@@ -146,9 +146,11 @@ class TransactionItem extends StatelessWidget {
                     children: <Widget>[
                       new Text(snapshot["quantity"] >= 0 ? "Bought" : "Sold",
                           style: Theme.of(context).textTheme.body2.apply(
-                              color: snapshot["quantity"] >= 0 ? Colors.green : Colors.red
+                            color: snapshot["quantity"] >= 0 ? Colors.green : Colors.red,
+                            fontWeightDelta: 2
                           )
                       ),
+                      new Padding(padding: const EdgeInsets.only(bottom: 2.0)),
                       new Row(children: <Widget>[
                         new Text(snapshot["quantity"].toString() + " " + symbol,
                             style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.1)),
@@ -190,7 +192,7 @@ class TransactionItem extends StatelessWidget {
                     ]),
                     new Text(time.month.toString()+"/"+time.day.toString()+"/"+time.year.toString().substring(2)
                         +" "+time.hour.toString()+":"+time.minute.toString(),
-                        style: Theme.of(context).primaryTextTheme.body1)
+                        style: Theme.of(context).primaryTextTheme.body2)
                   ],
                 ),
                 snapshot["notes"] != "" ? new Text(snapshot["notes"]) : new Container()
