@@ -20,8 +20,7 @@ class PortfolioTimelineState extends State<PortfolioTimeline> {
   num low = 0;
   num changePercent = 0;
 
-  String periodSetting = "24h";
-
+  String periodSetting = "7D";
   final Map periodOptions = {
     "24h":{
       "limit": 96,
@@ -68,7 +67,7 @@ class PortfolioTimelineState extends State<PortfolioTimeline> {
 
   };
 
-  List timelineData;
+  List<double> timelineData;
 
   redGreenParsePercent(context, input, double fontSize) {
     return new Text(
@@ -97,26 +96,38 @@ class PortfolioTimelineState extends State<PortfolioTimeline> {
       });
     });
 
-
-    Stream<Map> addNeeded() async* {
-      for (Map coin in needed) {
-        yield coin;
-      }
-    }
-    Stream<Map> neededStream = addNeeded();
-
-
-    Map timedData = await _pullData(neededStream);
+    Map timedData = await _pullData(needed);
     print("timedData FINAL: " + timedData.toString());
 
-    _getStats();
+
+    timelineData = [];
+    high = -double.infinity;
+    low = double.infinity;
+    timedData.forEach((time, amt) {
+      timelineData.add(amt.toDouble());
+      if (amt > high) {
+        high = amt;
+      }
+      if (amt < low) {
+        low = amt;
+      }
+    });
+
+    num start = timelineData[0] != 0 ? timelineData[0] : 1;
+    num end = timelineData.last;
+    changePercent = (end-start)/start*100;
+
+    setState(() {});
   }
 
-  Future<Map> _pullData(Stream<Map> needed) async {
+  _pullData(needed) async {
+    //TODO: make this pull all data at once
+    /// can be done with .forEach(() async {})
+    /// but doesn't wait for all data before returning
 
     Map timedData = {};
 
-    await for (Map coin in needed) {
+    for (Map coin in needed) {
       int limit = periodOptions[periodSetting]["limit"];
       int msAgo = new DateTime.now().millisecondsSinceEpoch - coin["oldest"];
       int periodInMs =
@@ -152,13 +163,9 @@ class PortfolioTimelineState extends State<PortfolioTimeline> {
 
       print("ran on " + coin["symbol"]);
       print("timedData: " + timedData.toString());
-
     }
 
     return timedData;
-  }
-
-  _getStats() {
 
   }
 
@@ -190,7 +197,6 @@ class PortfolioTimelineState extends State<PortfolioTimeline> {
                           )
                         ],
                       ),
-
                       new Row(
                         children: <Widget>[
                           new Column(
@@ -237,6 +243,15 @@ class PortfolioTimelineState extends State<PortfolioTimeline> {
                       )
                     ])
             ),
+
+            timelineData != null ? new Sparkline(
+              data: timelineData,
+
+            ) : new Container(
+              alignment: Alignment.center,
+              padding: const EdgeInsets.all(64.0),
+              child: new CircularProgressIndicator()
+            )
 
           ]))
         ]
