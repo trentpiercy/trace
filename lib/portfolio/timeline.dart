@@ -21,19 +21,53 @@ class PortfolioTimelineState extends State<PortfolioTimeline> {
   num changePercent = 0;
 
   String periodSetting = "24h";
+
   final Map periodOptions = {
     "24h":{
       "limit": 96,
       "aggregate_by": 15,
-      "hist_type": "minute"
+      "hist_type": "minute",
+      "unit_in_ms": 900000
     },
     "3D":{
       "limit": 72,
       "aggregate_by": 1,
-      "hist_type": "hour"
+      "hist_type": "hour",
+      "unit_in_ms": 3600000
+    },
+    "7D":{
+      "limit": 86,
+      "aggregate_by": 2,
+      "hist_type": "hour",
+      "unit_in_ms": 3600000*2
+    },
+    "1M":{
+      "limit": 90,
+      "aggregate_by": 8,
+      "hist_type": "hour",
+      "unit_in_ms": 3600000*8
+    },
+    "3M":{
+      "limit": 90,
+      "aggregate_by": 1,
+      "hist_type": "day",
+      "unit_in_ms": 3600000*24
+    },
+    "6M":{
+      "limit": 90,
+      "aggregate_by": 2,
+      "hist_type": "day",
+      "unit_in_ms": 3600000*24*2
+    },
+    "1Y":{
+      "limit": 73,
+      "aggregate_by": 5,
+      "hist_type": "day",
+      "unit_in_ms": 3600000*24*5
     },
 
   };
+
   List timelineData;
 
   redGreenParsePercent(context, input, double fontSize) {
@@ -61,18 +95,67 @@ class PortfolioTimelineState extends State<PortfolioTimeline> {
         "symbol":symbol,
         "oldest":oldest
       });
-
     });
 
 
+    Stream<Map> addNeeded() async* {
+      for (Map coin in needed) {
+        yield coin;
+      }
+    }
+    Stream<Map> neededStream = addNeeded();
+
+
+    Map timedData = await _pullData(neededStream);
+    print("timedData FINAL: " + timedData.toString());
 
     _getStats();
   }
 
-  Future _pullData(List needed) {
-    
+  Future<Map> _pullData(Stream<Map> needed) async {
 
-    return null;
+    Map timedData = {};
+
+    await for (Map coin in needed) {
+      int limit = periodOptions[periodSetting]["limit"];
+      int msAgo = new DateTime.now().millisecondsSinceEpoch - coin["oldest"];
+      int periodInMs =
+          limit * periodOptions[periodSetting]["unit_in_ms"];
+      if (msAgo < periodInMs) {
+        limit = limit - ((periodInMs - msAgo) ~/ periodOptions[periodSetting]["unit_in_ms"]);
+      }
+
+      var response = await http.get(
+          Uri.encodeFull(
+            "https://min-api.cryptocompare.com/data/histo"+
+            periodOptions[periodSetting]["hist_type"].toString() +
+            "?fsym=" + coin["symbol"] +
+            "&tsym=USD&limit="+ limit.toString() +
+            "&aggregate=" + periodOptions[periodSetting]["aggregate_by"].toString()
+          ),
+          headers: {"Accept": "application/json"}
+      );
+
+      List responseData = json.decode(response.body)["Data"];
+
+      responseData.forEach((point) {
+        num averagePrice = (point["open"] + point["close"]) / 2;
+        portfolioMap[coin["symbol"]].forEach((transaction) {
+          if (transaction["time_epoch"] < point["time"]*1000) {
+            if (timedData[point["time"]*1000] == null) {
+              timedData[point["time"]*1000] = 0;
+            }
+            timedData[point["time"]*1000] += transaction["quantity"] * averagePrice;
+          }
+        });
+      });
+
+      print("ran on " + coin["symbol"]);
+      print("timedData: " + timedData.toString());
+
+    }
+
+    return timedData;
   }
 
   _getStats() {
