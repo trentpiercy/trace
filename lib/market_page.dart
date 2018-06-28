@@ -248,7 +248,9 @@ class CoinListItem extends StatelessWidget {
               child: new Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  new Text(snapshot["rank"].toString(), style: Theme.of(context).textTheme.body2),
+                  new Text(snapshot["rank"].toString(), style: Theme.of(context).textTheme.body2.apply(
+                    fontWeightDelta: 2
+                  )),
                   new Padding(padding: const EdgeInsets.only(right: 7.0)),
                   _getImage(),
                   new Padding(padding: const EdgeInsets.only(right: 7.0)),

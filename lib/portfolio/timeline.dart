@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_sparkline/flutter_sparkline.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_sparkline/flutter_sparkline.dart';
 
 import '../main.dart';
-
-List<double> timelineData;
-num high = 0;
-num low = 0;
-num changePercent = 0;
-String periodSetting = "7D";
 
 class PortfolioTimeline extends StatefulWidget {
   PortfolioTimeline(this.totalStats);
@@ -21,7 +15,24 @@ class PortfolioTimeline extends StatefulWidget {
 }
 
 class PortfolioTimelineState extends State<PortfolioTimeline> {
+  redGreenParsePercent(context, input, double fontSize) {
+    return new Text(
+        num.parse(input) >= 0 ? "+"+input+"%" : input+"%",
+        style: Theme.of(context).primaryTextTheme.body1.apply(
+          color: num.parse(input) >= 0 ? Colors.green : Colors.red,
+          fontSizeFactor: fontSize,
+        )
+    );
+  }
+
   num value = 0;
+
+  List<double> timelineData;
+  num high = 0;
+  num low = 0;
+  num changePercent = 0;
+  String periodSetting = "7D";
+  bool pullStarted = false;
 
   final Map periodOptions = {
     "24h":{
@@ -69,18 +80,10 @@ class PortfolioTimelineState extends State<PortfolioTimeline> {
 
   };
 
-  redGreenParsePercent(context, input, double fontSize) {
-    return new Text(
-        num.parse(input) >= 0 ? "+"+input+"%" : input+"%",
-        style: Theme.of(context).primaryTextTheme.body1.apply(
-          color: num.parse(input) >= 0 ? Colors.green : Colors.red,
-          fontSizeFactor: fontSize,
-        )
-    );
-  }
-
   Map timedData;
+
   _getTimelineData() async {
+    pullStarted = true;
     timedData = {};
 
     List<Map> needed = [];
@@ -98,7 +101,6 @@ class PortfolioTimelineState extends State<PortfolioTimeline> {
         "oldest":oldest
       });
     });
-
 
     for (Map coin in needed) {
       await _pullData(coin);
@@ -123,6 +125,7 @@ class PortfolioTimelineState extends State<PortfolioTimeline> {
     num end = timelineData.last;
     changePercent = (end-start)/start*100;
 
+    pullStarted = false;
     setState(() {});
   }
 
@@ -141,11 +144,11 @@ class PortfolioTimelineState extends State<PortfolioTimeline> {
 
     var response = await http.get(
         Uri.encodeFull(
-          "https://min-api.cryptocompare.com/data/histo"+
-          periodOptions[periodSetting]["hist_type"].toString() +
-          "?fsym=" + coin["symbol"] +
-          "&tsym=USD&limit="+ limit.toString() +
-          "&aggregate=" + periodOptions[periodSetting]["aggregate_by"].toString()
+            "https://min-api.cryptocompare.com/data/histo"+
+                periodOptions[periodSetting]["hist_type"].toString() +
+                "?fsym=" + coin["symbol"] +
+                "&tsym=USD&limit="+ limit.toString() +
+                "&aggregate=" + periodOptions[periodSetting]["aggregate_by"].toString()
         ),
         headers: {"Accept": "application/json"}
     );
@@ -169,15 +172,15 @@ class PortfolioTimelineState extends State<PortfolioTimeline> {
 
   }
 
+
   @override
   void initState() {
     super.initState();
     value = widget.totalStats["value_usd"];
-    if (timelineData == null) {
+    if (timelineData == null && pullStarted != true) {
       _getTimelineData();
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
