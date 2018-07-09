@@ -56,8 +56,17 @@ class PortfolioFABState extends State<PortfolioFAB> {
 }
 
 class TransactionSheet extends StatefulWidget {
-  TransactionSheet(this.loadPortfolio, {Key key}) : super(key: key);
+  TransactionSheet(this.loadPortfolio,
+      {Key key,
+        this.editMode: false,
+        this.snapshot,
+        this.symbol
+      }) : super(key: key);
   final Function loadPortfolio;
+
+  final bool editMode;
+  final Map snapshot;
+  final String symbol;
 
   @override
   TransactionSheetState createState() => new TransactionSheetState();
@@ -234,6 +243,10 @@ class TransactionSheetState extends State<TransactionSheet> {
             jsonContent[symbol].add(newEntry);
           }
 
+          if (widget.editMode) {
+            jsonContent[widget.symbol].remove(widget.snapshot);
+          }
+
           portfolioMap = jsonContent;
           jsonFile.writeAsStringSync(json.encode(jsonContent));
 
@@ -249,7 +262,12 @@ class TransactionSheetState extends State<TransactionSheet> {
                   label: "Undo",
                   onPressed: () {
                     jsonContent[symbol].removeLast();
+                    if (widget.editMode) {
+                      jsonContent[widget.symbol].add(widget.snapshot);
+                    }
                     jsonFile.writeAsStringSync(json.encode(jsonContent));
+
+                    portfolioMap = jsonContent;
 
                     print("UNDID");
                     print(jsonContent);
@@ -282,17 +300,40 @@ class TransactionSheetState extends State<TransactionSheet> {
     print(exchangesList);
   }
 
+  _initEditMode() {
+    _symbolController.text = widget.symbol;
+    _checkValidSymbol(_symbolController.text);
+
+    _priceController.text = widget.snapshot["price_usd"].toString();
+    _checkValidPrice(_priceController.text);
+
+    _quantityController.text = widget.snapshot["quantity"].toString();
+    _checkValidQuantity(_quantityController.text);
+
+    _exchangeController.text = widget.snapshot["exchange"];
+    exchange = widget.snapshot["exchange"];
+
+    _notesController.text = widget.snapshot["notes"];
+
+    pickedDate = new DateTime.fromMillisecondsSinceEpoch(widget.snapshot["time_epoch"]);
+    pickedTime = new TimeOfDay.fromDateTime(pickedDate);
+  }
+
   @override
   void initState() {
     super.initState();
-    _checkValidSymbol("");
-    _makeEpoch();
-
-    if (marketListData == null) {getMarketData();}
-
     symbolTextColor = errorColor;
     quantityTextColor = errorColor;
     priceTextColor = errorColor;
+
+    if (widget.editMode) {
+      _initEditMode();
+    } else {
+      _checkValidSymbol("");
+    }
+    _makeEpoch();
+
+    if (marketListData == null) {getMarketData();}
   }
 
   @override
@@ -307,7 +348,9 @@ class TransactionSheetState extends State<TransactionSheet> {
         child: new Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            new Text("Add Transaction", style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2)),
+            widget.editMode ?
+            new Container()
+            : new Text("Add Transaction", style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2)),
             new Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
