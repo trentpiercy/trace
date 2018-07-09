@@ -140,7 +140,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     });
 
     portfolioDisplay.sort(
-            (a, b) => (b["total_quantity"]*b["price_usd"]).compareTo(a["total_quantity"]*a["price_usd"])
+        (a, b) => (b["total_quantity"]*b["price_usd"]).compareTo(a["total_quantity"]*a["price_usd"])
     );
 
 
@@ -272,7 +272,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         floatingActionButton: _tabIndex == 0 ?
         new PortfolioFAB(_scaffoldKey, () {
           setState(() {_makePortfolioDisplay();});
-        }) : null,
+        }, marketListData) : null,
 
         body: new NestedScrollView(
           controller: _scrollController,

@@ -66,20 +66,11 @@ class TransactionsPageState extends State<TransactionsPage> {
     setState(() {});
   }
 
-  _getTime(transaction) {
-    int result = transaction["time_epoch"];
-    return result;
-  }
-
   sortTransactions() {
     transactionList = portfolioMap[widget.symbol];
-
-    print(portfolioMap[widget.symbol]);
     transactionList.sort(
-        (a, b) => _getTime(a).compareTo(_getTime(b))
+        (a, b) => (b["time_epoch"].compareTo(a["time_epoch"]))
     );
-
-    print("sorted: " + transactionList.toString());
   }
 
   @override
@@ -135,12 +126,12 @@ class TransactionsPageState extends State<TransactionsPage> {
         ])),
         new SliverList(delegate: new SliverChildBuilderDelegate(
             (context, index) => new TransactionItem(
-              snapshot: portfolioMap[widget.symbol][index],
+              snapshot: transactionList[index],
               currentPrice: currentPrice,
               symbol: widget.symbol,
               refreshPage: _refreshState,
             ),
-            childCount: portfolioMap[widget.symbol].length
+            childCount: transactionList.length
         )),
       ],
     );
@@ -160,23 +151,17 @@ class TransactionItem extends StatelessWidget {
     print(snapshot);
     final DateTime time = new DateTime.fromMillisecondsSinceEpoch(snapshot["time_epoch"]);
     return new InkWell(
-      onTap: () => Navigator.of(context).push(
-          new MaterialPageRoute(builder: (context) => new Scaffold(
-            appBar: new PreferredSize(
-              preferredSize: const Size.fromHeight(appBarHeight),
-              child: new AppBar(
-                titleSpacing: 0.0,
-                elevation: appBarElevation,
-                title: new Text("Edit Transaction"),
-              ),
-            ),
-            body: new TransactionSheet(
-              refreshPage,
-              editMode: true,
-              snapshot: snapshot,
-              symbol: symbol,
-            ),
-          ))),
+      onTap: () => showBottomSheet(
+        context: context,
+        builder: (context) =>
+        new TransactionSheet(
+            refreshPage,
+            marketListData,
+            editMode: true,
+            snapshot: snapshot,
+            symbol: symbol,
+        )
+      ),
       child: new Container(
         padding: const EdgeInsets.all(8.0),
         child: new Column(
@@ -220,16 +205,16 @@ class TransactionItem extends StatelessWidget {
                           +" "+time.hour.toString()+":"+time.minute.toString(),
                           style: Theme.of(context).primaryTextTheme.body2)
                     ]),
-                new Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    new Text(snapshot["quantity"] >= 0 ? "Cost" : "Profit", style: Theme.of(context).textTheme.caption),
-                    new Text("\$"+(snapshot["quantity"]*snapshot["price_usd"]).abs().toStringAsFixed(2),
-                      style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.2)),
-                    snapshot["notes"] != "" ? new Text(snapshot["notes"]) : new Container()
-                  ]
-                ),
+                new Flexible(child: new Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      new Text(snapshot["quantity"] >= 0 ? "Cost" : "Profit", style: Theme.of(context).textTheme.caption),
+                      new Text("\$"+(snapshot["quantity"]*snapshot["price_usd"]).abs().toStringAsFixed(2),
+                          style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.2)),
+                      snapshot["notes"] != "" ? new Text(snapshot["notes"]) : new Container(),
+                    ]
+                )),
               ],
             ),
           ],

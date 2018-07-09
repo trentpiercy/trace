@@ -6,12 +6,12 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
 import '../main.dart';
-import '../market_page.dart';
 
 class PortfolioFAB extends StatefulWidget {
-  PortfolioFAB(this.scaffoldKey, this.loadPortfolio);
+  PortfolioFAB(this.scaffoldKey, this.loadPortfolio, this.marketListData);
   final GlobalKey<ScaffoldState> scaffoldKey;
   final Function loadPortfolio;
+  final List marketListData;
 
   PortfolioFABState createState() => new PortfolioFABState();
 }
@@ -26,7 +26,7 @@ class PortfolioFABState extends State<PortfolioFAB> {
       sheetOpen = true;
     });
     widget.scaffoldKey.currentState.showBottomSheet((BuildContext context) {
-      return new TransactionSheet(widget.loadPortfolio, key: _sheetKey);
+      return new TransactionSheet(widget.loadPortfolio, widget.marketListData, key: _sheetKey);
     }).closed.whenComplete(() {
       setState(() {
         sheetOpen = false;
@@ -56,13 +56,18 @@ class PortfolioFABState extends State<PortfolioFAB> {
 }
 
 class TransactionSheet extends StatefulWidget {
-  TransactionSheet(this.loadPortfolio,
+  TransactionSheet(
+      this.loadPortfolio,
+      this.marketListData,
+
       {Key key,
         this.editMode: false,
         this.snapshot,
-        this.symbol
+        this.symbol,
       }) : super(key: key);
+
   final Function loadPortfolio;
+  final List marketListData;
 
   final bool editMode;
   final Map snapshot;
@@ -151,15 +156,17 @@ class TransactionSheetState extends State<TransactionSheet> {
   _checkValidSymbol(String inputSymbol) async {
     if (symbolList == null || symbolList.isEmpty) {
       symbolList = [];
-      marketListData.forEach((value) => symbolList.add(value["symbol"]));
+      widget.marketListData.forEach((value) => symbolList.add(value["symbol"]));
     }
+
+    print("symbol list: " + symbolList.toString());
 
     if (symbolList.contains(inputSymbol.toUpperCase())) {
       symbol = inputSymbol.toUpperCase();
       exchangesList = null;
       _getExchangeList();
 
-      for (var value in marketListData) {
+      for (var value in widget.marketListData) {
         if (value["symbol"] == symbol) {
           price = value["quotes"]["USD"]["price"];
           _priceController.text = price.toString();
@@ -328,12 +335,8 @@ class TransactionSheetState extends State<TransactionSheet> {
 
     if (widget.editMode) {
       _initEditMode();
-    } else {
-      _checkValidSymbol("");
     }
     _makeEpoch();
-
-    if (marketListData == null) {getMarketData();}
   }
 
   @override
@@ -348,9 +351,7 @@ class TransactionSheetState extends State<TransactionSheet> {
         child: new Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            widget.editMode ?
-            new Container()
-            : new Text("Add Transaction", style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2)),
+            new Text(widget.editMode ? "Edit Transaction" : "Add Transaction", style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2)),
             new Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[

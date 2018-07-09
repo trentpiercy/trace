@@ -45,16 +45,11 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
     }
   }
 
-  int _tabIndex;
   @override
   void initState() {
     super.initState();
     _makeTabs();
     _tabController = new TabController(length: _tabAmt, vsync: this);
-    _tabController.addListener(() {
-      _tabIndex = _tabController.index;
-      setState(() {});
-    });
   }
 
   @override
@@ -84,7 +79,17 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
                       tabs: _tabBarChildren,
                     )
                 )
-            )
+            ),
+            actions: <Widget>[
+              new IconButton(
+                  icon: new Icon(Icons.add),
+                  onPressed: () {
+                    _scaffoldKey.currentState.showBottomSheet((BuildContext context) {
+                      return new TransactionSheet(_makeTabs, marketListData);
+                    });
+                }
+              )
+            ],
           ),
         ),
         body: new TabBarView(
@@ -101,10 +106,7 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
                 toSym: toSym,
                 key: new PageStorageKey("exchanges"))
           ]
-        ),
-      floatingActionButton: _tabIndex == 2 ?
-      new PortfolioFAB(_scaffoldKey, (){setState(() {});})
-          : null,
+        )
     );
   }
 }
