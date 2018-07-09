@@ -81,14 +81,16 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
                 )
             ),
             actions: <Widget>[
-              new IconButton(
+              widget.enableTransactions ? new IconButton(
                   icon: new Icon(Icons.add),
                   onPressed: () {
                     _scaffoldKey.currentState.showBottomSheet((BuildContext context) {
-                      return new TransactionSheet(() {setState(() {});}, marketListData);
+                      return new TransactionSheet(
+                        () {setState(() {});},
+                        marketListData);
                     });
                 }
-              )
+              ) : new Container()
             ],
           ),
         ),

@@ -47,7 +47,7 @@ class TransactionsPageState extends State<TransactionsPage> {
         break;
       }
     }
-    for (Map transaction in portfolioMap[widget.symbol]) {
+    for (Map transaction in transactionList) {
       cost += transaction["quantity"] * transaction["price_usd"];
       value += transaction["quantity"] * currentPrice;
       holdings += transaction["quantity"];
@@ -63,10 +63,12 @@ class TransactionsPageState extends State<TransactionsPage> {
   }
 
   _refreshState() {
-    setState(() {});
+    setState(() {
+      _sortTransactions();
+    });
   }
 
-  sortTransactions() {
+  _sortTransactions() {
     transactionList = portfolioMap[widget.symbol];
     transactionList.sort(
         (a, b) => (b["time_epoch"].compareTo(a["time_epoch"]))
@@ -76,8 +78,8 @@ class TransactionsPageState extends State<TransactionsPage> {
   @override
   void initState() {
     super.initState();
+    _sortTransactions();
     _getTotals();
-    sortTransactions();
   }
 
   @override
@@ -182,12 +184,12 @@ class TransactionItem extends StatelessWidget {
                       new Padding(padding: const EdgeInsets.only(bottom: 2.0)),
                       new Row(children: <Widget>[
                         new Text(snapshot["quantity"].toString() + " " + symbol,
-                            style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.1)),
+                            style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.1, fontWeightDelta: 2)),
                         new Padding(padding: const EdgeInsets.symmetric(horizontal: 1.0)),
                         new Text("at", style: Theme.of(context).textTheme.caption),
                         new Padding(padding: const EdgeInsets.symmetric(horizontal: 1.0)),
                         new Text("\$"+snapshot["price_usd"].toStringAsFixed(2),
-                            style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.1)),
+                            style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.05)),
                         new Padding(padding: const EdgeInsets.symmetric(horizontal: 1.0)),
                         redGreenParsePercent(
                             context,

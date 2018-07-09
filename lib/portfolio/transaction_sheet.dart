@@ -283,7 +283,6 @@ class TransactionSheetState extends State<TransactionSheet> {
                     portfolioMap = jsonContent;
 
                     print("UNDID");
-                    print(jsonContent);
 
                     widget.loadPortfolio();
                   },
@@ -296,6 +295,51 @@ class TransactionSheetState extends State<TransactionSheet> {
       });
       widget.loadPortfolio();
     }
+  }
+
+  _deleteTransaction() async {
+    await getApplicationDocumentsDirectory().then((Directory directory) {
+      File jsonFile = new File(directory.path + "/portfolio.json");
+      if (jsonFile.existsSync()) {
+        Map jsonContent = json.decode(jsonFile.readAsStringSync());
+
+        int index = 0;
+        for (Map transaction in jsonContent[widget.symbol]) {
+          if (transaction.toString() == widget.snapshot.toString()) {
+            jsonContent[widget.symbol].removeAt(index);
+            break;
+          }
+          index += 1;
+        }
+
+        portfolioMap = jsonContent;
+        Navigator.of(context).pop();
+        jsonFile.writeAsStringSync(json.encode(jsonContent));
+        widget.loadPortfolio();
+
+        Scaffold.of(context).showSnackBar(
+            new SnackBar(
+              duration: new Duration(seconds: 5),
+              content: new Text("Transaction Deleted."),
+              action: new SnackBarAction(
+                label: "Undo",
+                onPressed: () {
+
+                  jsonContent[widget.symbol].add(widget.snapshot);
+                  jsonFile.writeAsStringSync(json.encode(jsonContent));
+
+                  portfolioMap = jsonContent;
+
+                  print("UNDID");
+
+                  widget.loadPortfolio();
+                },
+              ),
+            )
+        );
+
+      }
+    });
   }
 
   Future<Null> _getExchangeList() async {
@@ -509,19 +553,32 @@ class TransactionSheetState extends State<TransactionSheet> {
                         ],
                       ),
                     ]),
-                new Container(
-                  padding: const EdgeInsets.only(right: 16.0),
-                  child: new FloatingActionButton(
-                      child: Icon(Icons.check),
-                      elevation: symbol != null && quantity != null && exchange != null && price != null ?
-                      6.0 : 0.0,
-                      backgroundColor:
-                      symbol != null && quantity != null && exchange != null && price != null ?
-                      Colors.green : Theme.of(context).disabledColor,
-                      foregroundColor: Theme.of(context).iconTheme.color,
-                      onPressed: _handleSave
-                  ),
-                )
+               new Column(
+                 children: <Widget>[
+                   widget.editMode ? new Container(
+                     padding: const EdgeInsets.only(right: 16.0),
+                     child: new FloatingActionButton(
+                         child: Icon(Icons.delete),
+                         backgroundColor: Colors.red,
+                         foregroundColor: Theme.of(context).iconTheme.color,
+                         onPressed: _deleteTransaction
+                     ),
+                   ) : new Container(),
+                   new Container(
+                     padding: const EdgeInsets.only(right: 16.0),
+                     child: new FloatingActionButton(
+                         child: Icon(Icons.check),
+                         elevation: symbol != null && quantity != null && exchange != null && price != null ?
+                         6.0 : 0.0,
+                         backgroundColor:
+                         symbol != null && quantity != null && exchange != null && price != null ?
+                         Colors.green : Theme.of(context).disabledColor,
+                         foregroundColor: Theme.of(context).iconTheme.color,
+                         onPressed: _handleSave
+                     ),
+                   )
+                 ],
+               )
               ],
             ),
           ],
