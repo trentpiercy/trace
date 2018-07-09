@@ -4,7 +4,6 @@ description: A new Flutter project.
 dependencies:
   flutter:
     sdk: flutter
-  flutter_sparkline: ^0.0.4
   shared_preferences: ^0.4.1
   path_provider: ^0.4.0
   flutter_circular_chart: ^0.0.3
