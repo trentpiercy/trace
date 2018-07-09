@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:trace/portfolio/transaction_sheet.dart';
+import 'transaction_sheet.dart';
 import '../main.dart';
 
 class TransactionsPage extends StatefulWidget {

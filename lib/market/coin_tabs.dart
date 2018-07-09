@@ -85,7 +85,7 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
                   icon: new Icon(Icons.add),
                   onPressed: () {
                     _scaffoldKey.currentState.showBottomSheet((BuildContext context) {
-                      return new TransactionSheet(_makeTabs, marketListData);
+                      return new TransactionSheet(() {setState(() {});}, marketListData);
                     });
                 }
               )

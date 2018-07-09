@@ -251,14 +251,20 @@ class TransactionSheetState extends State<TransactionSheet> {
           }
 
           if (widget.editMode) {
-            jsonContent[widget.symbol].remove(widget.snapshot);
+            int index = 0;
+            for (Map transaction in jsonContent[widget.symbol]) {
+              if (transaction.toString() == widget.snapshot.toString()) {
+                jsonContent[widget.symbol].removeAt(index);
+                break;
+              }
+              index += 1;
+            }
           }
 
           portfolioMap = jsonContent;
           jsonFile.writeAsStringSync(json.encode(jsonContent));
 
           print("WRITE SUCCESS");
-          print(jsonContent);
 
           Navigator.of(context).pop();
           Scaffold.of(context).showSnackBar(
