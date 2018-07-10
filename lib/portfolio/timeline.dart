@@ -266,11 +266,15 @@ class PortfolioTimelineState extends State<PortfolioTimeline> {
             ),
 
             new Container(
-              padding: const EdgeInsets.only(top: 16.0),
+              padding: const EdgeInsets.only(top: 16.0, left: 4.0, right: 0.0),
               height: MediaQuery.of(context).size.height*.6,
               child: timelineData != null ? new Sparkline(
                 data: timelineData,
                 lineGradient: new LinearGradient(colors: [Theme.of(context).buttonColor, Colors.purpleAccent[100]]),
+                enableGridLines: true,
+                gridLineColor: Theme.of(context).dividerColor,
+                gridLineLabelColor: Theme.of(context).hintColor,
+                gridLineAmount: 5,
               ) : new Container(
                   alignment: Alignment.center,
                   child: new CircularProgressIndicator()

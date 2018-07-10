@@ -133,12 +133,12 @@ class _OHLCVPainter extends CustomPainter {
         gridLineValue = _max - (((_max - _min) / (gridLineAmount - 1)) * i);
 
         String gridLineText;
-        if (gridLineValue.toString().length > 4) {
-          gridLineText = gridLineValue.toString()[4] != "."
-              ? gridLineValue.toString().substring(0, 5)
-              : gridLineValue.toString().substring(0, 4);
+        if (gridLineValue < 1) {
+          gridLineText = gridLineValue.toStringAsPrecision(4);
+        } else if (gridLineValue < 999) {
+          gridLineText = gridLineValue.toStringAsFixed(2);
         } else {
-          gridLineText = gridLineValue.toString();
+          gridLineText = gridLineValue.round().toString();
         }
 
         gridLineTextPainters.add(new TextPainter(
@@ -178,10 +178,11 @@ class _OHLCVPainter extends CustomPainter {
     final double height = size.height * (1 - volumeProp);
 
     if (enableGridLines) {
-      width = size.width - 36.0;
+      print(gridLineTextPainters[0].text.text.length);
+      width = size.width - gridLineTextPainters[0].text.text.length * 6;
       Paint gridPaint = new Paint()
         ..color = gridLineColor
-        ..strokeWidth = 0.5;
+        ..strokeWidth = gridLineWidth;
 
       double gridLineDist = height / (gridLineAmount - 1);
       double gridLineY;
