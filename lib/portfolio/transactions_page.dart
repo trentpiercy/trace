@@ -47,7 +47,7 @@ class TransactionsPageState extends State<TransactionsPage> {
         break;
       }
     }
-    _updateTotals();
+//    _updateTotals();
   }
 
   _updateTotals() {
@@ -80,16 +80,18 @@ class TransactionsPageState extends State<TransactionsPage> {
   }
 
   _refreshState() {
-    setState(() {
-      _sortTransactions();
-      _updateTotals();
-    });
+//    setState(() {
+//      _sortTransactions();
+//      _updateTotals();
+//    });
   }
 
   @override
   void initState() {
+    print("INIT TRANSACTION PAGE");
+
     super.initState();
-    _sortTransactions();
+//    _sortTransactions();
     _getTotals();
   }
 
@@ -97,6 +99,9 @@ class TransactionsPageState extends State<TransactionsPage> {
   Widget build(BuildContext context) {
 
     print("built transactions page");
+
+    _sortTransactions();
+    _updateTotals();
 
     return new CustomScrollView(
       slivers: <Widget>[

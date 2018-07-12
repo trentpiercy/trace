@@ -90,7 +90,8 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
                         marketListData);
                     });
                 }
-              ) : new Container()
+              ) : new Container(),
+              new IconButton(icon: new Icon(Icons.build), onPressed: () {setState(() {});})
             ],
           ),
         ),
