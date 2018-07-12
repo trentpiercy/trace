@@ -36,10 +36,6 @@ numCommaParse(numString) {
 }
 
 numCommaParseNoDollar(numString) {
-  return num.parse(numString).round().toString().replaceAllMapped(new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
-}
-
-numCommaParseNoRound(numString) {
   return numString.replaceAllMapped(new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
 }
 

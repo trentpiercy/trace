@@ -91,7 +91,6 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
                     });
                 }
               ) : new Container(),
-              new IconButton(icon: new Icon(Icons.build), onPressed: () {setState(() {});})
             ],
           ),
         ),

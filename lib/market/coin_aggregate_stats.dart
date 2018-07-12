@@ -77,7 +77,7 @@ class AggregateStats extends StatefulWidget {
 }
 
 class AggregateStatsState extends State<AggregateStats> {
-  _normalizeNum(num input) {
+  normalizeNum(num input) {
     if (input < 1) {
       return input.toStringAsFixed(4);
     } else {
@@ -136,8 +136,8 @@ class AggregateStatsState extends State<AggregateStats> {
       }
     }
 
-    _high = _normalizeNum(highReturn);
-    _low = _normalizeNum(lowReturn);
+    _high = normalizeNum(highReturn);
+    _low = normalizeNum(lowReturn);
 
     var start = historyOHLCV[0]["open"] == 0 ? 1 : historyOHLCV[0]["open"];
     var end = historyOHLCV.last["close"];

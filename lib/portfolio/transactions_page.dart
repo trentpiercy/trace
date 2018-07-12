@@ -116,7 +116,7 @@ class TransactionsPageState extends State<TransactionsPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     new Text("Total Value", style: Theme.of(context).textTheme.caption),
-                    new Text("\$"+ numCommaParseNoRound(value.toStringAsFixed(2)),
+                    new Text("\$"+ numCommaParseNoDollar(value.toStringAsFixed(2)),
                         style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)),
                     new Text(num.parse(holdings.toStringAsPrecision(9)).toString() + " " + widget.symbol,
                         style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2)),

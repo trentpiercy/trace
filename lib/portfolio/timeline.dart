@@ -25,6 +25,14 @@ class PortfolioTimelineState extends State<PortfolioTimeline> {
     );
   }
 
+  normalizeNum(num input) {
+    if (input < 1) {
+      return input.toStringAsFixed(4);
+    } else {
+      return numCommaParseNoDollar(input.toStringAsFixed(2));
+    }
+  }
+
   num value = 0;
 
   List<double> timelineData;
@@ -191,74 +199,73 @@ class PortfolioTimelineState extends State<PortfolioTimeline> {
                 padding: const EdgeInsets.all(10.0),
                 child: new Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       new Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           new Text("Portfolio Value", style: Theme.of(context).textTheme.caption),
-                          new Text("\$"+ numCommaParseNoRound(value.toStringAsFixed(2)),
-                            style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)
-                          )
-                        ],
-                      ),
-                      new Row(
-                        children: <Widget>[
-                          new Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          new Row(
+                            mainAxisSize: MainAxisSize.max,
                             children: <Widget>[
-                              new Row(
-                                children: <Widget>[
-                                  new Text(periodSetting, style: Theme.of(context).textTheme.body2),
-                                  new Padding(padding: const EdgeInsets.symmetric(horizontal: 1.0)),
-                                  timelineData != null ?
-                                    redGreenParsePercent(context, changePercent.toStringAsFixed(2), 1.1)
-                                    : new Container(),
-                                ],
+                              new Text("\$"+ numCommaParseNoDollar(value.toStringAsFixed(2)),
+                                  style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)
                               ),
-                              new Padding(padding: const EdgeInsets.symmetric(vertical: 1.0)),
-                              timelineData != null ? new Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  new Text("High", style: Theme.of(context).textTheme.caption),
-                                  new Padding(padding: const EdgeInsets.symmetric(horizontal: 2.0)),
-                                  new Text(numCommaParse(high.toString()),
-                                      style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)
-                                  )
-                                ],
-                              ) : new Container(),
-                              timelineData != null ? new Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  new Text("Low", style: Theme.of(context).textTheme.caption),
-                                  new Padding(padding: const EdgeInsets.symmetric(horizontal: 2.0)),
-                                  new Text(numCommaParse(low.toString()),
-                                      style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)
-                                  )
-                                ],
-                              ) : new Container(),
+                              new Padding(padding: const EdgeInsets.symmetric(horizontal: 4.0)),
+                              timelineData != null ?
+                              redGreenParsePercent(context, changePercent.toStringAsFixed(2), 1.2)
+                                  : new Container(),
                             ],
                           ),
-                          new Container(
-                            padding: const EdgeInsets.only(left: 10.0),
-                            child: new PopupMenuButton(
-                              icon: new Icon(Icons.access_time, color: Theme.of(context).buttonColor),
-                              tooltip: "Select Period",
-                              itemBuilder: (context) {
-                                List<PopupMenuEntry<dynamic>> options = [];
-                                periodOptions.forEach((K, V) => options.add(
-                                  new PopupMenuItem(child: new Text(K), value: K)
-                                ));
-                                return options;
-                              },
-                              onSelected: (chosen) {
-                                setState(() {
-                                  periodSetting = chosen;
-                                  timelineData = null;
-                                });
-                                _getTimelineData();
-                              }
-                            ),
+                          new Padding(padding: const EdgeInsets.symmetric(vertical: 2.5)),
+                          timelineData != null ? new Row(
+                            children: <Widget>[
+                              new Text("High", style: Theme.of(context).textTheme.caption),
+                              new Padding(padding: const EdgeInsets.symmetric(horizontal: 2.0)),
+                              new Text("\$"+normalizeNum(high),
+                                  style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)
+                              )
+                            ],
+                          ) : new Container(),
+                          timelineData != null ? new Row(
+                            children: <Widget>[
+                              new Text("Low", style: Theme.of(context).textTheme.caption),
+                              new Padding(padding: const EdgeInsets.symmetric(horizontal: 3.0)),
+                              new Text("\$"+normalizeNum(low),
+                                  style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)
+                              )
+                            ],
+                          ) : new Container(),
+                        ],
+                      ),
+                      new Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          new Text("Period", style: Theme.of(context).textTheme.caption),
+                          new Row(
+                            children: <Widget>[
+                              new Text(periodSetting, style: Theme.of(context).textTheme.body2),
+                              new Container(
+                                child: new PopupMenuButton(
+                                    icon: new Icon(Icons.access_time, color: Theme.of(context).buttonColor),
+                                    tooltip: "Select Period",
+                                    itemBuilder: (context) {
+                                      List<PopupMenuEntry<dynamic>> options = [];
+                                      periodOptions.forEach((K, V) => options.add(
+                                          new PopupMenuItem(child: new Text(K), value: K)
+                                      ));
+                                      return options;
+                                    },
+                                    onSelected: (chosen) {
+                                      setState(() {
+                                        periodSetting = chosen;
+                                        timelineData = null;
+                                      });
+                                      _getTimelineData();
+                                    }
+                                ),
+                              ),
+                            ],
                           )
                         ],
                       )
