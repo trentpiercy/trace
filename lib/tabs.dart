@@ -253,16 +253,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                       onTap: () => Navigator.push(context, new MaterialPageRoute(
                           builder: (context) => new PortfolioTabs(1, totalPortfolioStats, portfolioDisplay)
                       )),
-                    ),
-                    new ListTile(
-                      leading: new Icon(Icons.short_text),
-                      title: new Text(shortenOn ? "Full Numbers" : "Abbreviate Numbers"),
-                      onTap: () {
-                        setState(() {
-                          shortenOn = !shortenOn;
-                        });
-                        widget.savePreferences();
-                      },
                     )
                   ],
                 )

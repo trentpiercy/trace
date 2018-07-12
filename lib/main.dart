@@ -153,14 +153,13 @@ class TraceAppState extends State<TraceApp> {
   @override
   Widget build(BuildContext context) {
     print("BUILT MAIN APP ==========");
-
     return new MaterialApp(
       color: darkEnabled ? darkTheme.primaryColor : lightTheme.primaryColor,
       title: "Trace",
       home: new Tabs(toggleTheme, savePreferences, handleUpdate, darkEnabled, themeMode),
       theme: darkEnabled ? darkTheme : lightTheme,
       routes: <String, WidgetBuilder> {
-        "/settings": (BuildContext context) => new SettingsPage(),
+        "/settings": (BuildContext context) => new SettingsPage(savePreferences: savePreferences),
       },
     );
   }

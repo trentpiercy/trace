@@ -6,6 +6,9 @@ import 'package:path_provider/path_provider.dart';
 import 'main.dart';
 
 class SettingsPage extends StatefulWidget {
+  SettingsPage({this.savePreferences});
+  final Function savePreferences;
+
   @override
   SettingsPageState createState() => new SettingsPageState();
 }
@@ -78,6 +81,23 @@ class SettingsPageState extends State<SettingsPage>{
         ),
         body: new ListView(
           children: <Widget>[
+            new Container(
+              padding: const EdgeInsets.all(10.0),
+              child: new Text("Preferences", style: Theme.of(context).textTheme.body2),
+            ),
+            new Container(
+              color: Theme.of(context).cardColor,
+              child: new ListTile(
+                leading: new Icon(Icons.short_text),
+                title: new Text(shortenOn ? "Full Numbers" : "Abbreviate Numbers"),
+                onTap: () {
+                  setState(() {
+                    shortenOn = !shortenOn;
+                  });
+                  widget.savePreferences();
+                },
+              ),
+            ),
             new Container(
               padding: const EdgeInsets.all(10.0),
               child: new Text("Debug", style: Theme.of(context).textTheme.body2),
