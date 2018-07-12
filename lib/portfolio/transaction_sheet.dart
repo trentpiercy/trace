@@ -397,15 +397,15 @@ class TransactionSheetState extends State<TransactionSheet> {
           border: new Border(top: new BorderSide(color: Theme.of(context).dividerColor)),
           color: Theme.of(context).primaryColor,
         ),
-        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 16.0, left: 16.0),
         child: new Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               new Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     new Text(widget.editMode ? "Edit Transaction" : "Add Transaction", style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2)),
                     new Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         new Text("Buy", style: Theme.of(context).textTheme.caption),
                         new Radio(value: 0, groupValue: radioValue, onChanged: _handleRadioValueChange,
@@ -437,11 +437,11 @@ class TransactionSheetState extends State<TransactionSheet> {
                       ],
                     ),
                     new Row(
-                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         new Container(
-                          width: MediaQuery.of(context).size.width * 0.275,
-                          padding: const EdgeInsets.only(right: 4.0, left: 16.0),
+                          width: MediaQuery.of(context).size.width * 0.25,
+                          padding: const EdgeInsets.only(right: 4.0),
                           child: new TextField(
                             controller: _symbolController,
                             autofocus: true,
@@ -455,7 +455,7 @@ class TransactionSheetState extends State<TransactionSheet> {
                           ),
                         ),
                         new Container(
-                          width: MediaQuery.of(context).size.width * 0.225,
+                          width: MediaQuery.of(context).size.width * 0.25,
                           padding: const EdgeInsets.only(right: 4.0),
                           child: new TextField(
                             controller: _quantityController,
@@ -470,7 +470,7 @@ class TransactionSheetState extends State<TransactionSheet> {
                           ),
                         ),
                         new Container(
-                          width: MediaQuery.of(context).size.width*0.2,
+                          width: MediaQuery.of(context).size.width*0.25,
                           padding: const EdgeInsets.only(right: 4.0),
                           child: new TextField(
                             controller: _priceController,
@@ -489,11 +489,9 @@ class TransactionSheetState extends State<TransactionSheet> {
                       ],
                     ),
                     new Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         new Container(
-                          width: MediaQuery.of(context).size.width * 0.275,
-                          padding: const EdgeInsets.only(left: 16.0),
+                          width: MediaQuery.of(context).size.width * 0.25,
                           child: new PopupMenuButton(
                             itemBuilder: (BuildContext context) {
                               List<PopupMenuEntry<dynamic>> options = [
@@ -532,7 +530,7 @@ class TransactionSheetState extends State<TransactionSheet> {
                           ),
                         ),
                         new Container(
-                          width: MediaQuery.of(context).size.width*0.5,
+                          width: MediaQuery.of(context).size.width*0.50,
                           child: new TextField(
                             controller: _notesController,
                             autocorrect: false,
@@ -544,17 +542,15 @@ class TransactionSheetState extends State<TransactionSheet> {
                             ),
                           ),
                         ),
-
                       ],
                     )
                   ]
               ),
               new Column(
                 mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   widget.editMode ? new Container(
+                    padding: const EdgeInsets.only(bottom: 16.0),
                     child: new FloatingActionButton(
                         child: Icon(Icons.delete),
                         backgroundColor: Colors.red,
