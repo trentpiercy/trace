@@ -533,7 +533,7 @@ class TransactionSheetState extends State<TransactionSheet> {
                           width: MediaQuery.of(context).size.width*0.50,
                           child: new TextField(
                             controller: _notesController,
-                            autocorrect: false,
+                            autocorrect: true,
                             style: Theme.of(context).textTheme.body2.apply(color: validColor),
                             keyboardType: TextInputType.text,
                             decoration: new InputDecoration(

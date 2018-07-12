@@ -30,11 +30,11 @@ redGreenParsePercent(context, input, double fontSize) {
 }
 
 class TransactionsPageState extends State<TransactionsPage> {
-  num value = 0;
-  num cost = 0;
-  num holdings = 0;
-  num net = 0;
-  num netPercent = 0;
+  num value;
+  num cost;
+  num holdings;
+  num net;
+  num netPercent;
 
   num currentPrice;
 
@@ -47,6 +47,16 @@ class TransactionsPageState extends State<TransactionsPage> {
         break;
       }
     }
+    _updateTotals();
+  }
+
+  _updateTotals() {
+    value = 0;
+    cost = 0;
+    holdings = 0;
+    net = 0;
+    netPercent = 0;
+
     for (Map transaction in transactionList) {
       cost += transaction["quantity"] * transaction["price_usd"];
       value += transaction["quantity"] * currentPrice;
@@ -62,17 +72,18 @@ class TransactionsPageState extends State<TransactionsPage> {
     }
   }
 
-  _refreshState() {
-    setState(() {
-      _sortTransactions();
-    });
-  }
-
   _sortTransactions() {
     transactionList = portfolioMap[widget.symbol];
     transactionList.sort(
-            (a, b) => (b["time_epoch"].compareTo(a["time_epoch"]))
+        (a, b) => (b["time_epoch"].compareTo(a["time_epoch"]))
     );
+  }
+
+  _refreshState() {
+    setState(() {
+      _sortTransactions();
+      _updateTotals();
+    });
   }
 
   @override
