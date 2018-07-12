@@ -71,7 +71,7 @@ class TransactionsPageState extends State<TransactionsPage> {
   _sortTransactions() {
     transactionList = portfolioMap[widget.symbol];
     transactionList.sort(
-        (a, b) => (b["time_epoch"].compareTo(a["time_epoch"]))
+            (a, b) => (b["time_epoch"].compareTo(a["time_epoch"]))
     );
   }
 
@@ -127,7 +127,7 @@ class TransactionsPageState extends State<TransactionsPage> {
           new Divider(height: 0.0),
         ])),
         new SliverList(delegate: new SliverChildBuilderDelegate(
-            (context, index) => new TransactionItem(
+                (context, index) => new TransactionItem(
               snapshot: transactionList[index],
               currentPrice: currentPrice,
               symbol: widget.symbol,
@@ -153,75 +153,75 @@ class TransactionItem extends StatelessWidget {
     print(snapshot);
     final DateTime time = new DateTime.fromMillisecondsSinceEpoch(snapshot["time_epoch"]);
     return new InkWell(
-      onTap: () => showBottomSheet(
-        context: context,
-        builder: (context) =>
-        new TransactionSheet(
-            refreshPage,
-            marketListData,
-            editMode: true,
-            snapshot: snapshot,
-            symbol: symbol,
-        )
-      ),
-      child: new Container(
-        padding: const EdgeInsets.all(8.0),
-        child: new Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            new Text(snapshot["quantity"] >= 0 ? "Bought" : "Sold",
-                style: Theme.of(context).textTheme.body2.apply(
-                    color: snapshot["quantity"] >= 0 ? Colors.green : Colors.red,
-                    fontWeightDelta: 2
-                )
-            ),
-            new Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        onTap: () => showBottomSheet(
+            context: context,
+            builder: (context) =>
+            new TransactionSheet(
+              refreshPage,
+              marketListData,
+              editMode: true,
+              snapshot: snapshot,
+              symbol: symbol,
+            )
+        ),
+        child: new Container(
+            padding: const EdgeInsets.all(8.0),
+            child: new Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                new Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      new Padding(padding: const EdgeInsets.only(bottom: 2.0)),
-                      new Row(children: <Widget>[
-                        new Text(snapshot["quantity"].toString() + " " + symbol,
-                            style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.1, fontWeightDelta: 2)),
-                        new Padding(padding: const EdgeInsets.symmetric(horizontal: 1.0)),
-                        new Text("at", style: Theme.of(context).textTheme.caption),
-                        new Padding(padding: const EdgeInsets.symmetric(horizontal: 1.0)),
-                        new Text("\$"+snapshot["price_usd"].toStringAsFixed(2),
-                            style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.05)),
-                        new Padding(padding: const EdgeInsets.symmetric(horizontal: 1.0)),
-                        redGreenParsePercent(
-                            context,
-                            ((currentPrice - snapshot["price_usd"]) / snapshot["price_usd"] * 100).toStringAsFixed(2),
-                            1.0
-                        )
-                      ]),
-                      new Row(children: <Widget>[
-                        new Text("Exchange", style: Theme.of(context).textTheme.caption),
-                        new Padding(padding: const EdgeInsets.symmetric(horizontal: 1.0)),
-                        new Text(snapshot["exchange"],
-                            style: Theme.of(context).primaryTextTheme.body1)
-                      ]),
-                      new Text(time.month.toString()+"/"+time.day.toString()+"/"+time.year.toString().substring(2)
-                          +" "+time.hour.toString()+":"+time.minute.toString(),
-                          style: Theme.of(context).primaryTextTheme.body2)
-                    ]),
-                new Flexible(child: new Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: <Widget>[
-                      new Text(snapshot["quantity"] >= 0 ? "Cost" : "Profit", style: Theme.of(context).textTheme.caption),
-                      new Text("\$"+(snapshot["quantity"]*snapshot["price_usd"]).abs().toStringAsFixed(2),
-                          style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.2)),
-                      snapshot["notes"] != "" ? new Text(snapshot["notes"]) : new Container(),
-                    ]
-                )),
+                new Text(snapshot["quantity"] >= 0 ? "Bought" : "Sold",
+                    style: Theme.of(context).textTheme.body2.apply(
+                        color: snapshot["quantity"] >= 0 ? Colors.green : Colors.red,
+                        fontWeightDelta: 2
+                    )
+                ),
+                new Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    new Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          new Padding(padding: const EdgeInsets.only(bottom: 2.0)),
+                          new Row(children: <Widget>[
+                            new Text(snapshot["quantity"].toString() + " " + symbol,
+                                style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.1, fontWeightDelta: 2)),
+                            new Padding(padding: const EdgeInsets.symmetric(horizontal: 1.0)),
+                            new Text("at", style: Theme.of(context).textTheme.caption),
+                            new Padding(padding: const EdgeInsets.symmetric(horizontal: 1.0)),
+                            new Text("\$"+snapshot["price_usd"].toStringAsFixed(2),
+                                style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.05)),
+                            new Padding(padding: const EdgeInsets.symmetric(horizontal: 1.0)),
+                            redGreenParsePercent(
+                                context,
+                                ((currentPrice - snapshot["price_usd"]) / snapshot["price_usd"] * 100).toStringAsFixed(2),
+                                1.0
+                            )
+                          ]),
+                          new Row(children: <Widget>[
+                            new Text("Exchange", style: Theme.of(context).textTheme.caption),
+                            new Padding(padding: const EdgeInsets.symmetric(horizontal: 1.0)),
+                            new Text(snapshot["exchange"],
+                                style: Theme.of(context).primaryTextTheme.body1)
+                          ]),
+                          new Text(time.month.toString()+"/"+time.day.toString()+"/"+time.year.toString().substring(2)
+                              +" "+time.hour.toString()+":"+time.minute.toString(),
+                              style: Theme.of(context).primaryTextTheme.body2)
+                        ]),
+                    new Flexible(child: new Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          new Text(snapshot["quantity"] >= 0 ? "Cost" : "Profit", style: Theme.of(context).textTheme.caption),
+                          new Text("\$"+(snapshot["quantity"]*snapshot["price_usd"]).abs().toStringAsFixed(2),
+                              style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.2)),
+                          snapshot["notes"] != "" ? new Text(snapshot["notes"]) : new Container(),
+                        ]
+                    )),
+                  ],
+                ),
               ],
-            ),
-          ],
+            )
         )
-      )
     );
   }
 }
