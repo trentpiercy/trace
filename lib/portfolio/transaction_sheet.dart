@@ -159,8 +159,6 @@ class TransactionSheetState extends State<TransactionSheet> {
       widget.marketListData.forEach((value) => symbolList.add(value["symbol"]));
     }
 
-    print("symbol list: " + symbolList.toString());
-
     if (symbolList.contains(inputSymbol.toUpperCase())) {
       symbol = inputSymbol.toUpperCase();
       exchangesList = null;

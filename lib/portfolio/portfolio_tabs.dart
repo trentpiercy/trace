@@ -64,14 +64,10 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
           controller: _tabController,
           children: <Widget>[
             _timeline(context),
-            _breakdown(context)
+      new PortfolioBreakdown(widget.totalStats, widget.portfolioDisplay)
           ],
         )
     );
-  }
-  
-  Widget _breakdown(BuildContext context) {
-    return new PortfolioBreakdown(widget.totalStats, widget.portfolioDisplay);
   }
 
   redGreenParsePercent(context, input, double fontSize) {

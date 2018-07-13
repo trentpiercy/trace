@@ -171,7 +171,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
       _tabChildren = [
         new PortfolioPage(_makePortfolioDisplay, key: _portfolioKey),
         new MarketPage(filter, isSearching, key: _marketKey),
-        new Container(),
+//        new Container(),
       ];
     });
   }
@@ -184,7 +184,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     _tabChildren = [
       new PortfolioPage(_makePortfolioDisplay, key: _portfolioKey),
       new MarketPage(filter, isSearching, key: _marketKey),
-      new Container(),
+//      new Container(),
     ];
 
     _loadPortfolioJson(firstRun: true);
@@ -326,7 +326,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                         tabs: <Tab>[
                           new Tab(icon: new Icon(Icons.person)),
                           new Tab(icon: new Icon(Icons.menu)),
-                          new Tab(icon: new Icon(Icons.notifications))
+//                          new Tab(icon: new Icon(Icons.notifications))
                         ],
                       ),
                     )
@@ -341,7 +341,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
             children: _tabChildren,
           ),
         )
-
     );
   }
 }

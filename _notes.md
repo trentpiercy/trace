@@ -6,14 +6,7 @@ Portfolio
 
 Animate everything
 
-# Do Soon
-Icon
-- Vector drawable
-Splash screen
-
-# Ideas
-Exchange list for a coin
-    - Instead of bringing up new page, show graph and options right under, expand and contract when tapped
+# TODO
 
 # UI
 Specific currency
