@@ -145,6 +145,8 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
 
   Map timedData;
 
+  DateTime oldestPoint;
+
   _getTimelineData() async {
     timedData = {};
 
@@ -168,12 +170,19 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
       await _pullData(coin);
     }
 
-    List<int> times;
-    needed.forEach((e) => times += e["oldest"]);
+    List<int> times = [];
+    needed.forEach((e) => times.add(e["oldest"]));
 
-    print(times);
+    int oldestInData = times.reduce(min);
+    int oldestInRange = new DateTime.now().millisecondsSinceEpoch - periodOptions[periodSetting]["unit_in_ms"] * periodOptions[periodSetting]["limit"];
 
-    int oldest = times.reduce(min);
+    if (oldestInData > oldestInRange) {
+      oldestPoint = new DateTime.fromMillisecondsSinceEpoch(oldestInData);
+    } else {
+      oldestPoint = new DateTime.fromMillisecondsSinceEpoch(oldestInRange);
+    }
+
+
 
     print("timedData FINAL: " + timedData.toString());
 
@@ -288,12 +297,12 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
                         ],
                       ),
                       new Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          new Text("Period", style: Theme.of(context).textTheme.caption),
                           new Row(
                             children: <Widget>[
-                              new Text(periodSetting, style: Theme.of(context).textTheme.body2),
+                              new Text("Period", style: Theme.of(context).textTheme.caption),
+//                              new Text(periodSetting, style: Theme.of(context).textTheme.body2.apply(fontWeightDelta: 2, fontSizeFactor: 1.1)),
                               new Container(
                                 child: new PopupMenuButton(
                                     icon: new Icon(Icons.access_time, color: Theme.of(context).buttonColor),
@@ -315,7 +324,12 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
                                 ),
                               ),
                             ],
-                          )
+                          ),
+                          new Padding(padding: const EdgeInsets.symmetric(vertical: 1.0)),
+                          timelineData != null ?
+                            new Text(oldestPoint.month.toString() + "/" + oldestPoint.day.toString()
+                            + " to Now")
+                            : new Container()
                         ],
                       )
                     ])
