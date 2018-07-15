@@ -143,7 +143,7 @@ class TransactionsPageState extends State<TransactionsPage> {
           new Divider(height: 0.0),
         ])),
         new SliverList(delegate: new SliverChildBuilderDelegate(
-                (context, index) => new TransactionItem(
+            (context, index) => new TransactionItem(
               snapshot: transactionList[index],
               currentPrice: currentPrice,
               symbol: widget.symbol,

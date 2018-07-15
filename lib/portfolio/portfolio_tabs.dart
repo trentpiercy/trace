@@ -7,6 +7,7 @@ import 'dart:math';
 
 import '../main.dart';
 import 'breakdown.dart';
+import 'transactions_page.dart';
 
 
 class PortfolioTabs extends StatefulWidget {
@@ -32,6 +33,7 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
     if (timelineData == null) {
       _getTimelineData();
     }
+    _makeTransactionList();
   }
 
   @override
@@ -144,8 +146,9 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
   };
 
   Map timedData;
-
   DateTime oldestPoint;
+
+  List<Map> transactionList;
 
   _getTimelineData() async {
     timedData = {};
@@ -244,8 +247,30 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
       });
     });
 
-    print("ran on " + coin["symbol"]);
-    print("timedData: " + timedData.toString());
+//    print("ran on " + coin["symbol"]);
+//    print("timedData: " + timedData.toString());
+  }
+
+  _makeTransactionList() {
+    transactionList = [];
+    portfolioMap.forEach((symbol, transactions) {
+      num currentPrice;
+      for (Map coin in marketListData) {
+        if (coin["symbol"] == symbol) {
+          currentPrice = coin["quotes"]["USD"]["price"];
+          break;
+        }
+      }
+
+      transactions.forEach((transaction) => transactionList.add({
+        "snapshot": transaction,
+        "current_price": currentPrice,
+        "symbol": symbol
+      }));
+
+      transactionList.sort((a, b) => b["snapshot"]["time_epoch"].compareTo(a["snapshot"]["time_epoch"]));
+
+    });
   }
 
   Widget _timeline(BuildContext context) {
@@ -296,47 +321,52 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
                           ) : new Container(),
                         ],
                       ),
-                      new Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          new Row(
+                      new Card(
+                        child: new Container(
+                          margin: const EdgeInsets.only(left: 16.0, bottom: 10.0),
+                          child: new Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              new Text("Period", style: Theme.of(context).textTheme.caption),
+                              new Row(
+                                children: <Widget>[
+                                  new Text("Period", style: Theme.of(context).textTheme.caption),
 //                              new Text(periodSetting, style: Theme.of(context).textTheme.body2.apply(fontWeightDelta: 2, fontSizeFactor: 1.1)),
-                              new Container(
-                                child: new PopupMenuButton(
-                                    icon: new Icon(Icons.access_time, color: Theme.of(context).buttonColor),
-                                    tooltip: "Select Period",
-                                    itemBuilder: (context) {
-                                      List<PopupMenuEntry<dynamic>> options = [];
-                                      periodOptions.forEach((K, V) => options.add(
-                                          new PopupMenuItem(child: new Text(K), value: K)
-                                      ));
-                                      return options;
-                                    },
-                                    onSelected: (chosen) {
-                                      setState(() {
-                                        periodSetting = chosen;
-                                        timelineData = null;
-                                      });
-                                      _getTimelineData();
-                                    }
-                                ),
+                                  new Container(
+                                    child: new PopupMenuButton(
+                                        icon: new Icon(Icons.access_time, color: Theme.of(context).buttonColor),
+                                        tooltip: "Select Period",
+                                        itemBuilder: (context) {
+                                          List<PopupMenuEntry<dynamic>> options = [];
+                                          periodOptions.forEach((K, V) => options.add(
+                                              new PopupMenuItem(child: new Text(K), value: K)
+                                          ));
+                                          return options;
+                                        },
+                                        onSelected: (chosen) {
+                                          setState(() {
+                                            periodSetting = chosen;
+                                            timelineData = null;
+                                          });
+                                          _getTimelineData();
+                                        }
+                                    ),
+                                  ),
+                                ],
                               ),
+                              new Padding(padding: const EdgeInsets.symmetric(vertical: 1.0)),
+                              timelineData != null ?
+                              new Text(oldestPoint.month.toString() + "/" + oldestPoint.day.toString()
+                                  + " to Now")
+                                  : new Container()
                             ],
                           ),
-                          new Padding(padding: const EdgeInsets.symmetric(vertical: 1.0)),
-                          timelineData != null ?
-                            new Text(oldestPoint.month.toString() + "/" + oldestPoint.day.toString()
-                            + " to Now")
-                            : new Container()
-                        ],
+                        ),
                       )
                     ])
             ),
 
             new Container(
-              padding: const EdgeInsets.only(top: 16.0, left: 4.0, right: 0.0),
+              padding: const EdgeInsets.only(top: 16.0, left: 4.0, right: 2.0),
               height: MediaQuery.of(context).size.height*.6,
               child: timelineData != null ? new Sparkline(
                 data: timelineData,
@@ -349,8 +379,21 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
                   alignment: Alignment.center,
                   child: new CircularProgressIndicator()
               ),
+            ),
+            new Container(
+              padding: const EdgeInsets.only(top: 16.0, left: 8.0),
+              child: new Text("All Transactions", style: Theme.of(context).textTheme.caption), 
             )
-          ]))
+          ])),
+          new SliverList(delegate: new SliverChildBuilderDelegate(
+            (context, index) => new TransactionItem(
+              symbol: transactionList[index]["symbol"],
+              currentPrice: transactionList[index]["current_price"],
+              snapshot: transactionList[index]["snapshot"],
+              refreshPage: (){setState(() {});},
+            ),
+            childCount: transactionList.length
+          ))
         ]
     );
   }
