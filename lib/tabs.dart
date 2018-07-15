@@ -315,9 +315,9 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                 forceElevated: innerBoxIsScrolled,
 
                 bottom: new PreferredSize(
-                    preferredSize: const Size.fromHeight(45.0),
+                    preferredSize: const Size.fromHeight(38.0),
                     child: new Container(
-                      height: 45.0,
+                      height: 38.0,
                       child: new TabBar(
                         controller: _tabController,
                         indicatorColor: Theme.of(context).accentIconTheme.color,

@@ -33,7 +33,6 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
     if (timelineData == null) {
       _getTimelineData();
     }
-    _makeTransactionList();
   }
 
   @override
@@ -275,6 +274,7 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
 
   Widget _timeline(BuildContext context) {
     print("built timeline");
+    _makeTransactionList();
     return new CustomScrollView(
         slivers: <Widget>[
           new SliverList(delegate: new SliverChildListDelegate(<Widget>[
@@ -381,7 +381,7 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
               ),
             ),
             new Container(
-              padding: const EdgeInsets.only(top: 16.0, left: 8.0),
+              padding: const EdgeInsets.only(top: 16.0, left: 8.0, bottom: 4.0),
               child: new Text("All Transactions", style: Theme.of(context).textTheme.caption), 
             )
           ])),
