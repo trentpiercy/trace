@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../sparkline.dart';
+import 'dart:math';
 
 import '../main.dart';
 import 'breakdown.dart';
@@ -166,6 +167,13 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
     for (Map coin in needed) {
       await _pullData(coin);
     }
+
+    List<int> times;
+    needed.forEach((e) => times += e["oldest"]);
+
+    print(times);
+
+    int oldest = times.reduce(min);
 
     print("timedData FINAL: " + timedData.toString());
 

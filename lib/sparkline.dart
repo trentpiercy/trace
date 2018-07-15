@@ -273,11 +273,12 @@ class _SparklinePainter extends CustomPainter {
         String gridLineText;
         if (gridLineValue < 1) {
           gridLineText = gridLineValue.toStringAsPrecision(4);
-        } else if (gridLineValue < 999) {
+        } else if (gridLineValue < 1000) {
           gridLineText = gridLineValue.toStringAsFixed(2);
         } else {
-          gridLineText = gridLineValue.round().toString();
+          gridLineText = gridLineValue.round().toString().replaceAllMapped(new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
         }
+
 
         gridLineTextPainters.add(new TextPainter(
             text: new TextSpan(
