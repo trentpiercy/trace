@@ -210,9 +210,10 @@ class TransactionItem extends StatelessWidget {
             + "\n" + date
         ),
         trailing: new Container(
-          alignment: Alignment.centerRight,
+          alignment: Alignment.topRight,
           width: MediaQuery.of(context).size.width * .3,
-          child: new Text(snapshot["notes"], overflow: TextOverflow.ellipsis, maxLines: 3),
+          child: new Text(snapshot["notes"], overflow: TextOverflow.ellipsis, maxLines: 4,
+            style: Theme.of(context).textTheme.caption),
         ),
       ),
     );

@@ -8,76 +8,29 @@ import '../market/coin_aggregate_stats.dart';
 import '../market/coin_exchanges_list.dart';
 import '../market/coin_tabs.dart';
 
-class PortfolioBreakdown extends StatefulWidget {
-  PortfolioBreakdown(this.totalStats, this.portfolioDisplay);
+class PortfolioBreakdown extends StatelessWidget {
+  PortfolioBreakdown({
+    this.totalStats,
+    this.portfolioDisplay,
+    this.value,
+    this.net,
+    this.netPercent,
+    this.cost,
+    this.segments,
+    this.colors,
+  });
+
+  final columnProps = [.2,.3,.3];
+
   final Map totalStats;
   final List portfolioDisplay;
+  final num value;
+  final num net;
+  final num netPercent;
+  final num cost;
+  final List<CircularSegmentEntry> segments;
 
-  @override
-  PortfolioBreakdownState createState() => new PortfolioBreakdownState();
-}
-
-class PortfolioBreakdownState extends State<PortfolioBreakdown> {
-  final columnProps = [.2,.3,.3];
-  List <CircularSegmentEntry> segments = [];
-
-  final List colors = [
-    Colors.red[400],
-    Colors.purple[400],
-    Colors.indigo[400],
-    Colors.blue[400],
-    Colors.teal[400],
-    Colors.green[400],
-    Colors.lime[400],
-    Colors.orange[400],
-  ];
-
-  num value = 0;
-  num cost = 0;
-  num net = 0;
-  num netPercent = 0;
-
-  _getTotals() {
-    value = widget.totalStats["value_usd"];
-
-    portfolioMap.forEach((symbol, transactions){
-      transactions.forEach((transaction) {
-        cost += transaction["quantity"] * transaction["price_usd"];
-      });
-    });
-
-    net = value - cost;
-
-    if (cost > 0) {
-      netPercent = ((value - cost) / cost)*100;
-    } else {
-      netPercent = 0.0;
-    }
-  }
-
-  _makePortions() {
-    int colorInt = 0;
-
-    widget.portfolioDisplay.forEach((coin) {
-      if (colorInt > (colors.length-1)) {
-        colorInt = 1;
-      }
-
-      segments.add(new CircularSegmentEntry(
-          coin["total_quantity"] * coin["price_usd"],
-          colors[colorInt]
-      ));
-      colorInt += 1;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    print("INIT breakdown");
-    _getTotals();
-    _makePortions();
-  }
+  final List colors;
 
   @override
   Widget build(BuildContext context) {
@@ -157,12 +110,12 @@ class PortfolioBreakdownState extends State<PortfolioBreakdown> {
                     colorIndex = index-((index/(colors.length-1)).floor()*(colors.length-1));
                   }
                   return new PortfolioBreakdownItem(
-                      widget.portfolioDisplay[index],
-                      widget.totalStats["value_usd"],
+                      portfolioDisplay[index],
+                      totalStats["value_usd"],
                       colors[colorIndex]
                   );
                 },
-            childCount: widget.portfolioDisplay.length
+            childCount: portfolioDisplay.length
         )),
       ],
     );

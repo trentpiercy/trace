@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_circular_chart/flutter_circular_chart.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -28,11 +29,11 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
     super.initState();
     _tabController = new TabController(length: 2, vsync: this);
     _tabController.animateTo(widget.tab);
-
-    value = widget.totalStats["value_usd"];
     if (timelineData == null) {
       _getTimelineData();
     }
+    _getTotals();
+    _makePortions();
   }
 
   @override
@@ -66,7 +67,16 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
           controller: _tabController,
           children: <Widget>[
             _timeline(context),
-      new PortfolioBreakdown(widget.totalStats, widget.portfolioDisplay)
+            new PortfolioBreakdown(
+              totalStats: widget.totalStats,
+              portfolioDisplay: widget.portfolioDisplay,
+              value: value,
+              net: net,
+              netPercent: netPercent,
+              cost: cost,
+              segments: segments,
+              colors: colors,
+            )
           ],
         )
     );
@@ -148,6 +158,57 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
   DateTime oldestPoint = new DateTime.now();
 
   List<Map> transactionList;
+
+  List<CircularSegmentEntry> segments = [];
+  num cost = 0;
+  num net = 0;
+  num netPercent = 0;
+
+  final List colors = [
+    Colors.red[400],
+    Colors.purple[400],
+    Colors.indigo[400],
+    Colors.blue[400],
+    Colors.teal[400],
+    Colors.green[400],
+    Colors.lime[400],
+    Colors.orange[400],
+  ];
+
+  _getTotals() {
+    value = widget.totalStats["value_usd"];
+
+    portfolioMap.forEach((symbol, transactions){
+      transactions.forEach((transaction) {
+        cost += transaction["quantity"] * transaction["price_usd"];
+      });
+    });
+
+    net = value - cost;
+
+    if (cost > 0) {
+      netPercent = ((value - cost) / cost)*100;
+    } else {
+      netPercent = 0.0;
+    }
+  }
+
+  _makePortions() {
+    int colorInt = 0;
+
+    portfolioDisplay.forEach((coin) {
+      if (colorInt > (colors.length-1)) {
+        colorInt = 1;
+      }
+
+      segments.add(new CircularSegmentEntry(
+          coin["total_quantity"] * coin["price_usd"],
+          colors[colorInt]
+      ));
+      colorInt += 1;
+    });
+  }
+
 
   _getTimelineData() async {
     timedData = {};
