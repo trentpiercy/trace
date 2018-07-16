@@ -106,6 +106,7 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
   num high = 0;
   num low = 0;
   num changePercent = 0;
+  num changeAmt = 0;
   String periodSetting = "7D";
 
   final Map periodOptions = {
@@ -265,6 +266,7 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
     num start = timelineData[0] != 0 ? timelineData[0] : 1;
     num end = timelineData.last;
     changePercent = (end-start)/start*100;
+    changeAmt = end - start;
 
     setState(() {});
   }
@@ -357,7 +359,14 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
                               ),
                               new Padding(padding: const EdgeInsets.symmetric(horizontal: 4.0)),
                               timelineData != null ?
-                              redGreenParsePercent(context, changePercent.toStringAsFixed(2), 1.2)
+                                  new Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      redGreenParsePercent(context, changePercent.toStringAsFixed(2), 1.2),
+                                      redGreenParse(context, changeAmt.toStringAsFixed(2), 1.1),
+                                    ]
+                                  )
+
                                   : new Container(),
                             ],
                           ),
