@@ -368,7 +368,7 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
                               new Text("\$"+ numCommaParseNoDollar(value.toStringAsFixed(2)),
                                   style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)
                               ),
-                              new Padding(padding: const EdgeInsets.symmetric(horizontal: 4.0)),
+                              new Padding(padding: const EdgeInsets.symmetric(horizontal: 2.0)),
                               timelineData != null ?
                                   new Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -381,7 +381,7 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
                                   : new Container(),
                             ],
                           ),
-                          new Padding(padding: const EdgeInsets.symmetric(vertical: 2.5)),
+//                          new Padding(padding: const EdgeInsets.symmetric(vertical: 2.5)),
                           timelineData != null ? new Row(
                             children: <Widget>[
                               new Text("High", style: Theme.of(context).textTheme.caption),
@@ -411,7 +411,7 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
                             children: <Widget>[
                               new Row(
                                 children: <Widget>[
-                                  new Text(periodSetting, style: Theme.of(context).textTheme.body2.apply(fontWeightDelta: 2, fontSizeFactor: 1.1)),
+                                  new Text(periodSetting, style: Theme.of(context).textTheme.body2.apply(fontWeightDelta: 2, fontSizeFactor: 1.2)),
                                   new Container(
                                     child: new PopupMenuButton(
                                         icon: new Icon(Icons.access_time, color: Theme.of(context).buttonColor),
@@ -436,8 +436,9 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
                               ),
                               new Container(
                                 padding: const EdgeInsets.only(right: 14.0),
-                                child: new Text(oldestPoint.month.toString() + "/" + oldestPoint.day.toString()
-                                    + " ➞ Now", style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: .9)),
+                                child: new Text("${oldestPoint.month.toString()}/${oldestPoint.day.toString()}"
+                                    "/${oldestPoint.year.toString().substring(2)} ➞ Now",
+                                    style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: .9)),
                               ),
                             ],
                           ),

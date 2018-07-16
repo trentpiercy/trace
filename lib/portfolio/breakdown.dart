@@ -50,8 +50,9 @@ class PortfolioBreakdown extends StatelessWidget {
                     new Text("Portfolio Value", style: Theme.of(context).textTheme.caption),
                     new Row(
                       children: <Widget>[
-                        new Text("\$"+ numCommaParseNoDollar(value.toStringAsFixed(2)),
+                        new Text("\$" + numCommaParseNoDollar(value.toStringAsFixed(2)),
                             style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)),
+                        new Padding(padding: const EdgeInsets.symmetric(horizontal: 2.0)),
                         new Column(
                           children: <Widget>[
                             redGreenParsePercent(context, netPercent.toStringAsFixed(2), 1.2),
@@ -66,7 +67,7 @@ class PortfolioBreakdown extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     new Text("Total Cost", style: Theme.of(context).textTheme.caption),
-                    new Text("\$"+numCommaParseNoDollar(cost.toStringAsFixed(2)),
+                    new Text("\$" + numCommaParseNoDollar(cost.toStringAsFixed(2)),
                         style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.4))
                   ],
                 ),

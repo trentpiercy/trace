@@ -108,24 +108,31 @@ class TransactionsPageState extends State<TransactionsPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     new Text("Total Value", style: Theme.of(context).textTheme.caption),
-                    new Text("\$"+ numCommaParseNoDollar(value.toStringAsFixed(2)),
-                        style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)),
+                    new Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        new Text("\$"+ numCommaParseNoDollar(value.toStringAsFixed(2)),
+                            style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)
+                        ),
+                        new Padding(padding: const EdgeInsets.symmetric(horizontal: 2.0)),
+                        new Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              redGreenParsePercent(context, netPercent.toStringAsFixed(2), 1.2),
+                              redGreenParse(context, net.toStringAsFixed(2), 1.1),
+                            ]
+                        )
+                      ],
+                    ),
                     new Text(num.parse(holdings.toStringAsPrecision(9)).toString() + " " + widget.symbol,
                         style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2)),
-                  ],
-                ),
-                new Column(
-                  children: <Widget>[
-                    new Text("Total Net", style: Theme.of(context).textTheme.caption),
-                    redGreenParse(context, net.toStringAsFixed(2), 1.5),
-                    redGreenParsePercent(context, netPercent.toStringAsFixed(2), 1.2)
                   ],
                 ),
                 new Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     new Text("Total Cost", style: Theme.of(context).textTheme.caption),
-                    new Text("\$"+cost.toStringAsFixed(2),
+                    new Text("\$"+numCommaParseNoDollar(cost.toStringAsFixed(2)),
                         style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.5))
                   ],
                 ),

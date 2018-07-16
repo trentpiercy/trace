@@ -181,7 +181,7 @@ class ExchangeListItem extends StatelessWidget {
               new Container(
                 width: MediaQuery.of(context).size.width * columnProps[0],
                 child: new Text(exchangeDataSnapshot["MARKET"],
-                    style: Theme.of(context).textTheme.body2),
+                    style: Theme.of(context).textTheme.body1),
               ),
               new Container(
                 alignment: Alignment.centerRight,
