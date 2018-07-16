@@ -47,7 +47,7 @@ class PortfolioBreakdown extends StatelessWidget {
                 new Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    new Text("Total Portfolio Value", style: Theme.of(context).textTheme.caption),
+                    new Text("Portfolio Value", style: Theme.of(context).textTheme.caption),
                     new Row(
                       children: <Widget>[
                         new Text("\$"+ numCommaParseNoDollar(value.toStringAsFixed(2)),

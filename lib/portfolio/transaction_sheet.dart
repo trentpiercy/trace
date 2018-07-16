@@ -195,9 +195,16 @@ class TransactionSheetState extends State<TransactionSheet> {
   _checkValidQuantity(String quantityString) {
     try {
       quantity = num.parse(quantityString);
-      setState(() {
-        quantityTextColor = validColor;
-      });
+      if (quantity.isNegative) {
+        quantity = null;
+        setState(() {
+          quantityTextColor = errorColor;
+        });
+      } else {
+        setState(() {
+          quantityTextColor = validColor;
+        });
+      }
     } catch (e) {
       quantity = null;
       setState(() {
@@ -209,9 +216,16 @@ class TransactionSheetState extends State<TransactionSheet> {
   _checkValidPrice(String priceString) {
     try {
       price = num.parse(priceString);
-      setState(() {
-        priceTextColor = validColor;
-      });
+      if (price.isNegative) {
+        price = null;
+        setState(() {
+          priceTextColor = errorColor;
+        });
+      } else {
+        setState(() {
+          priceTextColor = validColor;
+        });
+      }
     } catch (e) {
       price = null;
       setState(() {
@@ -359,15 +373,15 @@ class TransactionSheetState extends State<TransactionSheet> {
     _symbolController.text = widget.symbol;
     _checkValidSymbol(_symbolController.text);
 
-    _priceController.text = widget.snapshot["price_usd"].abs().toString();
+    _priceController.text = widget.snapshot["price_usd"].toString();
     _checkValidPrice(_priceController.text);
 
-    if (widget.snapshot["price_usd"].isNegative) {
+    _quantityController.text = widget.snapshot["quantity"].abs().toString();
+    _checkValidQuantity(_quantityController.text);
+
+    if (widget.snapshot["quantity"].isNegative) {
       radioValue = 1;
     }
-
-    _quantityController.text = widget.snapshot["quantity"].toString();
-    _checkValidQuantity(_quantityController.text);
 
     _exchangeController.text = widget.snapshot["exchange"];
     exchange = widget.snapshot["exchange"];

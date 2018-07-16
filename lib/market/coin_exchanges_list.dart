@@ -189,7 +189,7 @@ class ExchangeListItem extends StatelessWidget {
                 child: new Text(
                     numCommaParse(
                         exchangeDataSnapshot["VOLUME24HOURTO"].toString()),
-                    style: Theme.of(context).textTheme.body1),
+                    style: Theme.of(context).textTheme.body2),
               ),
               new Container(
                 width: MediaQuery.of(context).size.width * columnProps[2],
@@ -199,7 +199,7 @@ class ExchangeListItem extends StatelessWidget {
                     new Text(priceTrim(exchangeDataSnapshot["PRICE"])),
                     new Text(
                         percentTrim(exchangeDataSnapshot["CHANGEPCT24HOUR"]),
-                        style: Theme.of(context).primaryTextTheme.body1.apply(
+                        style: Theme.of(context).textTheme.body1.apply(
                             color: exchangeDataSnapshot["CHANGEPCT24HOUR"] >= 0
                                 ? Colors.green
                                 : Colors.red)),

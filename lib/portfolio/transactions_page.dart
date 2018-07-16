@@ -189,7 +189,7 @@ class TransactionItem extends StatelessWidget {
         new Icon(Icons.add_circle, color: Colors.green, size: 28.0)
             : new Icon(Icons.remove_circle, color: Colors.red, size: 28.0),
         title: new RichText(text: TextSpan(children: <TextSpan>[
-          TextSpan(text: snapshot["quantity"].toString() + " " + symbol, style: Theme.of(context).textTheme.body2.apply(fontWeightDelta: 2)),
+          TextSpan(text: "${snapshot["quantity"].toString()} $symbol", style: Theme.of(context).textTheme.body2.apply(fontWeightDelta: 2)),
           TextSpan(text: " at ", style: Theme.of(context).textTheme.body1),
           TextSpan(text: "\$"+snapshot["price_usd"].toString(), style: Theme.of(context).textTheme.body2.apply(fontWeightDelta: 2)),
           TextSpan(text: changePercent > 0 ?
@@ -198,9 +198,7 @@ class TransactionItem extends StatelessWidget {
               style: Theme.of(context).textTheme.body2.apply(color: changePercent > 0 ? Colors.green : Colors.red)
           ),
         ])),
-        subtitle: new Text(snapshot["exchange"]
-            + "\n" + date
-        ),
+        subtitle: new Text("${snapshot["exchange"]}\n$date"),
         trailing: new Container(
           alignment: Alignment.topRight,
           width: MediaQuery.of(context).size.width * .3,

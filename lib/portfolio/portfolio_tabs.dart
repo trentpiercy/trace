@@ -107,7 +107,7 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
   num low = 0;
   num changePercent = 0;
   num changeAmt = 0;
-  String periodSetting = "7D";
+  String periodSetting = "24h";
 
   final Map periodOptions = {
     "24h":{
@@ -152,6 +152,12 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
       "hist_type": "day",
       "unit_in_ms": 3600000*24*5
     },
+    "All":{
+      "limit": 0,
+      "aggregate_by": 1,
+      "hist_type": "day",
+      "unit_in_ms": 3600000*24
+    }
 
   };
 
@@ -240,7 +246,7 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
     int oldestInData = times.reduce(min);
     int oldestInRange = new DateTime.now().millisecondsSinceEpoch - periodOptions[periodSetting]["unit_in_ms"] * periodOptions[periodSetting]["limit"];
 
-    if (oldestInData > oldestInRange) {
+    if (oldestInData > oldestInRange || periodSetting == "All") {
       oldestPoint = new DateTime.fromMillisecondsSinceEpoch(oldestInData);
     } else {
       oldestPoint = new DateTime.fromMillisecondsSinceEpoch(oldestInRange);
@@ -276,13 +282,18 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
     /// can be done with .forEach(() async {})
     /// but doesn't wait for all data before returning
 
-    int limit = periodOptions[periodSetting]["limit"];
+
     int msAgo = new DateTime.now().millisecondsSinceEpoch - coin["oldest"];
-    int periodInMs =
-        limit * periodOptions[periodSetting]["unit_in_ms"];
-    if (msAgo < periodInMs) {
+    int limit = periodOptions[periodSetting]["limit"];
+    int periodInMs = limit * periodOptions[periodSetting]["unit_in_ms"];
+
+    if (periodSetting == "All") {
+      limit = msAgo ~/ periodOptions[periodSetting]["unit_in_ms"];
+    }
+    else if (msAgo < periodInMs) {
       limit = limit - ((periodInMs - msAgo) ~/ periodOptions[periodSetting]["unit_in_ms"]);
     }
+
 
     var response = await http.get(
         Uri.encodeFull(
