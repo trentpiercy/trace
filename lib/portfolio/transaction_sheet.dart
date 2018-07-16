@@ -359,8 +359,12 @@ class TransactionSheetState extends State<TransactionSheet> {
     _symbolController.text = widget.symbol;
     _checkValidSymbol(_symbolController.text);
 
-    _priceController.text = widget.snapshot["price_usd"].toString();
+    _priceController.text = widget.snapshot["price_usd"].abs().toString();
     _checkValidPrice(_priceController.text);
+
+    if (widget.snapshot["price_usd"].isNegative) {
+      radioValue = 1;
+    }
 
     _quantityController.text = widget.snapshot["quantity"].toString();
     _checkValidQuantity(_quantityController.text);

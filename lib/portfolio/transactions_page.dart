@@ -36,7 +36,7 @@ class TransactionsPageState extends State<TransactionsPage> {
   num net;
   num netPercent;
 
-  num currentPrice;
+  num currentPrice = 0;
 
   List transactionList;
 
@@ -47,7 +47,6 @@ class TransactionsPageState extends State<TransactionsPage> {
         break;
       }
     }
-//    _updateTotals();
   }
 
   _updateTotals() {
@@ -79,19 +78,12 @@ class TransactionsPageState extends State<TransactionsPage> {
     );
   }
 
-  _refreshState() {
-//    setState(() {
-//      _sortTransactions();
-//      _updateTotals();
-//    });
-  }
 
   @override
   void initState() {
     print("INIT TRANSACTION PAGE");
 
     super.initState();
-//    _sortTransactions();
     _getTotals();
   }
 
@@ -146,7 +138,7 @@ class TransactionsPageState extends State<TransactionsPage> {
               snapshot: transactionList[index],
               currentPrice: currentPrice,
               symbol: widget.symbol,
-              refreshPage: _refreshState,
+              refreshPage: () {},
             ),
             childCount: transactionList.length
         )),
@@ -163,12 +155,12 @@ class TransactionItem extends StatelessWidget {
 
   final Function refreshPage;
 
-  String date;
-
   @override
   Widget build(BuildContext context) {
+    String date;
     final DateTime time = new DateTime.fromMillisecondsSinceEpoch(snapshot["time_epoch"]);
-    double changePercent = (currentPrice - snapshot["price_usd"]) / snapshot["price_usd"] * 100;
+    final double changePercent = (currentPrice - snapshot["price_usd"]) / snapshot["price_usd"] * 100;
+
     if (time.minute < 10) {
       date = time.month.toString()+"/"+time.day.toString()+"/"+time.year.toString().substring(2)
           +" "+time.hour.toString()+":0"+time.minute.toString();
