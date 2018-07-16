@@ -193,21 +193,24 @@ class AggregateStatsState extends State<AggregateStats> {
                           new Text("\$"+ (generalStats != null ? generalStats["price"].toString() : "0"), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)),
                           new Row(
                             mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               new Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  new Text("Market Cap", style: Theme.of(context).textTheme.caption),
-                                  new Padding(padding: const EdgeInsets.symmetric(vertical: 1.0)),
-                                  new Text("24h Volume", style: Theme.of(context).textTheme.caption),
+                                  new Text("Market Cap", style: Theme.of(context).textTheme.caption.apply(fontSizeFactor: .8)),
+                                  new Padding(padding: const EdgeInsets.symmetric(vertical: 2.5)),
+                                  new Text("24h Volume", style: Theme.of(context).textTheme.caption.apply(fontSizeFactor: .8)),
                                 ],
                               ),
-                              new Padding(padding: const EdgeInsets.symmetric(horizontal: 1.0)),
+                              new Padding(padding: const EdgeInsets.symmetric(horizontal: 2.0)),
                               new Column(
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: <Widget>[
-                                  new Text(generalStats != null ? numCommaParse(generalStats["market_cap"].toString()) : "0", style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)),
-                                  new Text(generalStats != null ? numCommaParse(generalStats["volume_24h"].toString()) : "0", style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)),
+                                  new Text(generalStats != null ? numCommaParse(generalStats["market_cap"].toString()) : "0",
+                                      style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1, fontWeightDelta: 2)),
+                                  new Text(generalStats != null ? numCommaParse(generalStats["volume_24h"].toString()) : "0",
+                                      style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1, fontWeightDelta: 2, color: Theme.of(context).hintColor)),
                                 ],
                               ),
                             ],
@@ -263,7 +266,7 @@ class AggregateStatsState extends State<AggregateStats> {
                                                 new Text("Low", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
                                               ],
                                             ),
-                                            new Padding(padding: const EdgeInsets.symmetric(horizontal: 1.0)),
+                                            new Padding(padding: const EdgeInsets.symmetric(horizontal: 1.5)),
                                             new Column(
                                               crossAxisAlignment: CrossAxisAlignment.end,
                                               children: <Widget>[

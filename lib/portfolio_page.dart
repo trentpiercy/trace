@@ -64,23 +64,26 @@ class PortfolioPageState extends State<PortfolioPage> {
                       new Column(
                         children: <Widget>[
                           new Text("7D Change", style: Theme.of(context).textTheme.caption),
+                          new Padding(padding: const EdgeInsets.symmetric(vertical: 1.0)),
                           new Text(
                               totalPortfolioStats["percent_change_7d"] >= 0 ? "+"+totalPortfolioStats["percent_change_7d"].toStringAsFixed(2)+"%" : totalPortfolioStats["percent_change_7d"].toStringAsFixed(2)+"%",
-                              style: Theme.of(context).primaryTextTheme.body1.apply(
+                              style: Theme.of(context).primaryTextTheme.body2.apply(
                                 color: totalPortfolioStats["percent_change_7d"] >= 0 ? Colors.green : Colors.red,
-                                fontSizeFactor: 1.6,
+                                fontSizeFactor: 1.4,
                               )
                           )
                         ],
                       ),
                       new Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
                           new Text("24h Change", style: Theme.of(context).textTheme.caption),
+                          new Padding(padding: const EdgeInsets.symmetric(vertical: 1.0)),
                           new Text(
                               totalPortfolioStats["percent_change_24h"] >= 0 ? "+"+totalPortfolioStats["percent_change_24h"].toStringAsFixed(2)+"%" : totalPortfolioStats["percent_change_24h"].toStringAsFixed(2)+"%",
-                              style: Theme.of(context).primaryTextTheme.body1.apply(
+                              style: Theme.of(context).primaryTextTheme.body2.apply(
                                 color: totalPortfolioStats["percent_change_24h"] >= 0 ? Colors.green : Colors.red,
-                                fontSizeFactor: 1.6
+                                fontSizeFactor: 1.4
                               )
                           )
                         ],

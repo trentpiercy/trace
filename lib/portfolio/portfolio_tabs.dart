@@ -145,7 +145,7 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
   };
 
   Map timedData;
-  DateTime oldestPoint;
+  DateTime oldestPoint = new DateTime.now();
 
   List<Map> transactionList;
 
@@ -322,15 +322,15 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
                         ],
                       ),
                       new Card(
+                        elevation: 2.0,
                         child: new Container(
-                          margin: const EdgeInsets.only(left: 16.0, bottom: 10.0),
+                          margin: const EdgeInsets.only(left: 14.0, bottom: 12.0),
                           child: new Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+//                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: <Widget>[
                               new Row(
                                 children: <Widget>[
-                                  new Text("Period", style: Theme.of(context).textTheme.caption),
-//                              new Text(periodSetting, style: Theme.of(context).textTheme.body2.apply(fontWeightDelta: 2, fontSizeFactor: 1.1)),
+                                  new Text(periodSetting, style: Theme.of(context).textTheme.body2.apply(fontWeightDelta: 2, fontSizeFactor: 1.1)),
                                   new Container(
                                     child: new PopupMenuButton(
                                         icon: new Icon(Icons.access_time, color: Theme.of(context).buttonColor),
@@ -348,16 +348,16 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
                                             timelineData = null;
                                           });
                                           _getTimelineData();
-                                        }
+                                        },
                                     ),
                                   ),
                                 ],
                               ),
-                              new Padding(padding: const EdgeInsets.symmetric(vertical: 1.0)),
-                              timelineData != null ?
-                              new Text(oldestPoint.month.toString() + "/" + oldestPoint.day.toString()
-                                  + " to Now")
-                                  : new Container()
+                              new Container(
+                                padding: const EdgeInsets.only(right: 14.0),
+                                child: new Text(oldestPoint.month.toString() + "/" + oldestPoint.day.toString()
+                                    + " ➞ Now", style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: .9)),
+                              ),
                             ],
                           ),
                         ),

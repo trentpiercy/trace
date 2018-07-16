@@ -288,7 +288,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                     child: new Text("Aggregate Markets"),
                   ),
 
-                  new Text("Alerts")
+//                  new Text("Alerts")
                 ][_tabIndex],
 
                 actions: <Widget>[
@@ -307,7 +307,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                     new Container()
                   ][_tabIndex],
                 ],
-
                 pinned: true,
                 floating: true,
                 titleSpacing: 3.0,
