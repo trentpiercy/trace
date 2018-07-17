@@ -456,7 +456,7 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
                 enableGridLines: true,
                 gridLineColor: Theme.of(context).dividerColor,
                 gridLineLabelColor: Theme.of(context).hintColor,
-                gridLineAmount: 5,
+                gridLineAmount: 4,
               ) : new Container(
                   alignment: Alignment.center,
                   child: new CircularProgressIndicator()

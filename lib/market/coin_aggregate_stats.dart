@@ -328,7 +328,7 @@ class AggregateStatsState extends State<AggregateStats> {
                           enableGridLines: true,
                           gridLineColor: Theme.of(context).dividerColor,
                           gridLineLabelColor: Theme.of(context).hintColor,
-                          gridLineAmount: 5,
+                          gridLineAmount: 4,
                           volumeProp: 0.2,
                         ) : new Container(
                           padding: const EdgeInsets.all(30.0),

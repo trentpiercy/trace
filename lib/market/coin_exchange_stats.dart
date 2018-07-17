@@ -16,38 +16,16 @@ class CoinMarketStats extends StatefulWidget {
   CoinMarketStats({
     Key key,
     this.exchangeData,
-    this.e = "CCCAGG",
-    this.currentOHLCVWidthSetting = 0,
-    this.historyAmt = "720",
-    this.historyAgg = "2",
-    this.historyType = "minute",
-    this.historyTotal = "24h",
-    this.toSym = "USD",
-  })  :
-        super(key: key);
+    this.e,
+  }) : super(key: key);
 
   final exchangeData;
   final e;
-
-  final currentOHLCVWidthSetting;
-
-  final historyAmt;
-  final historyType;
-  final historyTotal;
-  final historyAgg;
-
-  final toSym;
 
   @override
   CoinMarketStatsState createState() => new CoinMarketStatsState(
     exchangeData: exchangeData,
     e: e,
-    currentOHLCVWidthSetting: currentOHLCVWidthSetting,
-    historyAmt: historyAmt,
-    historyAgg: historyAgg,
-    historyType: historyType,
-    historyTotal: historyTotal,
-    toSym: toSym,
   );
 }
 
@@ -55,12 +33,6 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
   CoinMarketStatsState({
     this.exchangeData,
     this.e,
-    this.currentOHLCVWidthSetting,
-    this.historyAmt ,
-    this.historyAgg,
-    this.historyType,
-    this.historyTotal,
-    this.toSym,
   });
 
   Map exchangeData;
@@ -69,18 +41,25 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
   String e;
   List historyOHLCV;
 
-  int currentOHLCVWidthSetting;
-
-  String historyAmt;
-  String historyType;
-  String historyTotal;
-  String historyAgg;
+  int currentOHLCVWidthSetting = 0;
+  String historyAmt = "720";
+  String historyType = "minute";
+  String historyTotal = "24h";
+  String historyAgg = "2";
 
   String _high = "0";
   String _low = "0";
   String _change = "0";
 
-  String toSym;
+  String toSym = "USD";
+
+  normalizeNum(num input) {
+    if (input < 1) {
+      return input.toStringAsFixed(4);
+    } else {
+      return input.toStringAsFixed(2);
+    }
+  }
 
   Future<Null> getPrice() async {
     var response = await http.get(
@@ -129,8 +108,8 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
       }
     }
 
-    _high = highReturn.toStringAsFixed(2);
-    _low = lowReturn.toStringAsFixed(2);
+    _high = normalizeNum(highReturn);
+    _low = normalizeNum(lowReturn);
 
     var start = historyOHLCV[0]["open"] == 0 ? 1 : historyOHLCV[0]["open"];
     var end = historyOHLCV.last["close"];
@@ -187,23 +166,24 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
               child: new Column(
                 children: <Widget>[
                   new Container(
-                    margin: const EdgeInsets.only(left: 12.0, right: 12.0, top: 10.0, bottom: 10.0),
+                    padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0, bottom: 4.0),
                     child: new Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        new Text("\$"+ price.toString(), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)),
+                        new Text("\$"+ price.toString(),
+                            style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)),
                         new Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: <Widget>[
                             new Text("24h Volume", style: Theme.of(context).textTheme.caption),
-                            new Text(numCommaParse((exchangeData["VOLUME24HOURTO"]).toString()), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2)),
+                            new Text(numCommaParse((exchangeData["VOLUME24HOURTO"]).toString()),
+                                style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1, fontWeightDelta: 2)),
                           ],
                         ),
                       ],
                     ),
                   ),
-
                   new Card(
                     child: new Row(
                       children: <Widget>[
@@ -236,32 +216,35 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
                                           new Padding(padding: const EdgeInsets.only(bottom: 1.5)),
                                           new Row(
                                             children: <Widget>[
-                                              new Text("Candle Width", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
+                                              new Text("Candle Width",
+                                                  style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
                                               new Padding(padding: const EdgeInsets.only(right: 3.0)),
-                                              new Text(OHLCVWidthOptions[historyTotal][currentOHLCVWidthSetting][0], style: Theme.of(context).textTheme.body2.apply(fontWeightDelta: 2))
+                                              new Text(OHLCVWidthOptions[historyTotal][currentOHLCVWidthSetting][0],
+                                                  style: Theme.of(context).textTheme.body2.apply(fontWeightDelta: 2))
                                             ],
                                           ),
                                         ],
                                       ),
-                                      new Column(
-                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                      historyOHLCV != null ? new Row(
+//                                          mainAxisSize: MainAxisSize.min,
                                         children: <Widget>[
-                                          new Row(
+                                          new Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: <Widget>[
                                               new Text("High", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
-                                              new Padding(padding: const EdgeInsets.only(right: 3.0)),
-                                              new Text("\$"+_high)
+                                              new Text("Low", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
                                             ],
                                           ),
-                                          new Row(
+                                          new Padding(padding: const EdgeInsets.symmetric(horizontal: 1.5)),
+                                          new Column(
+                                            crossAxisAlignment: CrossAxisAlignment.end,
                                             children: <Widget>[
-                                              new Text("Low", style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
-                                              new Padding(padding: const EdgeInsets.only(right: 3.0)),
-                                              new Text("\$"+_low)
+                                              new Text("\$"+_high, style: Theme.of(context).textTheme.body2),
+                                              new Text("\$"+_low, style: Theme.of(context).textTheme.body2)
                                             ],
                                           ),
                                         ],
-                                      )
+                                      ) : new Container()
                                     ],
                                   ),
                                 ],
@@ -306,16 +289,15 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
                       ],
                     ),
                   ),
-
                   new Flexible(
                     child: historyOHLCV != null ? new Container(
-                      padding: const EdgeInsets.only(left: 2.0, right: 0.0, top: 10.0),
+                      padding: const EdgeInsets.only(left: 2.0, right: 1.0, top: 10.0),
                       child: new OHLCVGraph(
                         data: historyOHLCV,
                         enableGridLines: true,
                         gridLineColor: Theme.of(context).dividerColor,
                         gridLineLabelColor: Theme.of(context).hintColor,
-                        gridLineAmount: 5,
+                        gridLineAmount: 4,
                         volumeProp: 0.2,
                       ),
                     ) : new Container(
@@ -324,7 +306,6 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
                       ),
                     ),
                   )
-
                 ],
               ),
             )
