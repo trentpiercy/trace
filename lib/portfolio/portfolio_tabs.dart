@@ -476,17 +476,17 @@ class PercentDollarChange extends StatelessWidget {
   Widget build(BuildContext context) {
     return new Text.rich(new TextSpan(children: [
       percent > 0 ?
-      new TextSpan(text: "+${percent.toStringAsFixed(2)}%",
+      new TextSpan(text: "+${percent.toStringAsFixed(2)}%\n",
           style: Theme.of(context).textTheme.body1.apply(
               color: Colors.green, fontSizeFactor: 1.2))
-          : new TextSpan(text: "${percent.toStringAsFixed(2)}%",
+          : new TextSpan(text: "${percent.toStringAsFixed(2)}%\n",
           style: Theme.of(context).textTheme.body1.apply(
               color: Colors.red, fontSizeFactor: 1.2)),
       exact > 0 ?
-      new TextSpan(text: "+${exact.toStringAsFixed(2)}",
+      new TextSpan(text: "(\$${exact.toStringAsFixed(2)})",
           style: Theme.of(context).textTheme.body1.apply(
               color: Colors.green, fontSizeFactor: 1.1))
-          : new TextSpan(text: "${exact.toStringAsFixed(2)}%",
+          : new TextSpan(text: "(\$${exact.toStringAsFixed(2)})",
           style: Theme.of(context).textTheme.body1.apply(
               color: Colors.red, fontSizeFactor: 1.1)),
     ]));

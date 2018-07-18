@@ -28,8 +28,6 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
   TabController _tabController;
   int _tabAmt;
   List<Widget> _tabBarChildren;
-
-  String id;
   String symbol;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -58,7 +56,6 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
     _tabController = new TabController(length: _tabAmt, vsync: this);
 
     symbol = widget.snapshot["symbol"];
-    id = widget.snapshot["id"];
 
     _makeGeneralStats();
     if (historyOHLCV == null) {
@@ -132,11 +129,11 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
   String _low = "0";
   String _change = "0";
 
-  int currentOHLCVWidthSetting;
-  String historyAmt;
-  String historyType;
-  String historyTotal;
-  String historyAgg;
+  int currentOHLCVWidthSetting = 0;
+  String historyAmt = "720";
+  String historyType = "minute";
+  String historyTotal = "24h";
+  String historyAgg = "2";
 
   normalizeNum(num input) {
     if (input < 1) {

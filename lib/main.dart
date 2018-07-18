@@ -17,7 +17,7 @@ void main() async {
       print("creating file");
       jsonFile.createSync();
       jsonFile.writeAsStringSync("{}");
-      portfolioMap = json.decode(jsonFile.readAsStringSync());
+      portfolioMap = {};
     }
 
     print("finished portfolio load");
@@ -40,11 +40,8 @@ const double appBarElevation = 1.0;
 bool shortenOn = false;
 
 List marketListData;
-Map globalData;
-
 Map portfolioMap;
 List portfolioDisplay;
-Map totalPortfolioStats;
 
 numCommaParse(numString) {
   if (shortenOn) {
@@ -171,7 +168,7 @@ class TraceAppState extends State<TraceApp> {
     getPreferences();
     handleUpdate();
 
-    
+
   }
 
   @override

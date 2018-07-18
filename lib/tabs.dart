@@ -1,3 +1,7 @@
+import 'dart:async';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import 'portfolio/portfolio_tabs.dart';
@@ -30,8 +34,8 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   TabController _tabController;
   TextEditingController _textController = new TextEditingController();
   int _tabIndex = 0;
-  List<Widget> _tabChildren;
 
+  Map totalPortfolioStats;
   bool isSearching = false;
   String filter;
 
@@ -43,19 +47,24 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
       filter = value;
       isSearching = true;
     }
-    _makeTabChildren();
+    setState(() {
+      _filterMarketData();
+    });
   }
 
   _startSearch() {
-    isSearching = true;
-    _makeTabChildren();
+    setState(() {
+      isSearching = true;
+    });
   }
 
   _stopSearch() {
-    isSearching = false;
-    filter = null;
-    _textController.clear();
-    _makeTabChildren();
+    setState(() {
+      isSearching = false;
+      filter = null;
+      _filterMarketData();
+      _textController.clear();
+    });
   }
 
   _handleTabChange() {
@@ -123,31 +132,10 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     print("display list: " + portfolioDisplay.toString());
   }
 
-  _makeTabChildren() {
-    print("MADE TAB CHILDREN");
-    setState(() {
-      _tabChildren = [
-        new PortfolioPage(_makePortfolioDisplay, key: _portfolioKey),
-        new MarketPage(filter, isSearching, key: _marketKey),
-//        new Container(),
-      ];
-    });
-  }
-
-  _refreshMarketData() async {
-    await getMarketData();
-    _makePortfolioDisplay();
-    _makeTabChildren();
-  }
-
   @override
   void initState() {
     super.initState();
     print("INIT TABS");
-    _tabChildren = [
-      new PortfolioPage(_makePortfolioDisplay, key: _portfolioKey),
-      new MarketPage(filter, isSearching, key: _marketKey),
-    ];
     _tabController = new TabController(length: 3, vsync: this);
     _tabController.animation.addListener(() {
       if (_tabController.animation.value.round() != _tabIndex) {
@@ -155,10 +143,9 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
       }
     });
 
-    getGlobalData();
-    _refreshMarketData();
+    _refreshPortfolioPage();
+    _filterMarketData();
     _makePortfolioDisplay();
-    _makeTabChildren();
   }
 
   @override
@@ -168,9 +155,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     _tabController.animation.removeListener(_handleTabChange);
     super.dispose();
   }
-
-  final PageStorageKey _marketKey = new PageStorageKey("market");
-  final PageStorageKey _portfolioKey = new PageStorageKey("portfolio");
 
   ScrollController _scrollController = new ScrollController();
 
@@ -300,9 +284,242 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
 
           body: new TabBarView(
             controller: _tabController,
-            children: _tabChildren,
+            children: [
+              portfolioPage(context),
+              marketPage(context)
+            ],
           ),
         )
     );
   }
+
+  final columnProps = [.2,.3,.3];
+
+  Future<Null> _refreshPortfolioPage() async {
+    await getMarketData();
+    getGlobalData();
+    setState(() {
+      _filterMarketData();
+      _makePortfolioDisplay();
+    });
+  }
+
+  Widget portfolioPage(BuildContext context) {
+    print("[P] built portfolio page");
+    return new RefreshIndicator(
+        onRefresh: _refreshPortfolioPage,
+        child: new CustomScrollView(
+          slivers: <Widget>[
+            new SliverList(
+                delegate: new SliverChildListDelegate(<Widget>[
+                  new Container(
+                    padding: const EdgeInsets.all(10.0),
+                    child: new Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        new Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            new Text("Total Portfolio Value", style: Theme.of(context).textTheme.caption),
+                            new Text("\$"+ numCommaParseNoDollar(totalPortfolioStats["value_usd"].toStringAsFixed(2)),
+                                style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)
+                            ),
+                          ],
+                        ),
+                        new Column(
+                          children: <Widget>[
+                            new Text("7D Change", style: Theme.of(context).textTheme.caption),
+                            new Padding(padding: const EdgeInsets.symmetric(vertical: 1.0)),
+                            new Text(
+                                totalPortfolioStats["percent_change_7d"] >= 0 ? "+"+totalPortfolioStats["percent_change_7d"].toStringAsFixed(2)+"%" : totalPortfolioStats["percent_change_7d"].toStringAsFixed(2)+"%",
+                                style: Theme.of(context).primaryTextTheme.body2.apply(
+                                  color: totalPortfolioStats["percent_change_7d"] >= 0 ? Colors.green : Colors.red,
+                                  fontSizeFactor: 1.4,
+                                )
+                            )
+                          ],
+                        ),
+                        new Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            new Text("24h Change", style: Theme.of(context).textTheme.caption),
+                            new Padding(padding: const EdgeInsets.symmetric(vertical: 1.0)),
+                            new Text(
+                                totalPortfolioStats["percent_change_24h"] >= 0 ? "+"+totalPortfolioStats["percent_change_24h"].toStringAsFixed(2)+"%" : totalPortfolioStats["percent_change_24h"].toStringAsFixed(2)+"%",
+                                style: Theme.of(context).primaryTextTheme.body2.apply(
+                                    color: totalPortfolioStats["percent_change_24h"] >= 0 ? Colors.green : Colors.red,
+                                    fontSizeFactor: 1.4
+                                )
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  new Container(
+                    margin: const EdgeInsets.only(left: 6.0, right: 6.0),
+                    decoration: new BoxDecoration(
+                        border: new Border(bottom: new BorderSide(color: Theme.of(context).dividerColor, width: 1.0))
+                    ),
+                    padding: const EdgeInsets.only(bottom: 8.0, left: 2.0, right: 2.0),
+                    child: new Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        new Container(
+                          width: MediaQuery.of(context).size.width * columnProps[0],
+                          child: new Text("Currency", style: Theme.of(context).textTheme.body2),
+                        ),
+                        new Container(
+                          alignment: Alignment.centerRight,
+                          width: MediaQuery.of(context).size.width * columnProps[1],
+                          child: new Text("Holdings", style: Theme.of(context).textTheme.body2),
+                        ),
+                        new Container(
+                          alignment: Alignment.centerRight,
+                          width: MediaQuery.of(context).size.width * columnProps[2],
+                          child: new Text("Price/24h", style: Theme.of(context).textTheme.body2),
+                        ),
+                      ],
+                    ),
+                  ),
+                ])
+            ),
+            portfolioMap.isNotEmpty ? new SliverList(delegate: new SliverChildBuilderDelegate(
+                    (context, index) => new PortfolioListItem(portfolioDisplay[index]),
+                childCount: portfolioDisplay != null ? portfolioDisplay.length : 0
+            )) : new Container(
+              padding: const EdgeInsets.all(64.0),
+              child: new Text("Your portfolio is empty. Add a transaction!"),
+            )
+          ],
+        )
+    );
+  }
+
+  final marketColumnProps = [.3,.3,.25];
+  List filteredMarketData;
+  Map globalData;
+
+  Future<Null> getGlobalData() async {
+    var response = await http.get(
+        Uri.encodeFull("https://api.coinmarketcap.com/v2/global/"),
+        headers: {"Accept": "application/json"}
+    );
+
+    globalData = new JsonDecoder().convert(response.body)["data"]["quotes"]["USD"];
+  }
+
+  Future<Null> _refreshMarketPage() async {
+    await getGlobalData();
+    await getMarketData();
+    setState(() {
+      _filterMarketData();
+      _makePortfolioDisplay();
+    });
+  }
+
+  _filterMarketData() {
+    if (filter == "" || filter == null) {
+      filteredMarketData = marketListData;
+    } else {
+      filteredMarketData = [];
+      marketListData.forEach((item) {
+        if (item["symbol"].toLowerCase().contains(filter.toLowerCase()) ||
+            item["name"].toLowerCase().contains(filter.toLowerCase())) {
+          filteredMarketData.add(item);
+        }
+      });
+    }
+  }
+
+  Widget marketPage(BuildContext context) {
+    print("[M] built market page");
+    return filteredMarketData != null ? new RefreshIndicator(
+        onRefresh: () => _refreshMarketPage(),
+        child: new CustomScrollView(
+          slivers: <Widget>[
+            isSearching != true ? new SliverList(
+                delegate: new SliverChildListDelegate(<Widget>[
+                  globalData != null ? new Container(
+                      padding: const EdgeInsets.all(10.0),
+                      child: new Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          new Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              new Text("Total Market Cap", style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)),
+                              new Padding(padding: const EdgeInsets.symmetric(vertical: 1.0)),
+                              new Text("Total 24h Volume", style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)),
+                            ],
+                          ),
+                          new Padding(padding: const EdgeInsets.symmetric(horizontal: 1.0)),
+                          new Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: <Widget>[
+                              new Text(numCommaParse(globalData["total_market_cap"].toString()),
+                                  style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2, fontWeightDelta: 2)
+                              ),
+                              new Text(numCommaParse(globalData["total_volume_24h"].toString()),
+                                  style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2, fontWeightDelta: 2)
+                              ),
+                            ],
+                          )
+                        ],
+                      )
+                  ) : new Container(),
+                  new Container(
+                    margin: const EdgeInsets.only(left: 6.0, right: 6.0, top: 8.0),
+                    decoration: new BoxDecoration(
+                        border: new Border(bottom: new BorderSide(color: Theme.of(context).dividerColor, width: 1.0))
+                    ),
+                    padding: const EdgeInsets.only(bottom: 8.0, left: 2.0, right: 2.0),
+                    child: new Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        new Container(
+                          width: MediaQuery.of(context).size.width * marketColumnProps[0],
+                          child: new Text("Currency", style: Theme.of(context).textTheme.body2),
+                        ),
+                        new Container(
+                          alignment: Alignment.centerRight,
+                          width: MediaQuery.of(context).size.width * marketColumnProps[1],
+                          child: new Text("Market Cap/24h", style: Theme.of(context).textTheme.body2),
+                        ),
+                        new Container(
+                          alignment: Alignment.centerRight,
+                          width: MediaQuery.of(context).size.width * marketColumnProps[2],
+                          child: new Text("Price/24h", style: Theme.of(context).textTheme.body2),
+                        ),
+                      ],
+                    ),
+                  ),
+                ])
+            ) : new SliverPadding(padding: const EdgeInsets.all(0.0)),
+            filteredMarketData.isEmpty ? new SliverList(
+                delegate: new SliverChildListDelegate(
+                    <Widget>[
+                      new Container(
+                        padding: const EdgeInsets.all(30.0),
+                        alignment: Alignment.topCenter,
+                        child: new Text("No results found", style: Theme.of(context).textTheme.caption),
+                      )
+                    ]
+                )
+            ) :
+            new SliverList(delegate: new SliverChildBuilderDelegate(
+                    (BuildContext context, int index) =>
+                new CoinListItem(filteredMarketData[index], marketColumnProps),
+                childCount: filteredMarketData == null ? 0 : filteredMarketData.length
+            ))
+
+          ],
+        )
+    ) : new Container(
+      child: new Center(child: new CircularProgressIndicator()),
+    );
+  }
+
 }
