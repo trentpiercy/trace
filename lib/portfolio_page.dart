@@ -4,8 +4,6 @@ import 'dart:async';
 import 'main.dart';
 import 'market/coin_tabs.dart';
 import 'market_page.dart';
-import 'market/coin_aggregate_stats.dart';
-import 'market/coin_exchanges_list.dart';
 
 class PortfolioPage extends StatefulWidget {
   PortfolioPage(this.makePortfolioDisplay,
@@ -121,12 +119,10 @@ class PortfolioPageState extends State<PortfolioPage> {
 
               ])
           ),
-
           new SliverList(delegate: new SliverChildBuilderDelegate(
               (context, index) => new PortfolioListItem(portfolioDisplay[index]),
               childCount: portfolioDisplay != null ? portfolioDisplay.length : 0
           ))
-
         ],
       ) : new Container(
         child: new Center(child: new CircularProgressIndicator()),
@@ -146,7 +142,6 @@ class PortfolioListItem extends StatelessWidget {
       return new Image.asset(
           "assets/images/" + snapshot["symbol"].toLowerCase() +
               ".png", height: 28.0);
-
     } else {
       return new Container();
     }

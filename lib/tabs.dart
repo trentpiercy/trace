@@ -1,8 +1,4 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 
 import 'portfolio/portfolio_tabs.dart';
 import 'main.dart';
@@ -69,44 +65,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     } else {
       setState(() {});
     }
-  }
-
-  _loadPortfolioJson({firstRun = false}) async {
-    print("started JSON load...");
-
-    await getApplicationDocumentsDirectory().then((Directory directory) async {
-      File jsonFile = new File(directory.path + "/portfolio.json");
-      if (jsonFile.existsSync()) {
-        portfolioMap = json.decode(jsonFile.readAsStringSync());
-      } else {
-        print("creating file");
-        jsonFile.createSync();
-        jsonFile.writeAsStringSync("{}");
-        portfolioMap = json.decode(jsonFile.readAsStringSync());
-      }
-
-      print("finished JSON load");
-
-      if (firstRun) {
-        print("loading cached market data...");
-        File jsonFile = new File(directory.path + "/marketData.json");
-        if (jsonFile.existsSync()) {
-          marketListData = json.decode(jsonFile.readAsStringSync());
-        }
-        print("finished loading cached market data");
-      }
-    });
-
-    _makePortfolioDisplay();
-    _makeTabChildren();
-
-    if (firstRun || marketListData == null) {
-      await getMarketData();
-      _makePortfolioDisplay();
-      _makeTabChildren();
-    }
-
-    print("FINISHED loadPortfolioJson function");
   }
 
   _makePortfolioDisplay() {
@@ -176,26 +134,31 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     });
   }
 
+  _refreshMarketData() async {
+    await getMarketData();
+    _makePortfolioDisplay();
+    _makeTabChildren();
+  }
+
   @override
   void initState() {
     super.initState();
     print("INIT TABS");
-
     _tabChildren = [
       new PortfolioPage(_makePortfolioDisplay, key: _portfolioKey),
       new MarketPage(filter, isSearching, key: _marketKey),
-//      new Container(),
     ];
-
-    _loadPortfolioJson(firstRun: true);
-    if (globalData == null) {getGlobalData();}
-
     _tabController = new TabController(length: 3, vsync: this);
     _tabController.animation.addListener(() {
       if (_tabController.animation.value.round() != _tabIndex) {
         _handleTabChange();
       }
     });
+
+    getGlobalData();
+    _refreshMarketData();
+    _makePortfolioDisplay();
+    _makeTabChildren();
   }
 
   @override

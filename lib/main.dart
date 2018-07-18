@@ -1,10 +1,36 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path_provider/path_provider.dart';
+
 
 import 'tabs.dart';
 import 'settings_page.dart';
 
-void main() {
+void main() async {
+  await getApplicationDocumentsDirectory().then((Directory directory) async {
+    File jsonFile = new File(directory.path + "/portfolio.json");
+    if (jsonFile.existsSync()) {
+      portfolioMap = json.decode(jsonFile.readAsStringSync());
+    } else {
+      print("creating file");
+      jsonFile.createSync();
+      jsonFile.writeAsStringSync("{}");
+      portfolioMap = json.decode(jsonFile.readAsStringSync());
+    }
+
+    print("finished portfolio load");
+
+    print("loading cached market data...");
+    jsonFile = new File(directory.path + "/marketData.json");
+    if (jsonFile.existsSync()) {
+      marketListData = json.decode(jsonFile.readAsStringSync());
+    }
+    print("finished loading cached market data");
+
+  });
+
   runApp(new TraceApp());
 }
 
@@ -144,6 +170,8 @@ class TraceAppState extends State<TraceApp> {
     super.initState();
     getPreferences();
     handleUpdate();
+
+    
   }
 
   @override

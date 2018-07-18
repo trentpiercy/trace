@@ -155,6 +155,9 @@ class TransactionItem extends StatelessWidget {
           +" "+time.hour.toString()+":"+time.minute.toString();
     }
 
+    String exchange = snapshot["exchange"];
+    if (exchange == "CCCAGG") {exchange = "Aggregated";}
+
     return new Card(
       elevation: 2.0,
       child: new ListTile(
@@ -184,7 +187,7 @@ class TransactionItem extends StatelessWidget {
               style: Theme.of(context).textTheme.body2.apply(color: changePercent > 0 ? Colors.green : Colors.red)
           ),
         ])),
-        subtitle: new Text("${snapshot["exchange"]}\n$date"),
+        subtitle: new Text("$exchange\n$date"),
         trailing: new Container(
           alignment: Alignment.topRight,
           width: MediaQuery.of(context).size.width * .3,
