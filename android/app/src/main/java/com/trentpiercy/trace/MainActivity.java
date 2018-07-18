@@ -1,4 +1,4 @@
-package com.example.trace;
+package com.trentpiercy.trace;
 
 import android.os.Bundle;
 
