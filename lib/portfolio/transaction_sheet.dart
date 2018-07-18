@@ -105,6 +105,17 @@ class TransactionSheetState extends State<TransactionSheet> {
   List exchangesList;
   String exchange;
 
+  Map totalQuantities;
+
+  _makeTotalQuantities() {
+    totalQuantities = {};
+    portfolioMap.forEach((symbol, transactions) {
+      num total = 0;
+      transactions.forEach((transaction) => total += transaction["quantity"]);
+      totalQuantities[symbol] = total;
+    });
+  }
+
   _handleRadioValueChange(int value) {
     setState(() {
       radioValue = value;
@@ -195,7 +206,7 @@ class TransactionSheetState extends State<TransactionSheet> {
   _checkValidQuantity(String quantityString) {
     try {
       quantity = num.parse(quantityString);
-      if (quantity.isNegative) {
+      if (quantity.isNegative || symbol == null || radioValue == 1 && totalQuantities[symbol] - quantity < 0) {
         quantity = null;
         setState(() {
           quantityTextColor = errorColor;
@@ -214,6 +225,7 @@ class TransactionSheetState extends State<TransactionSheet> {
   }
 
   _checkValidPrice(String priceString) {
+    print(portfolioDisplay);
     try {
       price = num.parse(priceString);
       if (price.isNegative) {
@@ -406,6 +418,7 @@ class TransactionSheetState extends State<TransactionSheet> {
     if (widget.editMode) {
       _initEditMode();
     }
+    _makeTotalQuantities();
     _makeEpoch();
   }
 

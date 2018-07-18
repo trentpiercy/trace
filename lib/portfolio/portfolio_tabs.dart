@@ -11,7 +11,7 @@ import 'breakdown.dart';
 import 'transactions_page.dart';
 
 normalizeNum(num input) {
-  if (input < 1) {
+  if (input.abs() < 1) {
     return input.toStringAsFixed(4);
   } else {
     return numCommaParseNoDollar(input.toStringAsFixed(2));
@@ -205,7 +205,7 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
       }
 
       segments.add(new CircularSegmentEntry(
-          coin["total_quantity"] * coin["price_usd"],
+          (coin["total_quantity"] * coin["price_usd"]).abs(),
           colors[colorInt]
       ));
       colorInt += 1;

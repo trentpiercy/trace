@@ -96,15 +96,20 @@ class TransactionsPageState extends State<TransactionsPage> {
                         new Text("\$"+ numCommaParseNoDollar(value.toStringAsFixed(2)),
                             style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)
                         ),
-                        new Padding(padding: const EdgeInsets.symmetric(horizontal: 3.0)),
-                        new PercentDollarChange(
-                          percent: netPercent,
-                          exact: net,
-                        )
                       ],
                     ),
                     new Text(num.parse(holdings.toStringAsPrecision(9)).toString() + " " + widget.symbol,
                         style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2)),
+                  ],
+                ),
+                new Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    new Text("Total Net", style: Theme.of(context).textTheme.caption),
+                    new PercentDollarChange(
+                      exact: net,
+                      percent: netPercent,
+                    )
                   ],
                 ),
                 new Column(

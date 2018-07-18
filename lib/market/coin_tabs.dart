@@ -61,9 +61,7 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
     if (historyOHLCV == null) {
       changeHistory(historyType, historyAmt, historyTotal, historyAgg);
     }
-
     if (exchangeData == null) {_getExchangeData();}
-
   }
 
   @override
