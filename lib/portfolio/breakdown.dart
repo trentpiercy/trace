@@ -3,10 +3,10 @@ import 'package:flutter_circular_chart/flutter_circular_chart.dart';
 
 import '../main.dart';
 import '../market_page.dart';
-import 'transactions_page.dart';
 import '../market/coin_aggregate_stats.dart';
 import '../market/coin_exchanges_list.dart';
 import '../market/coin_tabs.dart';
+import 'portfolio_tabs.dart';
 
 class PortfolioBreakdown extends StatelessWidget {
   PortfolioBreakdown({
@@ -52,13 +52,11 @@ class PortfolioBreakdown extends StatelessWidget {
                       children: <Widget>[
                         new Text("\$" + numCommaParseNoDollar(value.toStringAsFixed(2)),
                             style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)),
-                        new Padding(padding: const EdgeInsets.symmetric(horizontal: 2.0)),
-                        new Column(
-                          children: <Widget>[
-                            redGreenParsePercent(context, netPercent.toStringAsFixed(2), 1.2),
-                            redGreenParse(context, net.toStringAsFixed(2), 1.1),
-                          ],
-                        ),
+                        new Padding(padding: const EdgeInsets.symmetric(horizontal: 3.0)),
+                        new PercentDollarChange(
+                          exact: net,
+                          percent: netPercent,
+                        )
                       ],
                     ),
                   ],
@@ -78,8 +76,8 @@ class PortfolioBreakdown extends StatelessWidget {
             initialChartData: <CircularStackEntry>[
               new CircularStackEntry(segments, rankKey: "Portfolio Breakdown")
             ],
-            size: new Size.square(MediaQuery.of(context).size.width*0.65),
-            duration: new Duration(milliseconds: 500),
+            size: new Size.square(MediaQuery.of(context).size.width*0.7),
+            duration: new Duration(milliseconds: 400),
           ),
           new Container(
             margin: const EdgeInsets.only(left: 6.0, right: 6.0),
@@ -149,8 +147,6 @@ class PortfolioBreakdownItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return new InkWell(
       onTap: () {
-        resetCoinStats();
-        resetExchangeData();
         Navigator.of(context).push(
             new MaterialPageRoute(
                 builder: (BuildContext context) => new CoinDetails(snapshot: snapshot, enableTransactions: true)

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'transaction_sheet.dart';
 import '../main.dart';
+import 'portfolio_tabs.dart';
 
 class TransactionsPage extends StatefulWidget {
   TransactionsPage({this.symbol});
@@ -8,25 +9,6 @@ class TransactionsPage extends StatefulWidget {
 
   @override
   TransactionsPageState createState() => new TransactionsPageState();
-}
-
-redGreenParse(context, input, double fontSize) {
-  return new Text(
-      num.parse(input) >= 0 ? "+\$"+input : "\$"+input,
-      style: Theme.of(context).primaryTextTheme.body2.apply(
-        color: num.parse(input) >= 0 ? Colors.green : Colors.red,
-        fontSizeFactor: fontSize,
-      )
-  );
-}
-redGreenParsePercent(context, input, double fontSize) {
-  return new Text(
-      num.parse(input) >= 0 ? "+"+input+"%" : input+"%",
-      style: Theme.of(context).primaryTextTheme.body1.apply(
-        color: num.parse(input) >= 0 ? Colors.green : Colors.red,
-        fontSizeFactor: fontSize,
-      )
-  );
 }
 
 class TransactionsPageState extends State<TransactionsPage> {
@@ -114,13 +96,10 @@ class TransactionsPageState extends State<TransactionsPage> {
                         new Text("\$"+ numCommaParseNoDollar(value.toStringAsFixed(2)),
                             style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)
                         ),
-                        new Padding(padding: const EdgeInsets.symmetric(horizontal: 2.0)),
-                        new Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              redGreenParsePercent(context, netPercent.toStringAsFixed(2), 1.2),
-                              redGreenParse(context, net.toStringAsFixed(2), 1.1),
-                            ]
+                        new Padding(padding: const EdgeInsets.symmetric(horizontal: 3.0)),
+                        new PercentDollarChange(
+                          percent: netPercent,
+                          exact: net,
                         )
                       ],
                     ),

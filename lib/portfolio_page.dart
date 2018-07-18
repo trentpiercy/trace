@@ -156,8 +156,6 @@ class PortfolioListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return new InkWell(
         onTap: () {
-          resetCoinStats();
-          resetExchangeData();
           Navigator.of(context).push(
               new MaterialPageRoute(
                   builder: (BuildContext context) => new CoinDetails(snapshot: snapshot, enableTransactions: true)

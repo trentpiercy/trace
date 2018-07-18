@@ -82,16 +82,6 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
     );
   }
 
-  redGreenParsePercent(context, input, double fontSize) {
-    return new Text(
-        num.parse(input) >= 0 ? "+"+input+"%" : input+"%",
-        style: Theme.of(context).primaryTextTheme.body1.apply(
-          color: num.parse(input) >= 0 ? Colors.green : Colors.red,
-          fontSizeFactor: fontSize,
-        )
-    );
-  }
-
   normalizeNum(num input) {
     if (input < 1) {
       return input.toStringAsFixed(4);
@@ -368,16 +358,12 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
                               new Text("\$"+ numCommaParseNoDollar(value.toStringAsFixed(2)),
                                   style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)
                               ),
-                              new Padding(padding: const EdgeInsets.symmetric(horizontal: 2.0)),
+                              new Padding(padding: const EdgeInsets.symmetric(horizontal: 3.0)),
                               timelineData != null ?
-                                  new Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      redGreenParsePercent(context, changePercent.toStringAsFixed(2), 1.2),
-                                      redGreenParse(context, changeAmt.toStringAsFixed(2), 1.1),
-                                    ]
+                                  new PercentDollarChange(
+                                    percent: changePercent,
+                                    exact: changeAmt,
                                   )
-
                                   : new Container(),
                             ],
                           ),
@@ -478,5 +464,31 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
           ))
         ]
     );
+  }
+}
+
+class PercentDollarChange extends StatelessWidget {
+  PercentDollarChange({this.percent, this.exact});
+  final num percent;
+  final num exact;
+
+  @override
+  Widget build(BuildContext context) {
+    return new Text.rich(new TextSpan(children: [
+      percent > 0 ?
+      new TextSpan(text: "+${percent.toStringAsFixed(2)}%",
+          style: Theme.of(context).textTheme.body1.apply(
+              color: Colors.green, fontSizeFactor: 1.2))
+          : new TextSpan(text: "${percent.toStringAsFixed(2)}%",
+          style: Theme.of(context).textTheme.body1.apply(
+              color: Colors.red, fontSizeFactor: 1.2)),
+      exact > 0 ?
+      new TextSpan(text: "+${exact.toStringAsFixed(2)}",
+          style: Theme.of(context).textTheme.body1.apply(
+              color: Colors.green, fontSizeFactor: 1.1))
+          : new TextSpan(text: "${exact.toStringAsFixed(2)}%",
+          style: Theme.of(context).textTheme.body1.apply(
+              color: Colors.red, fontSizeFactor: 1.1)),
+    ]));
   }
 }

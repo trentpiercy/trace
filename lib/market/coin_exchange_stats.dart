@@ -76,10 +76,10 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
   Future<Null> getHistoryOHLCV() async {
     var response = await http.get(
         Uri.encodeFull(
-            "https://min-api.cryptocompare.com/data/histo"+OHLCVWidthOptions[historyTotal][currentOHLCVWidthSetting][3]+
+            "https://min-api.cryptocompare.com/data/histo"+ohlcvWidthOptions[historyTotal][currentOHLCVWidthSetting][3]+
                 "?fsym="+exchangeData["FROMSYMBOL"]+
-                "&tsym=USD&limit="+(OHLCVWidthOptions[historyTotal][currentOHLCVWidthSetting][1] - 1).toString()+
-                "&aggregate="+OHLCVWidthOptions[historyTotal][currentOHLCVWidthSetting][2].toString()+
+                "&tsym=USD&limit="+(ohlcvWidthOptions[historyTotal][currentOHLCVWidthSetting][1] - 1).toString()+
+                "&aggregate="+ohlcvWidthOptions[historyTotal][currentOHLCVWidthSetting][2].toString()+
                 "&e=" + e
         ),
         headers: {"Accept": "application/json"}
@@ -219,7 +219,7 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
                                               new Text("Candle Width",
                                                   style: Theme.of(context).textTheme.body1.apply(color: Theme.of(context).hintColor)),
                                               new Padding(padding: const EdgeInsets.only(right: 3.0)),
-                                              new Text(OHLCVWidthOptions[historyTotal][currentOHLCVWidthSetting][0],
+                                              new Text(ohlcvWidthOptions[historyTotal][currentOHLCVWidthSetting][0],
                                                   style: Theme.of(context).textTheme.body2.apply(fontWeightDelta: 2))
                                             ],
                                           ),
@@ -257,8 +257,8 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
                               icon: new Icon(Icons.swap_horiz, color: Theme.of(context).buttonColor),
                               itemBuilder: (BuildContext context) {
                                 List<PopupMenuEntry<dynamic>> options = [];
-                                for (int i = 0; i < OHLCVWidthOptions[historyTotal].length; i++) {
-                                  options.add(new PopupMenuItem(child: new Text(OHLCVWidthOptions[historyTotal][i][0]), value: i));
+                                for (int i = 0; i < ohlcvWidthOptions[historyTotal].length; i++) {
+                                  options.add(new PopupMenuItem(child: new Text(ohlcvWidthOptions[historyTotal][i][0]), value: i));
                                 }
                                 return options;
                               },
