@@ -128,8 +128,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
       "percent_change_24h": total24hChange,
       "percent_change_7d": total7dChange
     };
-
-    print("display list: " + portfolioDisplay.toString());
   }
 
   @override
@@ -387,9 +385,13 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
             portfolioMap.isNotEmpty ? new SliverList(delegate: new SliverChildBuilderDelegate(
                     (context, index) => new PortfolioListItem(portfolioDisplay[index]),
                 childCount: portfolioDisplay != null ? portfolioDisplay.length : 0
-            )) : new Container(
-              padding: const EdgeInsets.all(64.0),
-              child: new Text("Your portfolio is empty. Add a transaction!"),
+            )) : new SliverFillRemaining(
+              child: new Container(
+                alignment: Alignment.topCenter,
+                padding: const EdgeInsets.all(32.0),
+                child: new Text("Your portfolio is empty. Add a transaction!",
+                  style: Theme.of(context).textTheme.caption)
+              ),
             )
           ],
         )

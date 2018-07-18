@@ -9,3 +9,6 @@ build/
 ios/.generated/
 packages
 .flutter-plugins
+key.jks
+pubspec.lock
+android/key.properties
