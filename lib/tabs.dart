@@ -35,7 +35,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   TextEditingController _textController = new TextEditingController();
   int _tabIndex = 0;
 
-  Map totalPortfolioStats;
   bool isSearching = false;
   String filter;
 
@@ -141,7 +140,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
       }
     });
 
-    _refreshPortfolioPage();
+    _refreshMarketPage();
   }
 
   @override
@@ -187,14 +186,14 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                       leading: new Icon(Icons.timeline),
                       title: new Text("Portfolio Timeline"),
                       onTap: () => Navigator.push(context, new MaterialPageRoute(
-                          builder: (context) => new PortfolioTabs(0, totalPortfolioStats, portfolioDisplay)
+                          builder: (context) => new PortfolioTabs(0, _makePortfolioDisplay)
                       )),
                     ),
                     new ListTile(
                       leading: new Icon(Icons.pie_chart_outlined),
                       title: new Text("Portfolio Breakdown"),
                       onTap: () => Navigator.push(context, new MaterialPageRoute(
-                          builder: (context) => new PortfolioTabs(1, totalPortfolioStats, portfolioDisplay)
+                          builder: (context) => new PortfolioTabs(1, _makePortfolioDisplay)
                       )),
                     )
                   ],

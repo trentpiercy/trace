@@ -41,6 +41,7 @@ bool shortenOn = false;
 List marketListData;
 Map portfolioMap;
 List portfolioDisplay;
+Map totalPortfolioStats;
 
 numCommaParse(numString) {
   if (shortenOn) {

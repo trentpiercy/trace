@@ -10,12 +10,18 @@ import '../main.dart';
 import 'breakdown.dart';
 import 'transactions_page.dart';
 
+normalizeNum(num input) {
+  if (input < 1) {
+    return input.toStringAsFixed(4);
+  } else {
+    return numCommaParseNoDollar(input.toStringAsFixed(2));
+  }
+}
 
 class PortfolioTabs extends StatefulWidget {
-  PortfolioTabs(this.tab, this.totalStats, this.portfolioDisplay);
+  PortfolioTabs(this.tab, this.makePortfolioDisplay);
   final int tab;
-  final Map totalStats;
-  final List portfolioDisplay;
+  final Function makePortfolioDisplay;
 
   @override
   PortfolioTabsState createState() => new PortfolioTabsState();
@@ -32,8 +38,8 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
     if (timelineData == null) {
       _getTimelineData();
     }
-    _getTotals();
-    _makePortions();
+    _getBreakdownTotals();
+    _makeBreakdownPortions();
   }
 
   @override
@@ -68,8 +74,7 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
           children: <Widget>[
             _timeline(context),
             new PortfolioBreakdown(
-              totalStats: widget.totalStats,
-              portfolioDisplay: widget.portfolioDisplay,
+              refresh: _refresh,
               value: value,
               net: net,
               netPercent: netPercent,
@@ -80,14 +85,6 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
           ],
         )
     );
-  }
-
-  normalizeNum(num input) {
-    if (input < 1) {
-      return input.toStringAsFixed(4);
-    } else {
-      return numCommaParseNoDollar(input.toStringAsFixed(2));
-    }
   }
 
   num value = 0;
@@ -151,15 +148,12 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
 
   };
 
-  Map timedData;
-  DateTime oldestPoint = new DateTime.now();
-
   List<Map> transactionList;
 
-  List<CircularSegmentEntry> segments = [];
-  num cost = 0;
-  num net = 0;
-  num netPercent = 0;
+  List<CircularSegmentEntry> segments;
+  num cost;
+  num net;
+  num netPercent;
 
   final List colors = [
     Colors.red[400],
@@ -172,8 +166,19 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
     Colors.orange[400],
   ];
 
-  _getTotals() {
-    value = widget.totalStats["value_usd"];
+  Future<Null>_refresh() async {
+    await _getTimelineData();
+    widget.makePortfolioDisplay();
+    _getBreakdownTotals();
+    _makeBreakdownPortions();
+    setState(() {});
+  }
+
+  _getBreakdownTotals() {
+    cost = 0;
+    net = 0;
+    netPercent = 0;
+    value = totalPortfolioStats["value_usd"];
 
     portfolioMap.forEach((symbol, transactions){
       transactions.forEach((transaction) {
@@ -190,8 +195,9 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
     }
   }
 
-  _makePortions() {
+  _makeBreakdownPortions() {
     int colorInt = 0;
+    segments = [];
 
     portfolioDisplay.forEach((coin) {
       if (colorInt > (colors.length-1)) {
@@ -206,11 +212,15 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
     });
   }
 
-
+  List<Map> needed;
+  List retrieved;
+  Map timedData;
+  DateTime oldestPoint = new DateTime.now();
   _getTimelineData() async {
     timedData = {};
+    needed = [];
+    retrieved = [];
 
-    List<Map> needed = [];
     portfolioMap.forEach((symbol, transactions) {
       num oldest = double.infinity;
 
@@ -226,53 +236,13 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
       });
     });
 
-    for (Map coin in needed) {
+    needed.forEach((Map coin) async {
       await _pullData(coin);
-    }
-
-    List<int> times = [];
-    needed.forEach((e) => times.add(e["oldest"]));
-
-    int oldestInData = times.reduce(min);
-    int oldestInRange = new DateTime.now().millisecondsSinceEpoch - periodOptions[periodSetting]["unit_in_ms"] * periodOptions[periodSetting]["limit"];
-
-    if (oldestInData > oldestInRange || periodSetting == "All") {
-      oldestPoint = new DateTime.fromMillisecondsSinceEpoch(oldestInData);
-    } else {
-      oldestPoint = new DateTime.fromMillisecondsSinceEpoch(oldestInRange);
-    }
-
-
-
-    print("timedData FINAL: " + timedData.toString());
-
-    timelineData = [];
-    high = -double.infinity;
-    low = double.infinity;
-    timedData.forEach((time, amt) {
-      timelineData.add(amt.toDouble());
-      if (amt > high) {
-        high = amt;
-      }
-      if (amt < low) {
-        low = amt;
-      }
+      _finalizeTimelineData();
     });
-
-    num start = timelineData[0] != 0 ? timelineData[0] : 1;
-    num end = timelineData.last;
-    changePercent = (end-start)/start*100;
-    changeAmt = end - start;
-
-    setState(() {});
   }
 
   Future<Null> _pullData(coin) async {
-    //TODO: make this pull all data at once
-    /// can be done with .forEach(() async {})
-    /// but doesn't wait for all data before returning
-
-
     int msAgo = new DateTime.now().millisecondsSinceEpoch - coin["oldest"];
     int limit = periodOptions[periodSetting]["limit"];
     int periodInMs = limit * periodOptions[periodSetting]["unit_in_ms"];
@@ -283,7 +253,6 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
     else if (msAgo < periodInMs) {
       limit = limit - ((periodInMs - msAgo) ~/ periodOptions[periodSetting]["unit_in_ms"]);
     }
-
 
     var response = await http.get(
         Uri.encodeFull(
@@ -310,8 +279,43 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
       });
     });
 
-//    print("ran on " + coin["symbol"]);
-//    print("timedData: " + timedData.toString());
+    retrieved.add(coin["symbol"]);
+  }
+
+  _finalizeTimelineData() {
+    if (retrieved.length == needed.length) {
+      List<int> times = [];
+      needed.forEach((e) => times.add(e["oldest"]));
+
+      int oldestInData = times.reduce(min);
+      int oldestInRange = new DateTime.now().millisecondsSinceEpoch - periodOptions[periodSetting]["unit_in_ms"] * periodOptions[periodSetting]["limit"];
+
+      if (oldestInData > oldestInRange || periodSetting == "All") {
+        oldestPoint = new DateTime.fromMillisecondsSinceEpoch(oldestInData);
+      } else {
+        oldestPoint = new DateTime.fromMillisecondsSinceEpoch(oldestInRange);
+      }
+
+      timelineData = [];
+      high = -double.infinity;
+      low = double.infinity;
+      timedData.forEach((time, amt) {
+        timelineData.add(amt.toDouble());
+        if (amt > high) {
+          high = amt;
+        }
+        if (amt < low) {
+          low = amt;
+        }
+      });
+
+      num start = timelineData[0] != 0 ? timelineData[0] : 1;
+      num end = timelineData.last;
+      changePercent = (end-start)/start*100;
+      changeAmt = end - start;
+
+      setState(() {});
+    }
   }
 
   _makeTransactionList() {
@@ -332,137 +336,139 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
       }));
 
       transactionList.sort((a, b) => b["snapshot"]["time_epoch"].compareTo(a["snapshot"]["time_epoch"]));
-
     });
   }
 
   Widget _timeline(BuildContext context) {
     print("built timeline");
     _makeTransactionList();
-    return new CustomScrollView(
-        slivers: <Widget>[
-          new SliverList(delegate: new SliverChildListDelegate(<Widget>[
-            new Container(
-                padding: const EdgeInsets.all(10.0),
-                child: new Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      new Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          new Text("Portfolio Value", style: Theme.of(context).textTheme.caption),
-                          new Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: <Widget>[
-                              new Text("\$"+ numCommaParseNoDollar(value.toStringAsFixed(2)),
-                                  style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)
-                              ),
-                              new Padding(padding: const EdgeInsets.symmetric(horizontal: 3.0)),
-                              timelineData != null ?
-                                  new PercentDollarChange(
-                                    percent: changePercent,
-                                    exact: changeAmt,
-                                  )
-                                  : new Container(),
-                            ],
-                          ),
+    return RefreshIndicator(
+      onRefresh: _refresh,
+      child: new CustomScrollView(
+          slivers: <Widget>[
+            new SliverList(delegate: new SliverChildListDelegate(<Widget>[
+              new Container(
+                  padding: const EdgeInsets.all(10.0),
+                  child: new Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        new Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            new Text("Portfolio Value", style: Theme.of(context).textTheme.caption),
+                            new Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: <Widget>[
+                                new Text("\$"+ numCommaParseNoDollar(value.toStringAsFixed(2)),
+                                    style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)
+                                ),
+                                new Padding(padding: const EdgeInsets.symmetric(horizontal: 3.0)),
+                                timelineData != null ?
+                                    new PercentDollarChange(
+                                      percent: changePercent,
+                                      exact: changeAmt,
+                                    )
+                                    : new Container(),
+                              ],
+                            ),
 //                          new Padding(padding: const EdgeInsets.symmetric(vertical: 2.5)),
-                          timelineData != null ? new Row(
-                            children: <Widget>[
-                              new Text("High", style: Theme.of(context).textTheme.caption),
-                              new Padding(padding: const EdgeInsets.symmetric(horizontal: 2.0)),
-                              new Text("\$"+normalizeNum(high),
-                                  style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)
-                              )
-                            ],
-                          ) : new Container(),
-                          timelineData != null ? new Row(
-                            children: <Widget>[
-                              new Text("Low", style: Theme.of(context).textTheme.caption),
-                              new Padding(padding: const EdgeInsets.symmetric(horizontal: 3.0)),
-                              new Text("\$"+normalizeNum(low),
-                                  style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)
-                              )
-                            ],
-                          ) : new Container(),
-                        ],
-                      ),
-                      new Card(
-                        elevation: 2.0,
-                        child: new Container(
-                          margin: const EdgeInsets.only(left: 14.0, bottom: 12.0),
-                          child: new Column(
-//                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: <Widget>[
-                              new Row(
-                                children: <Widget>[
-                                  new Text(periodSetting, style: Theme.of(context).textTheme.body2.apply(fontWeightDelta: 2, fontSizeFactor: 1.2)),
-                                  new Container(
-                                    child: new PopupMenuButton(
-                                        icon: new Icon(Icons.access_time, color: Theme.of(context).buttonColor),
-                                        tooltip: "Select Period",
-                                        itemBuilder: (context) {
-                                          List<PopupMenuEntry<dynamic>> options = [];
-                                          periodOptions.forEach((K, V) => options.add(
-                                              new PopupMenuItem(child: new Text(K), value: K)
-                                          ));
-                                          return options;
-                                        },
-                                        onSelected: (chosen) {
-                                          setState(() {
-                                            periodSetting = chosen;
-                                            timelineData = null;
-                                          });
-                                          _getTimelineData();
-                                        },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              new Container(
-                                padding: const EdgeInsets.only(right: 14.0),
-                                child: new Text("${oldestPoint.month.toString()}/${oldestPoint.day.toString()}"
-                                    "/${oldestPoint.year.toString().substring(2)} ➞ Now",
-                                    style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: .9)),
-                              ),
-                            ],
-                          ),
+                            timelineData != null ? new Row(
+                              children: <Widget>[
+                                new Text("High", style: Theme.of(context).textTheme.caption),
+                                new Padding(padding: const EdgeInsets.symmetric(horizontal: 2.0)),
+                                new Text("\$"+normalizeNum(high),
+                                    style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)
+                                )
+                              ],
+                            ) : new Container(),
+                            timelineData != null ? new Row(
+                              children: <Widget>[
+                                new Text("Low", style: Theme.of(context).textTheme.caption),
+                                new Padding(padding: const EdgeInsets.symmetric(horizontal: 3.0)),
+                                new Text("\$"+normalizeNum(low),
+                                    style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1)
+                                )
+                              ],
+                            ) : new Container(),
+                          ],
                         ),
-                      )
-                    ])
-            ),
-
-            new Container(
-              padding: const EdgeInsets.only(top: 16.0, left: 4.0, right: 2.0),
-              height: MediaQuery.of(context).size.height*.6,
-              child: timelineData != null ? new Sparkline(
-                data: timelineData,
-                lineGradient: new LinearGradient(colors: [Theme.of(context).buttonColor, Colors.purpleAccent[100]]),
-                enableGridLines: true,
-                gridLineColor: Theme.of(context).dividerColor,
-                gridLineLabelColor: Theme.of(context).hintColor,
-                gridLineAmount: 4,
-              ) : new Container(
-                  alignment: Alignment.center,
-                  child: new CircularProgressIndicator()
+                        new Card(
+                          elevation: 2.0,
+                          child: new Container(
+                            margin: const EdgeInsets.only(left: 14.0, bottom: 12.0),
+                            child: new Column(
+//                            crossAxisAlignment: CrossAxisAlignment.end,
+                              children: <Widget>[
+                                new Row(
+                                  children: <Widget>[
+                                    new Text(periodSetting, style: Theme.of(context).textTheme.body2.apply(fontWeightDelta: 2, fontSizeFactor: 1.2)),
+                                    new Container(
+                                      child: new PopupMenuButton(
+                                          icon: new Icon(Icons.access_time, color: Theme.of(context).buttonColor),
+                                          tooltip: "Select Period",
+                                          itemBuilder: (context) {
+                                            List<PopupMenuEntry<dynamic>> options = [];
+                                            periodOptions.forEach((K, V) => options.add(
+                                                new PopupMenuItem(child: new Text(K), value: K)
+                                            ));
+                                            return options;
+                                          },
+                                          onSelected: (chosen) {
+                                            setState(() {
+                                              periodSetting = chosen;
+                                              timelineData = null;
+                                            });
+                                            _getTimelineData();
+                                          },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                new Container(
+                                  padding: const EdgeInsets.only(right: 14.0),
+                                  child: new Text("${oldestPoint.month.toString()}/${oldestPoint.day.toString()}"
+                                      "/${oldestPoint.year.toString().substring(2)} ➞ Now",
+                                      style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: .9)),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      ])
               ),
-            ),
-            new Container(
-              padding: const EdgeInsets.only(top: 16.0, left: 8.0, bottom: 4.0),
-              child: new Text("All Transactions", style: Theme.of(context).textTheme.caption), 
-            )
-          ])),
-          new SliverList(delegate: new SliverChildBuilderDelegate(
-            (context, index) => new TransactionItem(
-              symbol: transactionList[index]["symbol"],
-              currentPrice: transactionList[index]["current_price"],
-              snapshot: transactionList[index]["snapshot"],
-              refreshPage: (){setState(() {});},
-            ),
-            childCount: transactionList.length
-          ))
-        ]
+
+              new Container(
+                padding: const EdgeInsets.only(top: 16.0, left: 4.0, right: 2.0),
+                height: MediaQuery.of(context).size.height*.6,
+                child: timelineData != null ? new Sparkline(
+                  data: timelineData,
+                  lineGradient: new LinearGradient(colors: [Theme.of(context).buttonColor, Colors.purpleAccent[100]]),
+                  enableGridLines: true,
+                  gridLineColor: Theme.of(context).dividerColor,
+                  gridLineLabelColor: Theme.of(context).hintColor,
+                  gridLineAmount: 4,
+                ) : new Container(
+                    alignment: Alignment.center,
+                    child: new CircularProgressIndicator()
+                ),
+              ),
+              new Container(
+                padding: const EdgeInsets.only(top: 16.0, left: 8.0, bottom: 4.0),
+                child: new Text("All Transactions", style: Theme.of(context).textTheme.caption),
+              )
+            ])),
+            new SliverList(delegate: new SliverChildBuilderDelegate(
+              (context, index) => new TransactionItem(
+                symbol: transactionList[index]["symbol"],
+                currentPrice: transactionList[index]["current_price"],
+                snapshot: transactionList[index]["snapshot"],
+                refreshPage: () => _refresh(),
+              ),
+              childCount: transactionList.length
+            ))
+          ]
+      ),
     );
   }
 }
@@ -483,10 +489,10 @@ class PercentDollarChange extends StatelessWidget {
           style: Theme.of(context).textTheme.body2.apply(
               color: Colors.red, fontSizeFactor: 1.1)),
       exact > 0 ?
-      new TextSpan(text: "(\$${exact.toStringAsFixed(2)})",
+      new TextSpan(text: "(\$${normalizeNum(exact)})",
           style: Theme.of(context).textTheme.body1.apply(
               color: Colors.green, fontSizeFactor: 1.0))
-          : new TextSpan(text: "(\$${exact.toStringAsFixed(2)})",
+          : new TextSpan(text: "(\$${normalizeNum(exact)})",
           style: Theme.of(context).textTheme.body1.apply(
               color: Colors.red, fontSizeFactor: 1.0)),
     ]));
