@@ -19,7 +19,6 @@ void main() async {
       jsonFile.writeAsStringSync("{}");
       portfolioMap = {};
     }
-
     print("finished portfolio load");
 
     print("loading cached market data...");

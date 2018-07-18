@@ -250,7 +250,7 @@ class TransactionSheetState extends State<TransactionSheet> {
             "price_usd":price,
             "exchange":exchange,
             "time_epoch":epochDate,
-            "notes":_notesController.text //TODO: make sure this works
+            "notes":_notesController.text
           };
 
           Map jsonContent = json.decode(jsonFile.readAsStringSync());
@@ -383,7 +383,11 @@ class TransactionSheetState extends State<TransactionSheet> {
       radioValue = 1;
     }
 
-    _exchangeController.text = widget.snapshot["exchange"];
+    if (widget.snapshot["exchange"] == "CCCAGG") {
+      _exchangeController.text = "Aggregated";
+    } else {
+      _exchangeController.text = widget.snapshot["exchange"];
+    }
     exchange = widget.snapshot["exchange"];
 
     _notesController.text = widget.snapshot["notes"];

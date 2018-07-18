@@ -21,7 +21,12 @@ class QuickPercentChangeBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return new Container(
       padding: const EdgeInsets.only(left: 6.0, right: 6.0, bottom: 3.0, top: 3.0),
-      color: Theme.of(context).primaryColor,
+      decoration: new BoxDecoration(
+          border: new Border(
+            top: new BorderSide(color: Theme.of(context).dividerColor),
+        ),
+        color: Theme.of(context).primaryColor
+      ),
       child: new Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[

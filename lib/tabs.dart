@@ -144,8 +144,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     });
 
     _refreshPortfolioPage();
-    _filterMarketData();
-    _makePortfolioDisplay();
   }
 
   @override
@@ -208,7 +206,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
 
         floatingActionButton: _tabIndex == 0 ?
         new PortfolioFAB(_scaffoldKey, () {
-          setState(() {_makePortfolioDisplay();});
+          setState(() {});
         }, marketListData) : null,
 
         body: new NestedScrollView(
@@ -299,13 +297,14 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     await getMarketData();
     getGlobalData();
     setState(() {
-      _filterMarketData();
       _makePortfolioDisplay();
+      _filterMarketData();
     });
   }
 
   Widget portfolioPage(BuildContext context) {
     print("[P] built portfolio page");
+    _makePortfolioDisplay();
     return new RefreshIndicator(
         onRefresh: _refreshPortfolioPage,
         child: new CustomScrollView(
@@ -415,7 +414,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     await getMarketData();
     setState(() {
       _filterMarketData();
-      _makePortfolioDisplay();
     });
   }
 

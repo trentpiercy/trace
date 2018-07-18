@@ -6,8 +6,6 @@ Portfolio
 
 Animate everything
 
-# TODO
-
 # UI
 Specific currency
 - Aggregate Market Stats
