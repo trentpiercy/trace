@@ -13,20 +13,19 @@ void main() async {
     if (jsonFile.existsSync()) {
       portfolioMap = json.decode(jsonFile.readAsStringSync());
     } else {
-      print("creating file");
       jsonFile.createSync();
       jsonFile.writeAsStringSync("{}");
       portfolioMap = {};
     }
-    print("finished portfolio load");
 
-    print("loading cached market data...");
     jsonFile = new File(directory.path + "/marketData.json");
     if (jsonFile.existsSync()) {
       marketListData = json.decode(jsonFile.readAsStringSync());
+    } else {
+      jsonFile.createSync();
+      jsonFile.writeAsStringSync("[]");
+      marketListData = [];
     }
-    print("finished loading cached market data");
-
   });
 
   runApp(new TraceApp());

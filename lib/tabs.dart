@@ -46,9 +46,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
       filter = value;
       isSearching = true;
     }
-    setState(() {
-      _filterMarketData();
-    });
+    setState(() {});
   }
 
   _startSearch() {
@@ -61,7 +59,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     setState(() {
       isSearching = false;
       filter = null;
-      _filterMarketData();
       _textController.clear();
     });
   }
@@ -76,6 +73,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   }
 
   _makePortfolioDisplay() {
+    print("making portfolio display");
     Map portfolioTotals = {};
     List neededPriceSymbols = [];
 
@@ -139,7 +137,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         _handleTabChange();
       }
     });
-
     _refreshMarketPage();
   }
 
@@ -294,7 +291,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     getGlobalData();
     setState(() {
       _makePortfolioDisplay();
-      _filterMarketData();
     });
   }
 
@@ -422,6 +418,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   }
 
   _filterMarketData() {
+    print("filtering market data");
     if (filter == "" || filter == null) {
       filteredMarketData = marketListData;
     } else {
@@ -437,6 +434,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
 
   Widget marketPage(BuildContext context) {
     print("[M] built market page");
+    _filterMarketData();
     return filteredMarketData != null ? new RefreshIndicator(
         key: _marketKey,
         onRefresh: () => _refreshMarketPage(),
