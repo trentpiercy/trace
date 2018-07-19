@@ -137,6 +137,7 @@ class TraceAppState extends State<TraceApp> {
 //    textSelectionColor: Colors.black,
     textSelectionHandleColor: Colors.purple[700],
     dividerColor: Colors.grey[200],
+    bottomAppBarColor: Colors.grey[200],
     buttonColor: Colors.purple[700],
     iconTheme: new IconThemeData(color: Colors.white),
     primaryIconTheme: new IconThemeData(color: Colors.black),
@@ -159,6 +160,7 @@ class TraceAppState extends State<TraceApp> {
     accentIconTheme: new IconThemeData(color: Colors.deepPurpleAccent[100]),
     cardColor: Color.fromRGBO(55, 55, 55, 1.0),
     dividerColor: Color.fromRGBO(60, 60, 60, 1.0),
+    bottomAppBarColor: Colors.black26,
   );
 
   @override

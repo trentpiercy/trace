@@ -23,7 +23,7 @@ class QuickPercentChangeBar extends StatelessWidget {
       padding: const EdgeInsets.only(left: 6.0, right: 6.0, bottom: 3.0, top: 3.0),
       decoration: new BoxDecoration(
           border: new Border(
-            top: new BorderSide(color: Theme.of(context).dividerColor),
+            top: new BorderSide(color: Theme.of(context).bottomAppBarColor),
         ),
         color: Theme.of(context).primaryColor
       ),

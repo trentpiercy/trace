@@ -158,7 +158,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     print("[T] built tabs");
-
     return new Scaffold(
       key: _scaffoldKey,
         drawer: new Drawer(
@@ -166,7 +165,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                 bottomNavigationBar: new Container(
                     decoration: new BoxDecoration(
                         border: new Border(
-                            top: new BorderSide(color: Theme.of(context).dividerColor),
+                            top: new BorderSide(color: Theme.of(context).bottomAppBarColor),
                         )
                     ),
                     child: new ListTile(
@@ -299,10 +298,14 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     });
   }
 
+  final PageStorageKey _marketKey = new PageStorageKey("market");
+  final PageStorageKey _portfolioKey = new PageStorageKey("portfolio");
+
   Widget portfolioPage(BuildContext context) {
     print("[P] built portfolio page");
     _makePortfolioDisplay();
     return new RefreshIndicator(
+        key: _portfolioKey,
         onRefresh: _refreshPortfolioPage,
         child: new CustomScrollView(
           slivers: <Widget>[
@@ -435,6 +438,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   Widget marketPage(BuildContext context) {
     print("[M] built market page");
     return filteredMarketData != null ? new RefreshIndicator(
+        key: _marketKey,
         onRefresh: () => _refreshMarketPage(),
         child: new CustomScrollView(
           slivers: <Widget>[

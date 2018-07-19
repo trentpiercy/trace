@@ -117,9 +117,8 @@ class TransactionSheetState extends State<TransactionSheet> {
   }
 
   _handleRadioValueChange(int value) {
-    setState(() {
-      radioValue = value;
-    });
+    radioValue = value;
+    _checkValidQuantity(_quantityController.text);
   }
 
   Future<Null> _selectDate() async {
@@ -185,10 +184,9 @@ class TransactionSheetState extends State<TransactionSheet> {
       }
 
       exchange = "CCCAGG";
-      setState(() {
-        _exchangeController.text = "Aggregated";
-        symbolTextColor = validColor;
-      });
+      _exchangeController.text = "Aggregated";
+      symbolTextColor = validColor;
+      _checkValidQuantity(_quantityController.text);
 
     } else {
       symbol = null;
@@ -197,9 +195,8 @@ class TransactionSheetState extends State<TransactionSheet> {
       _exchangeController.text = "";
       price = null;
       _priceController.text = "";
-      setState(() {
-        symbolTextColor = errorColor;
-      });
+      symbolTextColor = errorColor;
+      _checkValidQuantity(_quantityController.text);
     }
   }
 
@@ -427,7 +424,7 @@ class TransactionSheetState extends State<TransactionSheet> {
     validColor = Theme.of(context).textTheme.body2.color;
     return new Container(
         decoration: new BoxDecoration(
-          border: new Border(top: new BorderSide(color: Theme.of(context).dividerColor)),
+          border: new Border(top: new BorderSide(color: Theme.of(context).bottomAppBarColor)),
           color: Theme.of(context).primaryColor,
         ),
         padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 16.0, left: 16.0),

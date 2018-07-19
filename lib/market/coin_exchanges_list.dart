@@ -12,7 +12,7 @@ class ExchangeListItem extends StatelessWidget {
     if (input < 1) {
       return input.toStringAsFixed(4);
     } else {
-      return numCommaParseNoDollar(input.toStringAsFixed(2));
+      return input.toStringAsFixed(2);
     }
   }
 
