@@ -426,6 +426,7 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
     }
   }
 
+  List sortType = ["VOLUME24HOURTO", true];
   void _sortExchangeData() {
     List sortedExchangeData = [];
     for (var i in exchangeData) {
@@ -433,6 +434,13 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
         sortedExchangeData.add(i);
       }
     }
+
+    if (sortType[1]) {
+      sortedExchangeData.sort((a, b) => b[sortType[0]].compareTo(a[sortType[0]]));
+    } else {
+      sortedExchangeData.sort((a, b) => a[sortType[0]].compareTo(b[sortType[0]]));
+    }
+
     setState(() {
       exchangeData = sortedExchangeData;
     });
@@ -455,22 +463,68 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
                 child: new Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    new Container(
-                      width: MediaQuery.of(context).size.width * columnProps[0],
-                      child: new Text("Exchange",
-                          style: Theme.of(context).textTheme.body2),
+                    new InkWell(
+                      onTap: () {
+                        if (sortType[0] == "MARKET") {
+                          sortType[1] = !sortType[1];
+                        } else {
+                          sortType = ["MARKET", false];
+                        }
+                        setState(() {
+                          _sortExchangeData();
+                        });
+                      },
+                      child: new Container(
+                        width: MediaQuery.of(context).size.width * columnProps[0],
+                        child: sortType[0] == "MARKET" ?
+                            new Text(sortType[1] == true ? "Exchange ⬆" : "Exchange ⬇",
+                              style: Theme.of(context).textTheme.body2)
+                            : new Text("Exchange",
+                              style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor),
+                          ),
+                      ),
                     ),
-                    new Container(
-                      alignment: Alignment.centerRight,
-                      width: MediaQuery.of(context).size.width * columnProps[1],
-                      child: new Text("24h Volume",
-                          style: Theme.of(context).textTheme.body2),
+                    new InkWell(
+                      onTap: () {
+                        if (sortType[0] == "VOLUME24HOURTO") {
+                          sortType[1] = !sortType[1];
+                        } else {
+                          sortType = ["VOLUME24HOURTO", true];
+                        }
+                        setState(() {
+                          _sortExchangeData();
+                        });
+                      },
+                      child: new Container(
+                        alignment: Alignment.centerRight,
+                        width: MediaQuery.of(context).size.width * columnProps[1],
+                        child: sortType[0] == "VOLUME24HOURTO" ?
+                        new Text(sortType[1] == true ? "24h Volume ⬇" : "24h Volume ⬆",
+                            style: Theme.of(context).textTheme.body2)
+                            : new Text("24h Volume",
+                            style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)),
+                      ),
                     ),
-                    new Container(
-                      alignment: Alignment.centerRight,
-                      width: MediaQuery.of(context).size.width * columnProps[2],
-                      child: new Text("Price/24h",
-                          style: Theme.of(context).textTheme.body2),
+                    new InkWell(
+                      onTap: () {
+                        if (sortType[0] == "PRICE") {
+                          sortType[1] = !sortType[1];
+                        } else {
+                          sortType = ["PRICE", true];
+                        }
+                        setState(() {
+                          _sortExchangeData();
+                        });
+                      },
+                      child: new Container(
+                        alignment: Alignment.centerRight,
+                        width: MediaQuery.of(context).size.width * columnProps[2],
+                        child: sortType[0] == "PRICE" ?
+                        new Text(sortType[1] == true ? "Price ⬇" : "Price ⬆",
+                            style: Theme.of(context).textTheme.body2)
+                            : new Text("Price/24h",
+                            style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)),
+                      ),
                     ),
                   ],
                 ),

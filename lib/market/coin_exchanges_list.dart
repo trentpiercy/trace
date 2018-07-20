@@ -46,7 +46,7 @@ class ExchangeListItem extends StatelessWidget {
                 child: new Text(
                     numCommaParse(
                         exchangeDataSnapshot["VOLUME24HOURTO"].toString()),
-                    style: Theme.of(context).textTheme.body2),
+                    style: Theme.of(context).textTheme.body1),
               ),
               new Container(
                 width: MediaQuery.of(context).size.width * columnProps[2],
