@@ -83,6 +83,11 @@ class TransactionSheetState extends State<TransactionSheet> {
   TextEditingController _exchangeController = new TextEditingController();
   TextEditingController _notesController = new TextEditingController();
 
+  FocusNode _symbolFocusNode = new FocusNode();
+  FocusNode _priceFocusNode = new FocusNode();
+  FocusNode _quantityFocusNode = new FocusNode();
+  FocusNode _notesFocusNode = new FocusNode();
+
   Color errorColor = Colors.red;
   Color validColor;
 
@@ -205,7 +210,7 @@ class TransactionSheetState extends State<TransactionSheet> {
   _checkValidQuantity(String quantityString) {
     try {
       quantity = num.parse(quantityString);
-      if (quantity.isNegative || symbol == null || radioValue == 1 && totalQuantities[symbol] - quantity < 0) {
+      if (quantity.isNegative || radioValue == 1 && totalQuantities[symbol] - quantity < 0) {
         quantity = null;
         setState(() {
           quantityTextColor = errorColor;
@@ -476,9 +481,11 @@ class TransactionSheetState extends State<TransactionSheet> {
                           padding: const EdgeInsets.only(right: 4.0),
                           child: new TextField(
                             controller: _symbolController,
+                            focusNode: _symbolFocusNode,
                             autofocus: true,
                             autocorrect: false,
                             onChanged: _checkValidSymbol,
+                            onSubmitted: (_) => FocusScope.of(context).requestFocus(_quantityFocusNode),
                             style: Theme.of(context).textTheme.body2.apply(color: symbolTextColor),
                             decoration: new InputDecoration(
                               border: InputBorder.none,
@@ -490,9 +497,11 @@ class TransactionSheetState extends State<TransactionSheet> {
                           width: MediaQuery.of(context).size.width * 0.25,
                           padding: const EdgeInsets.only(right: 4.0),
                           child: new TextField(
+                            focusNode: _quantityFocusNode,
                             controller: _quantityController,
                             autocorrect: false,
                             onChanged: _checkValidQuantity,
+                            onSubmitted: (_) => FocusScope.of(context).requestFocus(_priceFocusNode),
                             style: Theme.of(context).textTheme.body2.apply(color: quantityTextColor),
                             keyboardType: TextInputType.number,
                             decoration: new InputDecoration(
@@ -505,9 +514,11 @@ class TransactionSheetState extends State<TransactionSheet> {
                           width: MediaQuery.of(context).size.width*0.25,
                           padding: const EdgeInsets.only(right: 4.0),
                           child: new TextField(
+                            focusNode: _priceFocusNode,
                             controller: _priceController,
                             autocorrect: false,
                             onChanged: _checkValidPrice,
+                            onSubmitted: (_) => FocusScope.of(context).requestFocus(_notesFocusNode),
                             style: Theme.of(context).textTheme.body2.apply(color: priceTextColor),
                             keyboardType: TextInputType.number,
                             decoration: new InputDecoration(
@@ -551,6 +562,7 @@ class TransactionSheetState extends State<TransactionSheet> {
                                 } else {
                                   _exchangeController.text = selected;
                                 }
+                                FocusScope.of(context).requestFocus(_notesFocusNode);
                               });
                             },
                             child: new Text(
@@ -564,6 +576,7 @@ class TransactionSheetState extends State<TransactionSheet> {
                         new Container(
                           width: MediaQuery.of(context).size.width*0.50,
                           child: new TextField(
+                            focusNode: _notesFocusNode,
                             controller: _notesController,
                             autocorrect: true,
                             style: Theme.of(context).textTheme.body2.apply(color: validColor),
