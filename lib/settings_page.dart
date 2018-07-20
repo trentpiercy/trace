@@ -89,7 +89,7 @@ class SettingsPageState extends State<SettingsPage>{
               color: Theme.of(context).cardColor,
               child: new ListTile(
                 leading: new Icon(Icons.short_text),
-                title: new Text(shortenOn ? "Full Numbers" : "Abbreviate Numbers"),
+                title: new Text(shortenOn ? "Abbreviated Numbers" : "Full Numbers"),
                 onTap: () {
                   setState(() {
                     shortenOn = !shortenOn;

@@ -59,7 +59,6 @@ class TransactionSheet extends StatefulWidget {
   TransactionSheet(
       this.loadPortfolio,
       this.marketListData,
-
       {Key key,
         this.editMode: false,
         this.snapshot,
@@ -114,6 +113,9 @@ class TransactionSheetState extends State<TransactionSheet> {
       transactions.forEach((transaction) => total += transaction["quantity"]);
       totalQuantities[symbol] = total;
     });
+    if (widget.editMode) {
+      totalQuantities[widget.symbol] -= widget.snapshot["quantity"];
+    }
   }
 
   _handleRadioValueChange(int value) {
