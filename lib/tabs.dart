@@ -103,11 +103,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
       }
     });
 
-    portfolioDisplay.sort(
-        (a, b) => (b["total_quantity"]*b["price_usd"]).compareTo(a["total_quantity"]*a["price_usd"])
-    );
-
-
     num total24hChange = 0;
     num total7dChange = 0;
     portfolioDisplay.forEach((coin) {
@@ -125,6 +120,8 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
       "percent_change_24h": total24hChange,
       "percent_change_7d": total7dChange
     };
+
+    _sortPortfolioDisplay();
   }
 
   @override
@@ -149,7 +146,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   }
 
   ScrollController _scrollController = new ScrollController();
-
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
@@ -294,9 +290,28 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     });
   }
 
-  List sortType = ["quantity", true];
+  List sortType = ["holdings", true];
+  List sortedPortfolioDisplay;
   _sortPortfolioDisplay() {
-
+    sortedPortfolioDisplay = portfolioDisplay;
+    if (sortType[1]) {
+      if (sortType[0] == "holdings") {
+        sortedPortfolioDisplay.sort((a, b) =>
+          (b["price_usd"]*b["total_quantity"]).toDouble()
+          .compareTo((a["price_usd"]*a["total_quantity"]).toDouble()));
+      } else {
+        sortedPortfolioDisplay.sort((a, b) => b[sortType[0]].compareTo(a[sortType[0]]));
+      }
+    } else {
+      if (sortType[0] == "holdings") {
+        sortedPortfolioDisplay.sort((a, b) =>
+          (a["price_usd"]*a["total_quantity"]).toDouble()
+          .compareTo((b["price_usd"]*b["total_quantity"]).toDouble()));
+      } else {
+        sortedPortfolioDisplay.sort((a, b) => a[sortType[0]].compareTo(b[sortType[0]]));
+      }
+    }
+    setState(() {});
   }
 
   final PageStorageKey _marketKey = new PageStorageKey("market");
@@ -379,7 +394,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                           },
                           child: new Container(
                             width: MediaQuery.of(context).size.width * columnProps[0],
-                            child: sortType[0] == "" ?
+                            child: sortType[0] == "symbol" ?
                             new Text(sortType[1] == true ? "Currency ⬆" : "Currency ⬇",
                                 style: Theme.of(context).textTheme.body2)
                                 : new Text("Currency",
@@ -389,10 +404,10 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                         ),
                         new InkWell(
                           onTap: () {
-                            if (sortType[0] == "") {
+                            if (sortType[0] == "holdings") {
                               sortType[1] = !sortType[1];
                             } else {
-                              sortType = ["", true];
+                              sortType = ["holdings", true];
                             }
                             setState(() {
                               _sortPortfolioDisplay();
@@ -401,7 +416,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                           child: new Container(
                             alignment: Alignment.centerRight,
                             width: MediaQuery.of(context).size.width * columnProps[1],
-                            child: sortType[0] == "" ?
+                            child: sortType[0] == "holdings" ?
                             new Text(sortType[1] == true ? "Holdings ⬇" : "Holdings ⬆",
                                 style: Theme.of(context).textTheme.body2)
                                 : new Text("Holdings",
@@ -420,8 +435,8 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                 ])
             ),
             portfolioMap.isNotEmpty ? new SliverList(delegate: new SliverChildBuilderDelegate(
-                    (context, index) => new PortfolioListItem(portfolioDisplay[index]),
-                childCount: portfolioDisplay != null ? portfolioDisplay.length : 0
+                (context, index) => new PortfolioListItem(sortedPortfolioDisplay[index]),
+                childCount: sortedPortfolioDisplay != null ? sortedPortfolioDisplay.length : 0
             )) : new SliverFillRemaining(
               child: new Container(
                 alignment: Alignment.topCenter,
