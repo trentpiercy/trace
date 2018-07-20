@@ -183,22 +183,22 @@ class TransactionItem extends StatelessWidget {
         new Icon(Icons.add_circle, color: Colors.green, size: 28.0)
             : new Icon(Icons.remove_circle, color: Colors.red, size: 28.0),
         title: new RichText(text: TextSpan(children: <TextSpan>[
-          TextSpan(text: "${snapshot["quantity"].toString()} $symbol", style: Theme.of(context).textTheme.body2.apply(fontWeightDelta: 2)),
+          TextSpan(text: "${snapshot["quantity"]} $symbol", style: Theme.of(context).textTheme.body2.apply(fontWeightDelta: 2)),
           TextSpan(text: " at ", style: Theme.of(context).textTheme.body1),
-          TextSpan(text: "\$"+snapshot["price_usd"].toString(), style: Theme.of(context).textTheme.body2.apply(fontWeightDelta: 2)),
+          TextSpan(text: "\$${snapshot["price_usd"]}", style: Theme.of(context).textTheme.body2.apply(fontWeightDelta: 2)),
           TextSpan(text: changePercent > 0 ?
           " +" + changePercent.toStringAsFixed(2) + "%"
               : " " + changePercent.toStringAsFixed(2) + "%",
               style: Theme.of(context).textTheme.body2.apply(color: changePercent > 0 ? Colors.green : Colors.red)
           ),
         ])),
-        subtitle: new Text("$exchange (\$${snapshot["quantity"]*snapshot["price_usd"]})\n$date"),
-        trailing: new Container(
+        subtitle: new Text("$exchange (\$${numCommaParseNoDollar((snapshot["quantity"]*snapshot["price_usd"]).toStringAsFixed(2))})\n$date"),
+        trailing: snapshot["notes"] != "" ? new Container(
           alignment: Alignment.topRight,
           width: MediaQuery.of(context).size.width * .3,
           child: new Text(snapshot["notes"], overflow: TextOverflow.ellipsis, maxLines: 4,
             style: Theme.of(context).textTheme.caption),
-        ),
+        ) : null,
       ),
     );
   }
