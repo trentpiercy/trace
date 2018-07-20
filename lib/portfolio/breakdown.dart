@@ -98,17 +98,20 @@ class PortfolioBreakdown extends StatelessWidget {
                 children: <Widget>[
                   new Container(
                     width: MediaQuery.of(context).size.width * columnProps[0],
-                    child: new Text("Currency", style: Theme.of(context).textTheme.body2),
+                    child: new Text("Currency",
+                        style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)),
                   ),
                   new Container(
                     alignment: Alignment.centerRight,
                     width: MediaQuery.of(context).size.width * columnProps[1],
-                    child: new Text("Holdings", style: Theme.of(context).textTheme.body2),
+                    child: new Text("Holdings",
+                        style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)),
                   ),
                   new Container(
                     alignment: Alignment.centerRight,
                     width: MediaQuery.of(context).size.width * columnProps[2],
-                    child: new Text("Percent of Total", style: Theme.of(context).textTheme.body2),
+                    child: new Text("Percent of Total",
+                        style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)),
                   ),
                 ],
               ),

@@ -453,13 +453,12 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
           slivers: <Widget>[
             new SliverList(delegate: new SliverChildListDelegate(<Widget>[
               new Container(
-                margin: const EdgeInsets.only(left: 6.0, right: 6.0, top: 8.0),
+                margin: const EdgeInsets.only(left: 6.0, right: 6.0),
                 decoration: new BoxDecoration(
                     border: new Border(
                         bottom: new BorderSide(
                             color: Theme.of(context).dividerColor,
                             width: 1.0))),
-                padding: const EdgeInsets.only(bottom: 8.0, left: 2.0, right: 2.0),
                 child: new Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -475,6 +474,7 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
                         });
                       },
                       child: new Container(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
                         width: MediaQuery.of(context).size.width * columnProps[0],
                         child: sortType[0] == "MARKET" ?
                             new Text(sortType[1] == true ? "Exchange ⬆" : "Exchange ⬇",
@@ -496,6 +496,7 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
                         });
                       },
                       child: new Container(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
                         alignment: Alignment.centerRight,
                         width: MediaQuery.of(context).size.width * columnProps[1],
                         child: sortType[0] == "VOLUME24HOURTO" ?
@@ -505,25 +506,53 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
                             style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)),
                       ),
                     ),
-                    new InkWell(
-                      onTap: () {
-                        if (sortType[0] == "PRICE") {
-                          sortType[1] = !sortType[1];
-                        } else {
-                          sortType = ["PRICE", true];
-                        }
-                        setState(() {
-                          _sortExchangeData();
-                        });
-                      },
-                      child: new Container(
-                        alignment: Alignment.centerRight,
-                        width: MediaQuery.of(context).size.width * columnProps[2],
-                        child: sortType[0] == "PRICE" ?
-                        new Text(sortType[1] == true ? "Price ⬇" : "Price ⬆",
-                            style: Theme.of(context).textTheme.body2)
-                            : new Text("Price/24h",
-                            style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)),
+                    new Container(
+                      width: MediaQuery.of(context).size.width * columnProps[2],
+                      child: new Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          new InkWell(
+                            onTap: () {
+                              if (sortType[0] == "PRICE") {
+                                sortType[1] = !sortType[1];
+                              } else {
+                                sortType = ["PRICE", true];
+                              }
+                              setState(() {
+                                _sortExchangeData();
+                              });
+                            },
+                            child: new Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                              child: sortType[0] == "PRICE" ?
+                              new Text(sortType[1] == true ? "Price ⬇" : "Price ⬆",
+                                  style: Theme.of(context).textTheme.body2)
+                                  : new Text("Price",
+                                  style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)),
+                            ),
+                          ),
+                          new Text("/", style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)),
+                          new InkWell(
+                            onTap: () {
+                              if (sortType[0] == "CHANGEPCT24HOUR") {
+                                sortType[1] = !sortType[1];
+                              } else {
+                                sortType = ["CHANGEPCT24HOUR", true];
+                              }
+                              setState(() {
+                                _sortExchangeData();
+                              });
+                            },
+                            child: new Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                              child: sortType[0] == "CHANGEPCT24HOUR" ?
+                              new Text(sortType[1] ? "24h ⬇" : "24h ⬆",
+                                  style: Theme.of(context).textTheme.body2)
+                                  : new Text("24h",
+                                  style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)),
+                            ),
+                          )
+                        ],
                       ),
                     ),
                   ],

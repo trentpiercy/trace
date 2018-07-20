@@ -46,6 +46,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
       filter = value;
       isSearching = true;
     }
+    _filterMarketData();
     setState(() {});
   }
 
@@ -60,6 +61,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
       isSearching = false;
       filter = null;
       _textController.clear();
+      _filterMarketData();
     });
   }
 
@@ -68,6 +70,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     if (isSearching) {
       _stopSearch();
     } else {
+      _filterMarketData();
       setState(() {});
     }
   }
@@ -134,6 +137,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         _handleTabChange();
       }
     });
+    _sortMarketData();
     _refreshMarketPage();
   }
 
@@ -290,28 +294,27 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     });
   }
 
-  List sortType = ["holdings", true];
+  List portfolioSortType = ["holdings", true];
   List sortedPortfolioDisplay;
   _sortPortfolioDisplay() {
     sortedPortfolioDisplay = portfolioDisplay;
-    if (sortType[1]) {
-      if (sortType[0] == "holdings") {
+    if (portfolioSortType[1]) {
+      if (portfolioSortType[0] == "holdings") {
         sortedPortfolioDisplay.sort((a, b) =>
           (b["price_usd"]*b["total_quantity"]).toDouble()
           .compareTo((a["price_usd"]*a["total_quantity"]).toDouble()));
       } else {
-        sortedPortfolioDisplay.sort((a, b) => b[sortType[0]].compareTo(a[sortType[0]]));
+        sortedPortfolioDisplay.sort((a, b) => b[portfolioSortType[0]].compareTo(a[portfolioSortType[0]]));
       }
     } else {
-      if (sortType[0] == "holdings") {
+      if (portfolioSortType[0] == "holdings") {
         sortedPortfolioDisplay.sort((a, b) =>
           (a["price_usd"]*a["total_quantity"]).toDouble()
           .compareTo((b["price_usd"]*b["total_quantity"]).toDouble()));
       } else {
-        sortedPortfolioDisplay.sort((a, b) => a[sortType[0]].compareTo(b[sortType[0]]));
+        sortedPortfolioDisplay.sort((a, b) => a[portfolioSortType[0]].compareTo(b[portfolioSortType[0]]));
       }
     }
-    setState(() {});
   }
 
   final PageStorageKey _marketKey = new PageStorageKey("market");
@@ -328,7 +331,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
             new SliverList(
                 delegate: new SliverChildListDelegate(<Widget>[
                   new Container(
-                    padding: const EdgeInsets.all(10.0),
+                    padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0, bottom: 4.0),
                     child: new Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -377,25 +380,25 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                     decoration: new BoxDecoration(
                         border: new Border(bottom: new BorderSide(color: Theme.of(context).dividerColor, width: 1.0))
                     ),
-                    padding: const EdgeInsets.only(bottom: 8.0, left: 2.0, right: 2.0),
                     child: new Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         new InkWell(
                           onTap: () {
-                            if (sortType[0] == "symbol") {
-                              sortType[1] = !sortType[1];
+                            if (portfolioSortType[0] == "symbol") {
+                              portfolioSortType[1] = !portfolioSortType[1];
                             } else {
-                              sortType = ["symbol", false];
+                              portfolioSortType = ["symbol", false];
                             }
                             setState(() {
                               _sortPortfolioDisplay();
                             });
                           },
                           child: new Container(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
                             width: MediaQuery.of(context).size.width * columnProps[0],
-                            child: sortType[0] == "symbol" ?
-                            new Text(sortType[1] == true ? "Currency ⬆" : "Currency ⬇",
+                            child: portfolioSortType[0] == "symbol" ?
+                            new Text(portfolioSortType[1] == true ? "Currency ⬆" : "Currency ⬇",
                                 style: Theme.of(context).textTheme.body2)
                                 : new Text("Currency",
                               style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor),
@@ -404,10 +407,10 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                         ),
                         new InkWell(
                           onTap: () {
-                            if (sortType[0] == "holdings") {
-                              sortType[1] = !sortType[1];
+                            if (portfolioSortType[0] == "holdings") {
+                              portfolioSortType[1] = !portfolioSortType[1];
                             } else {
-                              sortType = ["holdings", true];
+                              portfolioSortType = ["holdings", true];
                             }
                             setState(() {
                               _sortPortfolioDisplay();
@@ -415,20 +418,37 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                           },
                           child: new Container(
                             alignment: Alignment.centerRight,
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
                             width: MediaQuery.of(context).size.width * columnProps[1],
-                            child: sortType[0] == "holdings" ?
-                            new Text(sortType[1] == true ? "Holdings ⬇" : "Holdings ⬆",
+                            child: portfolioSortType[0] == "holdings" ?
+                            new Text(portfolioSortType[1] == true ? "Holdings ⬇" : "Holdings ⬆",
                                 style: Theme.of(context).textTheme.body2)
                                 : new Text("Holdings",
                                 style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)),
                           ),
                         ),
-                        new Container(
-                          alignment: Alignment.centerRight,
-                          width: MediaQuery.of(context).size.width * columnProps[1],
-                          child: new Text("Price/24h",
-                            style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)),
-                        )
+                        new InkWell(
+                          onTap: () {
+                            if (portfolioSortType[0] == "percent_change_24h") {
+                              portfolioSortType[1] = !portfolioSortType[1];
+                            } else {
+                              portfolioSortType = ["percent_change_24h", true];
+                            }
+                            setState(() {
+                              _sortPortfolioDisplay();
+                            });
+                          },
+                          child: new Container(
+                            alignment: Alignment.centerRight,
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            width: MediaQuery.of(context).size.width * columnProps[2],
+                            child: portfolioSortType[0] == "percent_change_24h" ?
+                            new Text(portfolioSortType[1] == true ? "Price/24h ⬇" : "Price/24h ⬆",
+                                style: Theme.of(context).textTheme.body2)
+                                : new Text("Price/24h",
+                                style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -473,30 +493,51 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
 
   _filterMarketData() {
     print("filtering market data");
-    if (filter == "" || filter == null) {
-      filteredMarketData = marketListData;
-    } else {
-      filteredMarketData = [];
-      marketListData.forEach((item) {
+    if (filter != "" && filter != null) {
+      List tempFilteredMarketData = [];
+      filteredMarketData.forEach((item) {
         if (item["symbol"].toLowerCase().contains(filter.toLowerCase()) ||
             item["name"].toLowerCase().contains(filter.toLowerCase())) {
-          filteredMarketData.add(item);
+          tempFilteredMarketData.add(item);
         }
       });
+      filteredMarketData = tempFilteredMarketData;
+    } else {
+      _sortMarketData();
+    }
+  }
+
+  List marketSortType = ["market_cap", true];
+  _sortMarketData() {
+    print("sorting market data");
+    filteredMarketData = marketListData;
+    if (marketSortType[1]) {
+      if (marketSortType[0] == "market_cap" || marketSortType[0] == "volume_24h" || marketSortType[0] == "percent_change_24h") {
+        filteredMarketData.sort((a, b) =>
+            b["quotes"]["USD"][marketSortType[0]].compareTo(a["quotes"]["USD"][marketSortType[0]]));
+      } else {
+        filteredMarketData.sort((a, b) => b[marketSortType[0]].compareTo(a[marketSortType[0]]));
+      }
+    } else {
+      if (marketSortType[0] == "market_cap" || marketSortType[0] == "volume_24h" || marketSortType[0] == "percent_change_24h") {
+        filteredMarketData.sort((a, b) =>
+            a["quotes"]["USD"][marketSortType[0]].compareTo(b["quotes"]["USD"][marketSortType[0]]));
+      } else {
+        filteredMarketData.sort((a, b) => a[marketSortType[0]].compareTo(b[marketSortType[0]]));
+      }
     }
   }
 
   Widget marketPage(BuildContext context) {
     print("[M] built market page");
-    _filterMarketData();
     return filteredMarketData != null ? new RefreshIndicator(
         key: _marketKey,
         onRefresh: () => _refreshMarketPage(),
         child: new CustomScrollView(
           slivers: <Widget>[
-            isSearching != true ? new SliverList(
+            new SliverList(
                 delegate: new SliverChildListDelegate(<Widget>[
-                  globalData != null ? new Container(
+                  globalData != null && isSearching != true ? new Container(
                       padding: const EdgeInsets.all(10.0),
                       child: new Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -526,33 +567,110 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                       )
                   ) : new Container(),
                   new Container(
-                    margin: const EdgeInsets.only(left: 6.0, right: 6.0, top: 8.0),
+                    margin: const EdgeInsets.only(left: 6.0, right: 6.0),
                     decoration: new BoxDecoration(
                         border: new Border(bottom: new BorderSide(color: Theme.of(context).dividerColor, width: 1.0))
                     ),
-                    padding: const EdgeInsets.only(bottom: 8.0, left: 2.0, right: 2.0),
                     child: new Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        new Container(
-                          width: MediaQuery.of(context).size.width * marketColumnProps[0],
-                          child: new Text("Currency", style: Theme.of(context).textTheme.body2),
+                        new InkWell(
+                          onTap: () {
+                            if (marketSortType[0] == "symbol") {
+                              marketSortType[1] = !marketSortType[1];
+                            } else {
+                              marketSortType = ["symbol", false];
+                            }
+                            setState(() {
+                              _sortMarketData();
+                            });
+                          },
+                          child: new Container(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            width: MediaQuery.of(context).size.width * marketColumnProps[0],
+                            child: marketSortType[0] == "symbol" ?
+                              new Text(marketSortType[1] ? "Currency ⬆" : "Currency ⬇",
+                                style: Theme.of(context).textTheme.body2)
+                              : new Text("Currency",
+                                style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)),
+                          ),
                         ),
                         new Container(
-                          alignment: Alignment.centerRight,
                           width: MediaQuery.of(context).size.width * marketColumnProps[1],
-                          child: new Text("Market Cap/24h", style: Theme.of(context).textTheme.body2),
+                          child: new Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              new InkWell(
+                                  onTap: () {
+                                    if (marketSortType[0] == "market_cap") {
+                                      marketSortType[1] = !marketSortType[1];
+                                    } else {
+                                      marketSortType = ["market_cap", true];
+                                    }
+                                    setState(() {
+                                      _sortMarketData();
+                                    });
+                                  },
+                                  child: new Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                    child: marketSortType[0] == "market_cap" ?
+                                    new Text(marketSortType[1] ? "Market Cap ⬇" : "Market Cap ⬆",
+                                        style: Theme.of(context).textTheme.body2)
+                                        : new Text("Market Cap",
+                                        style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)),
+                                  )
+                              ),
+                              new Text("/", style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)),
+                              new InkWell(
+                                onTap: () {
+                                  if (marketSortType[0] == "volume_24h") {
+                                    marketSortType[1] = !marketSortType[1];
+                                  } else {
+                                    marketSortType = ["volume_24h", true];
+                                  }
+                                  setState(() {
+                                    _sortMarketData();
+                                  });
+                                },
+                                child: new Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: marketSortType[0] == "volume_24h" ?
+                                  new Text(marketSortType[1] ? "24h ⬇" : "24h ⬆",
+                                      style: Theme.of(context).textTheme.body2)
+                                      : new Text("24h",
+                                      style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                        new Container(
-                          alignment: Alignment.centerRight,
-                          width: MediaQuery.of(context).size.width * marketColumnProps[2],
-                          child: new Text("Price/24h", style: Theme.of(context).textTheme.body2),
+                        new InkWell(
+                          onTap: () {
+                            if (marketSortType[0] == "percent_change_24h") {
+                              marketSortType[1] = !marketSortType[1];
+                            } else {
+                              marketSortType = ["percent_change_24h", true];
+                            }
+                            setState(() {
+                              _sortMarketData();
+                            });
+                          },
+                          child: new Container(
+                            alignment: Alignment.centerRight,
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            width: MediaQuery.of(context).size.width * marketColumnProps[2],
+                            child: marketSortType[0] == "percent_change_24h" ?
+                            new Text(marketSortType[1] == true ? "Price/24h ⬇" : "Price/24h ⬆",
+                                style: Theme.of(context).textTheme.body2)
+                                : new Text("Price/24h",
+                                style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)),
+                          ),
                         ),
                       ],
                     ),
                   ),
                 ])
-            ) : new SliverPadding(padding: const EdgeInsets.all(0.0)),
+            ),
             filteredMarketData.isEmpty ? new SliverList(
                 delegate: new SliverChildListDelegate(
                     <Widget>[
