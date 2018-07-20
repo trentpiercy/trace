@@ -66,9 +66,7 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
 
   @override
   Widget build(BuildContext context) {
-
     print("built coin tabs");
-
     return new Scaffold(
         key: _scaffoldKey,
         appBar: new PreferredSize(
@@ -424,11 +422,11 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
       });
     } else {
       exchangeData = new JsonDecoder().convert(response.body)["Data"]["Exchanges"];
-      _makeExchangeData();
+      _sortExchangeData();
     }
   }
 
-  void _makeExchangeData() {
+  void _sortExchangeData() {
     List sortedExchangeData = [];
     for (var i in exchangeData) {
       if (i["VOLUME24HOURTO"] > 1000) {

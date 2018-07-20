@@ -9,6 +9,7 @@ import 'dart:math';
 import '../main.dart';
 import 'breakdown.dart';
 import 'transactions_page.dart';
+import 'transaction_sheet.dart';
 
 normalizeNum(num input) {
   if (input.abs() < 1) {
@@ -30,6 +31,9 @@ class PortfolioTabs extends StatefulWidget {
 class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderStateMixin {
   TabController _tabController;
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<AnimatedCircularChartState> _chartKey = new GlobalKey<AnimatedCircularChartState>();
+
   @override
   void initState() {
     super.initState();
@@ -45,6 +49,7 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+        key: _scaffoldKey,
         appBar: new PreferredSize(
           preferredSize: const Size.fromHeight(75.0),
           child: new AppBar(
@@ -67,6 +72,18 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
                         new Tab(text: "Breakdown"),
                       ],
                     ))),
+            actions: <Widget>[
+              new IconButton(
+                  icon: new Icon(Icons.add),
+                  onPressed: () {
+                    _scaffoldKey.currentState.showBottomSheet((BuildContext context) {
+                      return new TransactionSheet(
+                        () {_refresh();},
+                        marketListData);
+                    });
+                  }
+              )
+            ],
           ),
         ),
         body: new TabBarView(
@@ -81,6 +98,7 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
               cost: cost,
               segments: segments,
               colors: colors,
+              chartKey: _chartKey
             )
           ],
         )
@@ -171,6 +189,7 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
     widget.makePortfolioDisplay();
     _getBreakdownTotals();
     _makeBreakdownPortions();
+    _chartKey.currentState.updateData([new CircularStackEntry(segments, rankKey: "Portfolio Breakdown")]);
     setState(() {});
   }
 

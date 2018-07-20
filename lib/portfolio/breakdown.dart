@@ -17,6 +17,7 @@ class PortfolioBreakdown extends StatelessWidget {
     this.cost,
     this.segments,
     this.colors,
+    this.chartKey
   });
 
   final columnProps = [.2,.3,.3];
@@ -28,8 +29,8 @@ class PortfolioBreakdown extends StatelessWidget {
   final num netPercent;
   final num cost;
   final List<CircularSegmentEntry> segments;
-
   final List colors;
+  final Key chartKey;
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +80,7 @@ class PortfolioBreakdown extends StatelessWidget {
               ),
             ),
             new AnimatedCircularChart(
+              key: chartKey,
               initialChartData: <CircularStackEntry>[
                 new CircularStackEntry(segments, rankKey: "Portfolio Breakdown")
               ],

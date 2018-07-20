@@ -439,9 +439,13 @@ class TransactionSheetState extends State<TransactionSheet> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               new Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    new Text(widget.editMode ? "Edit Transaction" : "Add Transaction", style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2)),
+//                    new Container(
+//                      padding: const EdgeInsets.symmetric(vertical: 4.0),
+//                      child: new Text(widget.editMode ? "Edit Transaction" : "Add Transaction", style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2, fontWeightDelta: 2))
+//                    ),
                     new Row(
                       children: <Widget>[
                         new Text("Buy", style: Theme.of(context).textTheme.caption),
@@ -450,7 +454,7 @@ class TransactionSheetState extends State<TransactionSheet> {
                         new Text("Sell", style: Theme.of(context).textTheme.caption),
                         new Radio(value: 1, groupValue: radioValue, onChanged: _handleRadioValueChange,
                             activeColor: Theme.of(context).buttonColor),
-                        new Padding(padding: const EdgeInsets.symmetric(horizontal: 2.0)),
+                        new Padding(padding: const EdgeInsets.symmetric(horizontal: 6.0)),
                         new GestureDetector(
                           onTap: () => _selectDate(),
                           child: new Text(
