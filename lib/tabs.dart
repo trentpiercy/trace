@@ -294,6 +294,11 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     });
   }
 
+  List sortType = ["quantity", true];
+  _sortPortfolioDisplay() {
+
+  }
+
   final PageStorageKey _marketKey = new PageStorageKey("market");
   final PageStorageKey _portfolioKey = new PageStorageKey("portfolio");
 
@@ -361,20 +366,54 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                     child: new Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        new Container(
-                          width: MediaQuery.of(context).size.width * columnProps[0],
-                          child: new Text("Currency", style: Theme.of(context).textTheme.body2),
+                        new InkWell(
+                          onTap: () {
+                            if (sortType[0] == "symbol") {
+                              sortType[1] = !sortType[1];
+                            } else {
+                              sortType = ["symbol", false];
+                            }
+                            setState(() {
+                              _sortPortfolioDisplay();
+                            });
+                          },
+                          child: new Container(
+                            width: MediaQuery.of(context).size.width * columnProps[0],
+                            child: sortType[0] == "" ?
+                            new Text(sortType[1] == true ? "Currency ⬆" : "Currency ⬇",
+                                style: Theme.of(context).textTheme.body2)
+                                : new Text("Currency",
+                              style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor),
+                            ),
+                          ),
+                        ),
+                        new InkWell(
+                          onTap: () {
+                            if (sortType[0] == "") {
+                              sortType[1] = !sortType[1];
+                            } else {
+                              sortType = ["", true];
+                            }
+                            setState(() {
+                              _sortPortfolioDisplay();
+                            });
+                          },
+                          child: new Container(
+                            alignment: Alignment.centerRight,
+                            width: MediaQuery.of(context).size.width * columnProps[1],
+                            child: sortType[0] == "" ?
+                            new Text(sortType[1] == true ? "Holdings ⬇" : "Holdings ⬆",
+                                style: Theme.of(context).textTheme.body2)
+                                : new Text("Holdings",
+                                style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)),
+                          ),
                         ),
                         new Container(
                           alignment: Alignment.centerRight,
                           width: MediaQuery.of(context).size.width * columnProps[1],
-                          child: new Text("Holdings", style: Theme.of(context).textTheme.body2),
-                        ),
-                        new Container(
-                          alignment: Alignment.centerRight,
-                          width: MediaQuery.of(context).size.width * columnProps[2],
-                          child: new Text("Price/24h", style: Theme.of(context).textTheme.body2),
-                        ),
+                          child: new Text("Price/24h",
+                            style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor)),
+                        )
                       ],
                     ),
                   ),
