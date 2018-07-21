@@ -295,28 +295,6 @@ class TransactionSheetState extends State<TransactionSheet> {
           print("WRITE SUCCESS");
 
           Navigator.of(context).pop();
-          Scaffold.of(context).showSnackBar(
-              new SnackBar(
-                duration: new Duration(seconds: 5),
-                content: new Text("Transaction Saved!"),
-                action: new SnackBarAction(
-                  label: "Undo",
-                  onPressed: () {
-                    jsonContent[symbol].removeLast();
-                    if (widget.editMode) {
-                      jsonContent[widget.symbol].add(widget.snapshot);
-                    }
-                    jsonFile.writeAsStringSync(json.encode(jsonContent));
-
-                    portfolioMap = jsonContent;
-
-                    print("UNDID");
-
-                    widget.loadPortfolio();
-                  },
-                ),
-              )
-          );
         } else {
           print("FAILED - file does not exist");
         }
@@ -342,7 +320,6 @@ class TransactionSheetState extends State<TransactionSheet> {
         
         if (jsonContent[widget.symbol].isEmpty) {
           jsonContent.remove(widget.symbol);
-          print("removed blank: $jsonContent");
         }
 
         portfolioMap = jsonContent;
