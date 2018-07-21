@@ -70,7 +70,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     if (isSearching) {
       _stopSearch();
     } else {
-      _filterMarketData();
       setState(() {});
     }
   }
@@ -198,9 +197,9 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         ),
 
         floatingActionButton: _tabIndex == 0 ?
-        new PortfolioFAB(_scaffoldKey, () {
-          setState(() {});
-        }, marketListData) : null,
+        new PortfolioFAB(_scaffoldKey, () {setState(() {
+          _makePortfolioDisplay();
+        });}, marketListData) : null,
 
         body: new NestedScrollView(
           controller: _scrollController,
@@ -322,7 +321,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
 
   Widget portfolioPage(BuildContext context) {
     print("[P] built portfolio page");
-    _makePortfolioDisplay();
+//    _makePortfolioDisplay(); //TODO: useful for updating if transaction added from another page, see if affects performance
     return new RefreshIndicator(
         key: _portfolioKey,
         onRefresh: _refreshPortfolioPage,
