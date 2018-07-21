@@ -210,7 +210,7 @@ class TransactionSheetState extends State<TransactionSheet> {
   _checkValidQuantity(String quantityString) {
     try {
       quantity = num.parse(quantityString);
-      if (quantity.isNegative || radioValue == 1 && totalQuantities[symbol] - quantity < 0) {
+      if (quantity <= 0 || radioValue == 1 && totalQuantities[symbol] - quantity < 0) {
         quantity = null;
         setState(() {
           quantityTextColor = errorColor;
@@ -339,11 +339,15 @@ class TransactionSheetState extends State<TransactionSheet> {
           }
           index += 1;
         }
+        
+        if (jsonContent[widget.symbol].isEmpty) {
+          jsonContent.remove(widget.symbol);
+          print("removed blank: $jsonContent");
+        }
 
         portfolioMap = jsonContent;
         Navigator.of(context).pop();
         jsonFile.writeAsStringSync(json.encode(jsonContent));
-        widget.loadPortfolio();
 
         Scaffold.of(context).showSnackBar(
             new SnackBar(
@@ -352,8 +356,13 @@ class TransactionSheetState extends State<TransactionSheet> {
               action: new SnackBarAction(
                 label: "Undo",
                 onPressed: () {
-
-                  jsonContent[widget.symbol].add(widget.snapshot);
+                  if (jsonContent[widget.symbol] != null) {
+                    jsonContent[widget.symbol].add(widget.snapshot);
+                  } else {
+                    jsonContent[widget.symbol] = [];
+                    jsonContent[widget.symbol].add(widget.snapshot);
+                  }
+                  
                   jsonFile.writeAsStringSync(json.encode(jsonContent));
 
                   portfolioMap = jsonContent;
@@ -365,9 +374,9 @@ class TransactionSheetState extends State<TransactionSheet> {
               ),
             )
         );
-
       }
     });
+    widget.loadPortfolio();
   }
 
   Future<Null> _getExchangeList() async {

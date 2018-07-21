@@ -219,9 +219,7 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
   }
 
   Widget aggregateStats(BuildContext context) {
-
     print("built aggregate stats");
-
     return new Scaffold(
       resizeToAvoidBottomPadding: false,
       body: new RefreshIndicator(
@@ -241,14 +239,14 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
                           new Text("\$"+ (generalStats != null ? generalStats["price"].toString() : "0"), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)),
                           new Row(
                             mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: <Widget>[
                               new Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  new Text("Market Cap", style: Theme.of(context).textTheme.caption.apply(fontSizeFactor: .8)),
-                                  new Padding(padding: const EdgeInsets.symmetric(vertical: 2.5)),
-                                  new Text("24h Volume", style: Theme.of(context).textTheme.caption.apply(fontSizeFactor: .8)),
+                                  new Text("Market Cap", style: Theme.of(context).textTheme.caption.apply(color: Theme.of(context).hintColor)),
+                                  new Padding(padding: const EdgeInsets.symmetric(vertical: 2.0)),
+                                  new Text("24h Volume", style: Theme.of(context).textTheme.caption.apply(color: Theme.of(context).hintColor)),
                                 ],
                               ),
                               new Padding(padding: const EdgeInsets.symmetric(horizontal: 2.0)),

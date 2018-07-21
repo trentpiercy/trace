@@ -137,7 +137,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         _handleTabChange();
       }
     });
-    _sortMarketData();
+    _filterMarketData();
     _refreshMarketPage();
   }
 
@@ -493,6 +493,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
 
   _filterMarketData() {
     print("filtering market data");
+    filteredMarketData = marketListData;
     if (filter != "" && filter != null) {
       List tempFilteredMarketData = [];
       filteredMarketData.forEach((item) {
@@ -502,15 +503,13 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         }
       });
       filteredMarketData = tempFilteredMarketData;
-    } else {
-      _sortMarketData();
     }
+    _sortMarketData();
   }
 
   List marketSortType = ["market_cap", true];
   _sortMarketData() {
     print("sorting market data");
-    filteredMarketData = marketListData;
     if (marketSortType[1]) {
       if (marketSortType[0] == "market_cap" || marketSortType[0] == "volume_24h" || marketSortType[0] == "percent_change_24h") {
         filteredMarketData.sort((a, b) =>

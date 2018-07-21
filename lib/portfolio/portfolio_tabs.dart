@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_circular_chart/flutter_circular_chart.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -32,7 +31,6 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
   TabController _tabController;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  final GlobalKey<AnimatedCircularChartState> _chartKey = new GlobalKey<AnimatedCircularChartState>();
 
   @override
   void initState() {
@@ -42,8 +40,6 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
     if (timelineData == null) {
       _getTimelineData();
     }
-    _getBreakdownTotals();
-    _makeBreakdownPortions();
   }
 
   @override
@@ -91,14 +87,7 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
           children: <Widget>[
             _timeline(context),
             new PortfolioBreakdown(
-              refresh: _refresh,
-              value: value,
-              net: net,
-              netPercent: netPercent,
-              cost: cost,
-              segments: segments,
-              colors: colors,
-              chartKey: _chartKey
+              refresh: _refresh
             )
           ],
         )
@@ -168,67 +157,10 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
 
   List<Map> transactionList;
 
-  List<CircularSegmentEntry> segments;
-  num cost;
-  num net;
-  num netPercent;
-
-  final List colors = [
-    Colors.red[400],
-    Colors.purple[400],
-    Colors.indigo[400],
-    Colors.blue[400],
-    Colors.teal[400],
-    Colors.green[400],
-    Colors.lime[400],
-    Colors.orange[400],
-  ];
-
   Future<Null>_refresh() async {
     await _getTimelineData();
     widget.makePortfolioDisplay();
-    _getBreakdownTotals();
-    _makeBreakdownPortions();
-    _chartKey.currentState.updateData([new CircularStackEntry(segments, rankKey: "Portfolio Breakdown")]);
     setState(() {});
-  }
-
-  _getBreakdownTotals() {
-    cost = 0;
-    net = 0;
-    netPercent = 0;
-    value = totalPortfolioStats["value_usd"];
-
-    portfolioMap.forEach((symbol, transactions){
-      transactions.forEach((transaction) {
-        cost += transaction["quantity"] * transaction["price_usd"];
-      });
-    });
-
-    net = value - cost;
-
-    if (cost > 0) {
-      netPercent = ((value - cost) / cost)*100;
-    } else {
-      netPercent = 0.0;
-    }
-  }
-
-  _makeBreakdownPortions() {
-    int colorInt = 0;
-    segments = [];
-
-    portfolioDisplay.forEach((coin) {
-      if (colorInt > (colors.length-1)) {
-        colorInt = 1;
-      }
-
-      segments.add(new CircularSegmentEntry(
-          (coin["total_quantity"] * coin["price_usd"]).abs(),
-          colors[colorInt]
-      ));
-      colorInt += 1;
-    });
   }
 
   List<Map> needed;
@@ -236,6 +168,8 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
   Map timedData;
   DateTime oldestPoint = new DateTime.now();
   _getTimelineData() async {
+    value = totalPortfolioStats["value_usd"];
+
     timedData = {};
     needed = [];
     retrieved = [];
@@ -262,6 +196,7 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
   }
 
   Future<Null> _pullData(coin) async {
+    print(needed);
     int msAgo = new DateTime.now().millisecondsSinceEpoch - coin["oldest"];
     int limit = periodOptions[periodSetting]["limit"];
     int periodInMs = limit * periodOptions[periodSetting]["unit_in_ms"];
