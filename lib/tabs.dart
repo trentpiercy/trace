@@ -136,6 +136,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         _handleTabChange();
       }
     });
+    _makePortfolioDisplay();
     _filterMarketData();
     _refreshMarketPage();
   }

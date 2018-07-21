@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trace/portfolio/portfolio_tabs.dart';
 import '../flutter_candlesticks.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
@@ -62,6 +63,8 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
       changeHistory(historyType, historyAmt, historyTotal, historyAgg);
     }
     if (exchangeData == null) {_getExchangeData();}
+
+    _refreshTransactions();
   }
 
   @override
@@ -96,7 +99,9 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
                   onPressed: () {
                     _scaffoldKey.currentState.showBottomSheet((BuildContext context) {
                       return new TransactionSheet(
-                        () {setState(() {});},
+                        () {setState(() {
+                          _refreshTransactions();
+                        });},
                         marketListData);
                     });
                 }
@@ -109,7 +114,7 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
           children: widget.enableTransactions ? [
             aggregateStats(context),
             exchangeListPage(context),
-            new TransactionsPage(symbol: widget.snapshot["symbol"])
+            transactionPage(context)
           ] : [
             aggregateStats(context),
             exchangeListPage(context)
@@ -584,4 +589,119 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
       child: new Center(child: new CircularProgressIndicator()),
     );
   }
+
+  num value;
+  num cost;
+  num holdings;
+  num net;
+  num netPercent;
+  List transactionList;
+
+  _refreshTransactions() {
+    _sortTransactions();
+    _updateTotals();
+  }
+
+  _updateTotals() {
+    print("updated totals");
+
+    value = 0;
+    cost = 0;
+    holdings = 0;
+    net = 0;
+    netPercent = 0;
+
+    for (Map transaction in transactionList) {
+      cost += transaction["quantity"] * transaction["price_usd"];
+      value += transaction["quantity"] * generalStats["price"];
+      holdings += transaction["quantity"];
+    }
+
+    net = value - cost;
+
+    if (cost > 0) {
+      netPercent = ((value - cost) / cost)*100;
+    } else {
+      netPercent = 0.0;
+    }
+  }
+
+  _sortTransactions() {
+    print("sorted transactions");
+    if (portfolioMap[symbol] == null) {
+      transactionList =[];
+    } else {
+      transactionList = portfolioMap[symbol];
+      transactionList.sort(
+              (a, b) => (b["time_epoch"].compareTo(a["time_epoch"]))
+      );
+    }
+  }
+
+  Widget transactionPage(BuildContext context) {
+    print("built transactions page");
+    return new CustomScrollView(
+      slivers: <Widget>[
+        new SliverList(delegate: new SliverChildListDelegate(<Widget>[
+          new Container(
+            padding: const EdgeInsets.all(10.0),
+            child: new Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                new Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    new Text("Total Value", style: Theme.of(context).textTheme.caption),
+                    new Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        new Text("\$"+ numCommaParseNoDollar(value.toStringAsFixed(2)),
+                            style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)
+                        ),
+                      ],
+                    ),
+                    new Text(num.parse(holdings.toStringAsPrecision(9)).toString() + " " + symbol,
+                        style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2)),
+                  ],
+                ),
+                new Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    new Text("Total Net", style: Theme.of(context).textTheme.caption),
+                    new PercentDollarChange(
+                      exact: net,
+                      percent: netPercent,
+                    )
+                  ],
+                ),
+                new Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    new Text("Total Cost", style: Theme.of(context).textTheme.caption),
+                    new Text("\$"+numCommaParseNoDollar(cost.toStringAsFixed(2)),
+                        style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.5))
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ])),
+        new SliverList(delegate: new SliverChildBuilderDelegate(
+                (context, index) => new TransactionItem(
+              snapshot: transactionList[index],
+              currentPrice: generalStats["price"],
+              symbol: symbol,
+              refreshPage: () {
+                setState(() {
+                  _refreshTransactions();
+                });
+              },
+            ),
+            childCount: transactionList.length
+        )),
+      ],
+    );
+  }
+
 }
