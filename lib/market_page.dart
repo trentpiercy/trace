@@ -10,7 +10,7 @@ import 'main.dart';
 import 'market/coin_tabs.dart';
 
 final assetImages = [
-  ['\$pac', 'abt', 'act', 'ada', 'adx', 'ae', 'agi', 'agrs', 'aion', 'amb',
+  '\$pac', 'abt', 'act', 'ada', 'adx', 'ae', 'agi', 'agrs', 'aion', 'amb',
   'amp', 'ant', 'apex', 'appc', 'ardr', 'ark', 'arn', 'ary', 'ast', 'atm',
   'auto', 'bat', 'bay', 'bcbc', 'bcc', 'bcd', 'bch', 'bcn', 'bco', 'bcpt',
   'bdl', 'bela', 'bix', 'blcn', 'blk', 'block', 'blz', 'bnb', 'bnt', 'bnty',
@@ -42,15 +42,14 @@ final assetImages = [
   'vibe', 'vivo', 'vrc', 'vtc', 'wabi', 'wan', 'waves', 'wax', 'wgr', 'wings',
   'wpr', 'wtc', 'xas', 'xbc', 'xby', 'xcp', 'xdn', 'xem', 'xlm', 'xmg', 'xmr',
   'xmy', 'xp', 'xpa', 'xpm', 'xrp', 'xtz', 'xuc', 'xvc', 'xvg', 'xzc', 'yoyow',
-  'zcl', 'zec', 'zel', 'zen', 'zil', 'zilla', 'zrx']
+  'zcl', 'zec', 'zel', 'zen', 'zil', 'zilla', 'zrx'
 ];
 
 Future<Null> getMarketData() async {
+  int numberOfCoins = 500;
   List tempMarketListData = [];
-  for (int i = 0; i <= 4; i++) {
-    int start = i*100 + 1;
-    int limit = i*100 + 100;
 
+  _pullData(start, limit) async {
     var response = await http.get(
         Uri.encodeFull("https://api.coinmarketcap.com/v2/ticker/" +
             "?start=" + start.toString() +
@@ -60,15 +59,24 @@ Future<Null> getMarketData() async {
 
     Map rawMarketListData = new JsonDecoder().convert(response.body)["data"];
     rawMarketListData.forEach((key, value) => tempMarketListData.add(value));
+
+    print("pulled market data [$start - $limit]");
+
+    if (tempMarketListData.length == numberOfCoins) {
+      print("\$\$\$\$ FINISHED GETTING NEW MARKET DATA");
+      marketListData = tempMarketListData;
+      getApplicationDocumentsDirectory().then((Directory directory) async {
+        File jsonFile = new File(directory.path + "/marketData.json");
+        jsonFile.writeAsStringSync(json.encode(marketListData));
+      });
+    }
   }
 
-  marketListData = tempMarketListData;
-  getApplicationDocumentsDirectory().then((Directory directory) async {
-    File jsonFile = new File(directory.path + "/marketData.json");
-    jsonFile.writeAsStringSync(json.encode(marketListData));
-  });
-
-  print("\$\$\$\$ GOT NEW MARKET DATA");
+  for (int i = 0; i <= numberOfCoins/100 - 1; i++) {
+    int start = i*100 + 1;
+    int limit = i*100 + 100;
+    _pullData(start, limit);
+  }
 }
 
 class CoinListItem extends StatelessWidget {
