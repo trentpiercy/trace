@@ -381,6 +381,7 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
                           gridLineLabelColor: Theme.of(context).hintColor,
                           gridLineAmount: 4,
                           volumeProp: 0.2,
+                          lineWidth: 1.0,
                         ) : new Container(
                           padding: const EdgeInsets.all(30.0),
                           alignment: Alignment.topCenter,

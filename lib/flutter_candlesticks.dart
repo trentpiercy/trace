@@ -216,9 +216,9 @@ class _OHLCVPainter extends CustomPainter {
       rectLeft = (i * rectWidth) + lineWidth / 2;
       rectRight = ((i + 1) * rectWidth) - lineWidth / 2;
 
-      double volumeBarTop = (height + volumeHeight) -
-          (data[i]["volumeto"] * volumeNormalizer - lineWidth);
-      double volumeBarBottom = height + volumeHeight;
+      double volumeBarTop =
+          (height + volumeHeight) - (data[i]["volumeto"] * volumeNormalizer - lineWidth/2);
+      double volumeBarBottom = height + volumeHeight + lineWidth/2;
 
       if (data[i]["open"] > data[i]["close"]) {
         // Draw candlestick if decrease

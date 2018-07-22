@@ -403,7 +403,11 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
                 height: MediaQuery.of(context).size.height*.6,
                 child: timelineData != null ? new Sparkline(
                   data: timelineData,
-                  lineGradient: new LinearGradient(colors: [Theme.of(context).buttonColor, Colors.purpleAccent[100]]),
+                  lineGradient: new LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [Theme.of(context).buttonColor, Colors.purpleAccent[100]]
+                  ),
                   enableGridLines: true,
                   gridLineColor: Theme.of(context).dividerColor,
                   gridLineLabelColor: Theme.of(context).hintColor,
