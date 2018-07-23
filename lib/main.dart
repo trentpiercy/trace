@@ -7,6 +7,16 @@ import 'package:path_provider/path_provider.dart';
 import 'tabs.dart';
 import 'settings_page.dart';
 
+const double appBarHeight = 48.0;
+const double appBarElevation = 1.0;
+
+bool shortenOn = false;
+
+List marketListData;
+Map portfolioMap;
+List portfolioDisplay;
+Map totalPortfolioStats;
+
 void main() async {
   await getApplicationDocumentsDirectory().then((Directory directory) async {
     File jsonFile = new File(directory.path + "/portfolio.json");
@@ -28,18 +38,15 @@ void main() async {
     }
   });
 
-  runApp(new TraceApp());
+  String themeMode = "Automatic";
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  if (prefs.getBool("shortenOn") != null && prefs.getString("themeMode") != null) {
+    shortenOn = prefs.getBool("shortenOn");
+    themeMode = prefs.getString("themeMode");
+  }
+
+  runApp(new TraceApp(themeMode));
 }
-
-const double appBarHeight = 48.0;
-const double appBarElevation = 1.0;
-
-bool shortenOn = false;
-
-List marketListData;
-Map portfolioMap;
-List portfolioDisplay;
-Map totalPortfolioStats;
 
 numCommaParse(numString) {
   if (shortenOn) {
@@ -61,14 +68,16 @@ numCommaParseNoDollar(numString) {
 }
 
 class TraceApp extends StatefulWidget {
+  TraceApp(this.themeMode);
+  final themeMode;
+
   @override
   TraceAppState createState() => new TraceAppState();
 }
 
 class TraceAppState extends State<TraceApp> {
   bool darkEnabled;
-  String themeMode = "Automatic";
-
+  String themeMode;
 
   void savePreferences() async {
     print("----- saving prefs");
@@ -78,18 +87,7 @@ class TraceAppState extends State<TraceApp> {
     prefs.setBool("shortenOn", shortenOn);
   }
 
-  void getPreferences() async {
-    print("----- getting prefs");
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (prefs.getBool("shortenOn") != null && prefs.getString("themeMode") != null) {
-      shortenOn = prefs.getBool("shortenOn");
-      themeMode = prefs.getString("themeMode");
-      handleUpdate();
-    }
-  }
-
-  void toggleTheme() {
+  toggleTheme() {
     switch (themeMode) {
       case "Automatic":
         themeMode = "Dark";
@@ -105,7 +103,7 @@ class TraceAppState extends State<TraceApp> {
     savePreferences();
   }
 
-  void handleUpdate() {
+  setDarkMode() {
     switch (themeMode) {
       case "Automatic":
         int nowHour = new DateTime.now().hour;
@@ -122,7 +120,12 @@ class TraceAppState extends State<TraceApp> {
         darkEnabled = false;
         break;
     }
-    setState(() {});
+  }
+
+  handleUpdate() {
+    setState(() {
+      setDarkMode();
+    });
   }
 
   final ThemeData lightTheme = new ThemeData(
@@ -165,10 +168,8 @@ class TraceAppState extends State<TraceApp> {
   @override
   void initState() {
     super.initState();
-    getPreferences();
-    handleUpdate();
-
-
+    themeMode = widget.themeMode ?? "Automatic";
+    setDarkMode();
   }
 
   @override
