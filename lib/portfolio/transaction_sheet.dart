@@ -19,14 +19,12 @@ class PortfolioFAB extends StatefulWidget {
 class PortfolioFABState extends State<PortfolioFAB> {
   bool sheetOpen = false;
 
-  final _sheetKey = new Key("transactionSheet");
-
   openTransaction() {
     setState(() {
       sheetOpen = true;
     });
     widget.scaffoldKey.currentState.showBottomSheet((BuildContext context) {
-      return new TransactionSheet(widget.loadPortfolio, widget.marketListData, key: _sheetKey);
+      return new TransactionSheet(widget.loadPortfolio, widget.marketListData);
     }).closed.whenComplete(() {
       setState(() {
         sheetOpen = false;
@@ -410,6 +408,8 @@ class TransactionSheetState extends State<TransactionSheet> {
     }
     _makeTotalQuantities();
     _makeEpoch();
+
+//    FocusScope.of(context).requestFocus(_symbolFocusNode);
   }
 
   @override

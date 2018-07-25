@@ -166,13 +166,15 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
     widget.makePortfolioDisplay();
     _updateBreakdown();
     _sortPortfolioDisplay();
-    _chartKey.currentState.updateData([new CircularStackEntry(segments, rankKey: "Portfolio Breakdown")]);
+    if (_tabController.index == 1) {
+      _chartKey.currentState.updateData([new CircularStackEntry(segments, rankKey: "Portfolio Breakdown")]);
+    }
     setState(() {});
   }
 
   List<Map> needed;
   List retrieved;
-  Map timedData;
+  Map<int, double> timedData;
   DateTime oldestPoint = new DateTime.now();
   _getTimelineData() async {
     value = totalPortfolioStats["value_usd"];
@@ -228,19 +230,35 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
 
     List responseData = json.decode(response.body)["Data"];
 
+//    print("PULLING DATA FOR ${coin["symbol"]}");
+//    print("limit: $limit");
+
     responseData.forEach((point) {
       num averagePrice = (point["open"] + point["close"]) / 2;
+//      print("checking at ${point["time"]}");
+
       portfolioMap[coin["symbol"]].forEach((transaction) {
+
+        /// Use this here to show $0 on timeline
+//        if (timedData[point["time"]] == null) {
+//          timedData[point["time"]] = 0.0;
+//        }
+
         if (transaction["time_epoch"] < point["time"]*1000) {
-          if (timedData[point["time"]*1000] == null) {
-            timedData[point["time"]*1000] = 0;
+          if (timedData[point["time"]] == null) {
+            timedData[point["time"]] = 0.0;
           }
-          timedData[point["time"]*1000] += transaction["quantity"] * averagePrice;
+          timedData[point["time"]] += (transaction["quantity"] * averagePrice).toDouble();
+//          print("added $transaction at ${point["time"]}");
         }
       });
+
     });
 
     retrieved.add(coin["symbol"]);
+
+//    print("retrieved: $retrieved");
+//    print("new timedData: $timedData");
   }
 
   _finalizeTimelineData() {
@@ -258,17 +276,10 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
       }
 
       timelineData = [];
-      high = -double.infinity;
-      low = double.infinity;
-      timedData.forEach((time, amt) {
-        timelineData.add(amt.toDouble());
-        if (amt > high) {
-          high = amt;
-        }
-        if (amt < low) {
-          low = amt;
-        }
-      });
+      timedData.keys.toList()..sort()..forEach((key) => timelineData.add(timedData[key]));
+
+      high = timelineData.reduce(max);
+      low = timelineData.reduce(min);
 
       num start = timelineData[0] != 0 ? timelineData[0] : 1;
       num end = timelineData.last;
@@ -523,8 +534,6 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
 
   Widget _breakdown(BuildContext context) {
     print("built breakdown");
-//    _sortPortfolioDisplay();
-//    _updateBreakdown();
     return RefreshIndicator(
       onRefresh: _refresh,
       child: new CustomScrollView(
@@ -654,7 +663,6 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
       ),
     );
   }
-
 }
 
 class PercentDollarChange extends StatelessWidget {

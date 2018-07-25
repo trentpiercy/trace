@@ -291,6 +291,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     getGlobalData();
     setState(() {
       _makePortfolioDisplay();
+      _filterMarketData();
     });
   }
 
@@ -488,6 +489,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     await getMarketData();
     setState(() {
       _filterMarketData();
+      _makePortfolioDisplay();
     });
   }
 
