@@ -46,9 +46,9 @@ void main() async {
     themeMode = prefs.getString("themeMode");
   }
 
-  quickActions.setShortcutItems(<ShortcutItem>[
-    new quickActions.ShortcutItem(type: 'search', localizedTitle: 'Search', icon: 'icon_search'),
-    new quickActions.ShortcutItem(type: 'new_transaction', localizedTitle: 'New Transaction', icon: 'icon_new_transaction')
+  const QuickActions().setShortcutItems(<ShortcutItem>[
+    const ShortcutItem(type: 'new_transaction', localizedTitle: 'New Transaction', icon: 'icon_new_transaction'),
+    const ShortcutItem(type: 'search', localizedTitle: 'Search', icon: 'icon_search'),
   ]);
 
   runApp(new TraceApp(themeMode));

@@ -73,18 +73,6 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
                         new Tab(text: "Breakdown"),
                       ],
                     ))),
-            actions: <Widget>[
-              new IconButton(
-                  icon: new Icon(Icons.add),
-                  onPressed: () {
-                    _scaffoldKey.currentState.showBottomSheet((BuildContext context) {
-                      return new TransactionSheet(
-                        () {_refresh();},
-                        marketListData);
-                    });
-                  }
-              )
-            ],
           ),
         ),
         body: new TabBarView(
@@ -315,7 +303,7 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
   Widget _timeline(BuildContext context) {
     print("built timeline");
     _makeTransactionList();
-    return RefreshIndicator(
+    return portfolioMap.isNotEmpty ? new RefreshIndicator(
       onRefresh: _refresh,
       child: new CustomScrollView(
           slivers: <Widget>[
@@ -445,6 +433,11 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
             ))
           ]
       ),
+    ) : new Container(
+        alignment: Alignment.topCenter,
+        padding: const EdgeInsets.symmetric(vertical: 40.0),
+        child: new Text("Your portfolio is empty. Add a transaction!",
+            style: Theme.of(context).textTheme.caption)
     );
   }
 
@@ -535,7 +528,7 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
 
   Widget _breakdown(BuildContext context) {
     print("built breakdown");
-    return RefreshIndicator(
+    return portfolioMap.isNotEmpty ? new RefreshIndicator(
       onRefresh: _refresh,
       child: new CustomScrollView(
         slivers: <Widget>[
@@ -662,6 +655,11 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
           )),
         ],
       ),
+    ) : new Container(
+        alignment: Alignment.topCenter,
+        padding: const EdgeInsets.symmetric(vertical: 40.0),
+        child: new Text("Your portfolio is empty. Add a transaction!",
+            style: Theme.of(context).textTheme.caption)
     );
   }
 }

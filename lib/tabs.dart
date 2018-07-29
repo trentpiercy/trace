@@ -81,7 +81,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     _scaffoldKey.currentState.showBottomSheet((BuildContext context) {
       return new TransactionSheet(
         () {setState(() {_makePortfolioDisplay();});},
-        marketListData
+        marketListData,
       );
     }).closed.whenComplete(() {
       setState(() {sheetOpen = false;});
@@ -154,7 +154,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     _filterMarketData();
     _refreshMarketPage();
 
-    quickActions.initialize((type) {
+    const QuickActions().initialize((type) {
       if (type == "search") {
         _tabController.animateTo(1);
         _startSearch();
@@ -502,11 +502,23 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
             )) : new SliverFillRemaining(
               child: new Container(
                 alignment: Alignment.topCenter,
-                padding: const EdgeInsets.all(32.0),
-                child: new Text("Your portfolio is empty. Add a transaction!",
-                  style: Theme.of(context).textTheme.caption)
-              ),
-            )
+                padding: const EdgeInsets.symmetric(vertical: 40.0),
+                child: new Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    new Text("Your portfolio is empty. Add a transaction!",
+                     style: Theme.of(context).textTheme.caption),
+                    new Padding(padding: const EdgeInsets.symmetric(vertical: 8.0)),
+                    new RaisedButton(
+                      onPressed: _openTransaction,
+                      child: new Text("New Transaction", style: Theme.of(context).textTheme.body2.apply(
+                        color: Theme.of(context).iconTheme.color
+                      )),
+                    )
+                  ],
+                )
+              )
+            ),
           ],
         )
     );

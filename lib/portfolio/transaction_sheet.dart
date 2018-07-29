@@ -7,6 +7,9 @@ import 'package:path_provider/path_provider.dart';
 
 import '../main.dart';
 
+import 'package:flutter/services.dart';
+//TODO: temp workaround
+
 class TransactionSheet extends StatefulWidget {
   TransactionSheet(
       this.loadPortfolio,
@@ -350,8 +353,13 @@ class TransactionSheetState extends State<TransactionSheet> {
     pickedTime = new TimeOfDay.fromDateTime(pickedDate);
   }
 
+  void focusSymbol() {
+    FocusScope.of(context).requestFocus(_symbolFocusNode);
+  }
+
   @override
   void initState() {
+    print("INIT transaction sheet");
     super.initState();
     symbolTextColor = errorColor;
     quantityTextColor = errorColor;
@@ -362,8 +370,6 @@ class TransactionSheetState extends State<TransactionSheet> {
     }
     _makeTotalQuantities();
     _makeEpoch();
-
-    FocusScope.of(context).autofocus(_symbolFocusNode);
   }
 
   @override
@@ -428,6 +434,7 @@ class TransactionSheetState extends State<TransactionSheet> {
                             focusNode: _symbolFocusNode,
                             autofocus: true,
                             autocorrect: false,
+                            textCapitalization: TextCapitalization.characters,
                             onChanged: _checkValidSymbol,
                             onSubmitted: (_) => FocusScope.of(context).requestFocus(_quantityFocusNode),
                             style: Theme.of(context).textTheme.body2.apply(color: symbolTextColor),
@@ -523,6 +530,7 @@ class TransactionSheetState extends State<TransactionSheet> {
                             focusNode: _notesFocusNode,
                             controller: _notesController,
                             autocorrect: true,
+                            textCapitalization: TextCapitalization.none,
                             style: Theme.of(context).textTheme.body2.apply(color: validColor),
                             keyboardType: TextInputType.text,
                             decoration: new InputDecoration(

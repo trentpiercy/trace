@@ -1,14 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-
-
-    <item android:drawable="@color/launch_background" />
-
-    <item>
-        <bitmap
-            android:gravity="center"
-            android:src="@mipmap/splash_foreground" />
-    </item>
-
+    <item android:drawable="@color/launch_background"/>
+    <item android:drawable="@drawable/icon_launcher"
+    	android:width="192dp"
+        android:height="192dp"
+        android:gravity="center"/>
 </layer-list>
