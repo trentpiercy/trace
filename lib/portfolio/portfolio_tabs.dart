@@ -9,7 +9,6 @@ import 'dart:math';
 import '../main.dart';
 import 'breakdown.dart';
 import 'transactions_page.dart';
-import 'transaction_sheet.dart';
 
 normalizeNum(num input) {
   if (input.abs() < 1) {

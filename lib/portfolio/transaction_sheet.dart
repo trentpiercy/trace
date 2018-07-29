@@ -38,7 +38,6 @@ class TransactionSheetState extends State<TransactionSheet> {
   TextEditingController _exchangeController = new TextEditingController();
   TextEditingController _notesController = new TextEditingController();
 
-  FocusNode _symbolFocusNode = new FocusNode();
   FocusNode _priceFocusNode = new FocusNode();
   FocusNode _quantityFocusNode = new FocusNode();
   FocusNode _notesFocusNode = new FocusNode();
@@ -353,10 +352,6 @@ class TransactionSheetState extends State<TransactionSheet> {
     pickedTime = new TimeOfDay.fromDateTime(pickedDate);
   }
 
-  void focusSymbol() {
-    FocusScope.of(context).requestFocus(_symbolFocusNode);
-  }
-
   @override
   void initState() {
     print("INIT transaction sheet");
@@ -431,7 +426,6 @@ class TransactionSheetState extends State<TransactionSheet> {
                           padding: const EdgeInsets.only(right: 4.0),
                           child: new TextField(
                             controller: _symbolController,
-                            focusNode: _symbolFocusNode,
                             autofocus: true,
                             autocorrect: false,
                             textCapitalization: TextCapitalization.characters,

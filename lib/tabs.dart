@@ -10,6 +10,9 @@ import 'portfolio_page.dart';
 import 'portfolio/transaction_sheet.dart';
 import 'market_page.dart';
 
+import 'package:flutter/services.dart';
+//TODO: temp workaround
+
 class Tabs extends StatefulWidget {
   Tabs(
       this.toggleTheme,
@@ -144,7 +147,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     print("INIT TABS");
-    _tabController = new TabController(length: 3, vsync: this);
+    _tabController = new TabController(length: 2, vsync: this);
     _tabController.animation.addListener(() {
       if (_tabController.animation.value.round() != _tabIndex) {
         _handleTabChange();
@@ -154,9 +157,11 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     _filterMarketData();
     _refreshMarketPage();
 
-    const QuickActions().initialize((type) {
+    const QuickActions().initialize((type) async {
       if (type == "search") {
+        _tabIndex = 1;
         _tabController.animateTo(1);
+        //TODO: doesn't wait on animation before opening search
         _startSearch();
       } else if (type == "new_transaction") {
         _tabController.animateTo(0);
@@ -239,6 +244,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                     style: Theme.of(context).textTheme.subhead,
                     onChanged: (value) => _handleFilter(value),
                     autofocus: true,
+                    textCapitalization: TextCapitalization.characters,
                     decoration: new InputDecoration.collapsed(
                         hintText: 'Search names and symbols...'
                     ),
