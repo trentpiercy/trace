@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:quick_actions/quick_actions.dart';
 
 import 'tabs.dart';
 import 'settings_page.dart';
@@ -44,6 +45,11 @@ void main() async {
     shortenOn = prefs.getBool("shortenOn");
     themeMode = prefs.getString("themeMode");
   }
+
+  quickActions.setShortcutItems(<ShortcutItem>[
+    new quickActions.ShortcutItem(type: 'search', localizedTitle: 'Search', icon: 'icon_search'),
+    new quickActions.ShortcutItem(type: 'new_transaction', localizedTitle: 'New Transaction', icon: 'icon_new_transaction')
+  ]);
 
   runApp(new TraceApp(themeMode));
 }

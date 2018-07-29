@@ -7,52 +7,6 @@ import 'package:path_provider/path_provider.dart';
 
 import '../main.dart';
 
-class PortfolioFAB extends StatefulWidget {
-  PortfolioFAB(this.scaffoldKey, this.loadPortfolio, this.marketListData);
-  final GlobalKey<ScaffoldState> scaffoldKey;
-  final Function loadPortfolio;
-  final List marketListData;
-
-  PortfolioFABState createState() => new PortfolioFABState();
-}
-
-class PortfolioFABState extends State<PortfolioFAB> {
-  bool sheetOpen = false;
-
-  openTransaction() {
-    setState(() {
-      sheetOpen = true;
-    });
-    widget.scaffoldKey.currentState.showBottomSheet((BuildContext context) {
-      return new TransactionSheet(widget.loadPortfolio, widget.marketListData);
-    }).closed.whenComplete(() {
-      setState(() {
-        sheetOpen = false;
-      });
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return sheetOpen ? new FloatingActionButton(
-      onPressed: () => Navigator.of(context).pop(),
-      child: Icon(Icons.close),
-      foregroundColor: Theme.of(context).iconTheme.color,
-      backgroundColor: Theme.of(context).accentIconTheme.color,
-      elevation: 4.0,
-      tooltip: "Close Transaction",
-    ) :
-    new FloatingActionButton(
-      onPressed: openTransaction,
-      child: Icon(Icons.add),
-      foregroundColor: Theme.of(context).iconTheme.color,
-      backgroundColor: Theme.of(context).accentIconTheme.color,
-      elevation: 4.0,
-      tooltip: "Add Transaction",
-    );
-  }
-}
-
 class TransactionSheet extends StatefulWidget {
   TransactionSheet(
       this.loadPortfolio,
@@ -409,7 +363,7 @@ class TransactionSheetState extends State<TransactionSheet> {
     _makeTotalQuantities();
     _makeEpoch();
 
-//    FocusScope.of(context).requestFocus(_symbolFocusNode);
+    FocusScope.of(context).autofocus(_symbolFocusNode);
   }
 
   @override

@@ -276,7 +276,8 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
       }
 
       timelineData = [];
-      timedData.keys.toList()..sort()..forEach((key) => timelineData.add(timedData[key]));
+      timedData.keys.toList()..sort()
+        ..forEach((key) => timelineData.add(timedData[key]));
 
       high = timelineData.reduce(max);
       low = timelineData.reduce(min);

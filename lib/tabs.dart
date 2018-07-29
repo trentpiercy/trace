@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:quick_actions/quick_actions.dart';
 
 import 'portfolio/portfolio_tabs.dart';
 import 'main.dart';
@@ -38,6 +38,8 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   bool isSearching = false;
   String filter;
 
+  bool sheetOpen = false;
+
   _handleFilter(value) {
     if (value == null) {
       isSearching = false;
@@ -72,6 +74,18 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     } else {
       setState(() {});
     }
+  }
+
+  _openTransaction() {
+    setState(() {sheetOpen = true;});
+    _scaffoldKey.currentState.showBottomSheet((BuildContext context) {
+      return new TransactionSheet(
+        () {setState(() {_makePortfolioDisplay();});},
+        marketListData
+      );
+    }).closed.whenComplete(() {
+      setState(() {sheetOpen = false;});
+    });
   }
 
   _makePortfolioDisplay() {
@@ -139,6 +153,16 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     _makePortfolioDisplay();
     _filterMarketData();
     _refreshMarketPage();
+
+    quickActions.initialize((type) {
+      if (type == "search") {
+        _tabController.animateTo(1);
+        _startSearch();
+      } else if (type == "new_transaction") {
+        _tabController.animateTo(0);
+        _openTransaction();
+      }
+    });
   }
 
   @override
@@ -198,9 +222,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         ),
 
         floatingActionButton: _tabIndex == 0 ?
-        new PortfolioFAB(_scaffoldKey, () {setState(() {
-          _makePortfolioDisplay();
-        });}, marketListData) : null,
+          _transactionFAB(context) : null,
 
         body: new NestedScrollView(
           controller: _scrollController,
@@ -281,6 +303,25 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
             ],
           ),
         )
+    );
+  }
+
+  Widget _transactionFAB(BuildContext context) {
+    return sheetOpen ? new FloatingActionButton(
+      onPressed: () => Navigator.of(context).pop(),
+      child: Icon(Icons.close),
+      foregroundColor: Theme.of(context).iconTheme.color,
+      backgroundColor: Theme.of(context).accentIconTheme.color,
+      elevation: 4.0,
+      tooltip: "Close Transaction",
+    ) :
+    new FloatingActionButton(
+      onPressed: _openTransaction,
+      child: Icon(Icons.add),
+      foregroundColor: Theme.of(context).iconTheme.color,
+      backgroundColor: Theme.of(context).accentIconTheme.color,
+      elevation: 4.0,
+      tooltip: "Add Transaction",
     );
   }
 
