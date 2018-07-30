@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-
-import 'package:trace/flutter_candlesticks.dart';
+import '../flutter_candlesticks.dart';
 
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-//import 'package:trace/market/coin_exchanges_list.dart';
-import 'package:trace/main.dart';
-import 'coin_aggregate_stats.dart';
-import 'package:trace/market_page.dart';
+import '../main.dart';
+import 'change_bar.dart';
 
 
 class CoinMarketStats extends StatefulWidget {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'main.dart';
 import 'market/coin_tabs.dart';
-import 'market_page.dart';
+import 'market_coin_item.dart';
 
 class PortfolioListItem extends StatelessWidget {
   PortfolioListItem(this.snapshot);

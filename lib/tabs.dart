@@ -6,9 +6,9 @@ import 'package:quick_actions/quick_actions.dart';
 
 import 'portfolio/portfolio_tabs.dart';
 import 'main.dart';
-import 'portfolio_page.dart';
+import 'portfolio_item.dart';
 import 'portfolio/transaction_sheet.dart';
-import 'market_page.dart';
+import 'market_coin_item.dart';
 
 import 'package:flutter/services.dart';
 //TODO: temp workaround

@@ -7,8 +7,8 @@ import '../sparkline.dart';
 import 'dart:math';
 
 import '../main.dart';
-import 'breakdown.dart';
-import 'transactions_page.dart';
+import 'breakdown_item.dart';
+import 'transaction_item.dart';
 
 class PortfolioTabs extends StatefulWidget {
   PortfolioTabs(this.tab, this.makePortfolioDisplay);

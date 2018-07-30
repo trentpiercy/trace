@@ -45,40 +45,6 @@ final assetImages = [
   'zcl', 'zec', 'zel', 'zen', 'zil', 'zilla', 'zrx'
 ];
 
-Future<Null> getMarketData() async {
-  int numberOfCoins = 500;
-  List tempMarketListData = [];
-
-  _pullData(start, limit) async {
-    var response = await http.get(
-        Uri.encodeFull("https://api.coinmarketcap.com/v2/ticker/" +
-            "?start=" + start.toString() +
-            "&limit=" + limit.toString()),
-        headers: {"Accept": "application/json"}
-    );
-
-    Map rawMarketListData = new JsonDecoder().convert(response.body)["data"];
-    rawMarketListData.forEach((key, value) => tempMarketListData.add(value));
-
-    print("pulled market data [$start - $limit]");
-
-    if (tempMarketListData.length == numberOfCoins) {
-      print("\$\$\$\$ FINISHED GETTING NEW MARKET DATA");
-      marketListData = tempMarketListData;
-      getApplicationDocumentsDirectory().then((Directory directory) async {
-        File jsonFile = new File(directory.path + "/marketData.json");
-        jsonFile.writeAsStringSync(json.encode(marketListData));
-      });
-    }
-  }
-
-  for (int i = 0; i <= numberOfCoins/100 - 1; i++) {
-    int start = i*100 + 1;
-    int limit = i*100 + 100;
-    _pullData(start, limit);
-  }
-}
-
 class CoinListItem extends StatelessWidget {
   CoinListItem(this.snapshot, this.columnProps);
   final columnProps;

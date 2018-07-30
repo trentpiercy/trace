@@ -5,12 +5,12 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import '../market_page.dart';
+import '../market_coin_item.dart';
 import '../portfolio/transaction_sheet.dart';
 import '../main.dart';
-import 'coin_aggregate_stats.dart';
-import 'coin_exchanges_list.dart';
-import '../portfolio/transactions_page.dart';
+import 'change_bar.dart';
+import 'exchange_list_item.dart';
+import '../portfolio/transaction_item.dart';
 
 class CoinDetails extends StatefulWidget {
   CoinDetails({

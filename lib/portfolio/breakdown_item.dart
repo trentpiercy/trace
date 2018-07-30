@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../main.dart';
-import '../market_page.dart';
+import '../market_coin_item.dart';
 import '../market/coin_tabs.dart';
 
 class PortfolioBreakdownItem extends StatelessWidget {
