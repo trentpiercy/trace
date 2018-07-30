@@ -136,14 +136,6 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
   String historyTotal = "24h";
   String historyAgg = "2";
 
-  normalizeNum(num input) {
-    if (input < 1) {
-      return input.toStringAsFixed(4);
-    } else {
-      return input.toStringAsFixed(2);
-    }
-  }
-
   _getGeneralStats() async {
     await getMarketData();
     _makeGeneralStats();
@@ -195,8 +187,8 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
       }
     }
 
-    _high = normalizeNum(highReturn);
-    _low = normalizeNum(lowReturn);
+    _high = normalizeNumNoCommas(highReturn);
+    _low = normalizeNumNoCommas(lowReturn);
 
     var start = historyOHLCV[0]["open"] == 0 ? 1 : historyOHLCV[0]["open"];
     var end = historyOHLCV.last["close"];
@@ -241,7 +233,7 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
-                          new Text("\$"+ (generalStats != null ? generalStats["price"].toString() : "0"), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)),
+                          new Text("\$"+ (generalStats != null ? normalizeNumNoCommas(generalStats["price"]) : "0"), style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)),
                           new Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             crossAxisAlignment: CrossAxisAlignment.end,

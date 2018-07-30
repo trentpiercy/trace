@@ -10,14 +10,6 @@ import '../main.dart';
 import 'breakdown.dart';
 import 'transactions_page.dart';
 
-normalizeNum(num input) {
-  if (input.abs() < 1) {
-    return input.toStringAsFixed(4);
-  } else {
-    return numCommaParseNoDollar(input.toStringAsFixed(2));
-  }
-}
-
 class PortfolioTabs extends StatefulWidget {
   PortfolioTabs(this.tab, this.makePortfolioDisplay);
   final int tab;
@@ -29,7 +21,6 @@ class PortfolioTabs extends StatefulWidget {
 
 class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderStateMixin {
   TabController _tabController;
-
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override

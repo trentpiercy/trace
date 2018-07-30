@@ -8,14 +8,6 @@ class ExchangeListItem extends StatelessWidget {
   final columnProps;
   final exchangeDataSnapshot;
 
-  normalizeNum(num input) {
-    if (input < 1) {
-      return input.toStringAsFixed(4);
-    } else {
-      return input.toStringAsFixed(2);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return new InkWell(
@@ -53,7 +45,7 @@ class ExchangeListItem extends StatelessWidget {
                 child: new Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    new Text("\$"+normalizeNum(exchangeDataSnapshot["PRICE"])),
+                    new Text("\$"+normalizeNumNoCommas(exchangeDataSnapshot["PRICE"])),
                     exchangeDataSnapshot["CHANGEPCT24HOUR"] > 0 ?
                       new Text("+"+exchangeDataSnapshot["CHANGEPCT24HOUR"].toStringAsFixed(2)+"%",
                           style: Theme.of(context).textTheme.body1.apply(color: Colors.green))

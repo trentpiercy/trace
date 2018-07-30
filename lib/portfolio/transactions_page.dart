@@ -49,7 +49,7 @@ class TransactionItem extends StatelessWidget {
         title: new RichText(text: TextSpan(children: <TextSpan>[
           TextSpan(text: "${snapshot["quantity"]} $symbol", style: Theme.of(context).textTheme.body2.apply(fontWeightDelta: 2)),
           TextSpan(text: " at ", style: Theme.of(context).textTheme.body1),
-          TextSpan(text: "\$${snapshot["price_usd"]}", style: Theme.of(context).textTheme.body2.apply(fontWeightDelta: 2)),
+          TextSpan(text: "\$${num.parse(normalizeNumNoCommas(snapshot["price_usd"])).toString()}", style: Theme.of(context).textTheme.body2.apply(fontWeightDelta: 2)),
           TextSpan(text: changePercent > 0 ?
           " +" + changePercent.toStringAsFixed(2) + "%"
               : " " + changePercent.toStringAsFixed(2) + "%",

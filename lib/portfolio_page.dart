@@ -65,10 +65,10 @@ class PortfolioListItem extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    new Text("\$"+snapshot["price_usd"].toString()),
+                    new Text("\$"+normalizeNumNoCommas(snapshot["price_usd"])),
                     new Padding(padding: const EdgeInsets.only(bottom: 4.0)),
                     new Text(
-                        snapshot["percent_change_24h"] >= 0 ? "+"+snapshot["percent_change_24h"].toString()+"%" : snapshot["percent_change_24h"].toString()+"%",
+                        snapshot["percent_change_24h"] >= 0 ? "+"+snapshot["percent_change_24h"].toStringAsFixed(2)+"%" : snapshot["percent_change_24h"].toStringAsFixed(2)+"%",
                         style: Theme.of(context).primaryTextTheme.body1.apply(
                             color: snapshot["percent_change_24h"] >= 0 ? Colors.green : Colors.red
                         )

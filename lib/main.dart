@@ -46,11 +46,6 @@ void main() async {
     themeMode = prefs.getString("themeMode");
   }
 
-  const QuickActions().setShortcutItems(<ShortcutItem>[
-    const ShortcutItem(type: 'new_transaction', localizedTitle: 'New Transaction', icon: 'icon_new_transaction'),
-    const ShortcutItem(type: 'search', localizedTitle: 'Search', icon: 'icon_search'),
-  ]);
-
   runApp(new TraceApp(themeMode));
 }
 
@@ -71,6 +66,25 @@ numCommaParse(numString) {
 
 numCommaParseNoDollar(numString) {
   return numString.replaceAllMapped(new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
+}
+
+normalizeNum(num input) {
+  if (input >= 100000) {
+   return numCommaParseNoDollar(input.round().toString());
+  }
+  else if (input >= 1000) {
+    return numCommaParseNoDollar(input.toStringAsFixed(2));
+  } else {
+    return input.toStringAsFixed(6 - input.round().toString().length);
+  }
+}
+
+normalizeNumNoCommas(num input) {
+  if (input >= 1000) {
+    return input.toStringAsFixed(2);
+  } else {
+    return input.toStringAsFixed(6 - input.round().toString().length);
+  }
 }
 
 class TraceApp extends StatefulWidget {

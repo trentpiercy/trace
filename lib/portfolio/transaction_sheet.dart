@@ -439,7 +439,7 @@ class TransactionSheetState extends State<TransactionSheet> {
                           ),
                         ),
                         new Container(
-                          width: MediaQuery.of(context).size.width * 0.25,
+                          width: MediaQuery.of(context).size.width * 0.2,
                           padding: const EdgeInsets.only(right: 4.0),
                           child: new TextField(
                             focusNode: _quantityFocusNode,
@@ -456,7 +456,7 @@ class TransactionSheetState extends State<TransactionSheet> {
                           ),
                         ),
                         new Container(
-                          width: MediaQuery.of(context).size.width*0.25,
+                          width: MediaQuery.of(context).size.width*0.3,
                           padding: const EdgeInsets.only(right: 4.0),
                           child: new TextField(
                             focusNode: _priceFocusNode,

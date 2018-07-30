@@ -157,7 +157,8 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     _filterMarketData();
     _refreshMarketPage();
 
-    const QuickActions().initialize((type) async {
+    final QuickActions quickActions = const QuickActions();
+    quickActions.initialize((type) {
       if (type == "search") {
         _tabIndex = 1;
         _tabController.animateTo(1);
@@ -168,6 +169,11 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         _openTransaction();
       }
     });
+
+    quickActions.setShortcutItems(<ShortcutItem>[
+      const ShortcutItem(type: 'new_transaction', localizedTitle: 'New Transaction', icon: 'icon_new_transaction'),
+      const ShortcutItem(type: 'search', localizedTitle: 'Search', icon: 'icon_search'),
+    ]);
   }
 
   @override
@@ -244,7 +250,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                     style: Theme.of(context).textTheme.subhead,
                     onChanged: (value) => _handleFilter(value),
                     autofocus: true,
-                    textCapitalization: TextCapitalization.characters,
+                    textCapitalization: TextCapitalization.none,
                     decoration: new InputDecoration.collapsed(
                         hintText: 'Search names and symbols...'
                     ),

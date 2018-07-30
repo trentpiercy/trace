@@ -138,10 +138,10 @@ class CoinListItem extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
-                  new Text(numCommaParse(snapshot["quotes"]["USD"]["market_cap"].toString()),
+                  new Text("\$"+normalizeNum(snapshot["quotes"]["USD"]["market_cap"]),
                       style: Theme.of(context).textTheme.body2),
                   new Padding(padding: const EdgeInsets.only(bottom: 4.0)),
-                  new Text(numCommaParse(snapshot["quotes"]["USD"]["volume_24h"].toString()),
+                  new Text("\$"+normalizeNum(snapshot["quotes"]["USD"]["volume_24h"]),
                       style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor))
                 ],
               )
@@ -152,12 +152,12 @@ class CoinListItem extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
-                  new Text("\$"+snapshot["quotes"]["USD"]["price"].toString()),
+                  new Text("\$"+normalizeNumNoCommas(snapshot["quotes"]["USD"]["price"])),
                   new Padding(padding: const EdgeInsets.only(bottom: 4.0)),
                   new Text(
                     snapshot["quotes"]["USD"]["percent_change_24h"] >= 0 ?
-                      "+"+snapshot["quotes"]["USD"]["percent_change_24h"].toString()+"%"
-                      : snapshot["quotes"]["USD"]["percent_change_24h"].toString()+"%",
+                      "+"+snapshot["quotes"]["USD"]["percent_change_24h"].toStringAsFixed(2)+"%"
+                      : snapshot["quotes"]["USD"]["percent_change_24h"].toStringAsFixed(2)+"%",
                     style: Theme.of(context).primaryTextTheme.body1.apply(
                       color: snapshot["quotes"]["USD"]["percent_change_24h"] >= 0 ? Colors.green : Colors.red
                     )
