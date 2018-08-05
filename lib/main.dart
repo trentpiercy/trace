@@ -8,8 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:quick_actions/quick_actions.dart';
 
-import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
-
 import 'tabs.dart';
 import 'settings_page.dart';
 
@@ -165,7 +163,7 @@ class TraceAppState extends State<TraceApp> {
     savePreferences();
   }
 
-  setDarkMode() async {
+  setDarkMode() {
     switch (themeMode) {
       case "Automatic":
         int nowHour = new DateTime.now().hour;
@@ -182,11 +180,7 @@ class TraceAppState extends State<TraceApp> {
         darkEnabled = false;
         break;
     }
-    try {
-      await FlutterStatusbarcolor.setNavigationBarColor(darkEnabled ? darkOLED ? darkThemeOLED.primaryColor : darkTheme.primaryColor : lightTheme.primaryColor);
-    } catch (e) {
-      print(e);
-    }
+    setNavBarColor();
   }
 
   handleUpdate() {
@@ -195,15 +189,25 @@ class TraceAppState extends State<TraceApp> {
     });
   }
 
-  switchOLED({state}) async {
+  switchOLED({state}) {
     setState(() {
       darkOLED = state ?? !darkOLED;
     });
+    setNavBarColor();
     savePreferences();
-    try {
-      await FlutterStatusbarcolor.setNavigationBarColor(darkEnabled ? darkOLED ? darkThemeOLED.primaryColor : darkTheme.primaryColor : lightTheme.primaryColor);
-    } catch (e) {
-      print(e);
+  }
+
+  setNavBarColor() async {
+    if (darkEnabled) {
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
+          systemNavigationBarIconBrightness: Brightness.light,
+          systemNavigationBarColor: darkOLED ? darkThemeOLED.primaryColor : darkTheme.primaryColor
+      ));
+    } else {
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
+          systemNavigationBarIconBrightness: Brightness.dark,
+          systemNavigationBarColor: lightTheme.primaryColor
+      ));
     }
   }
 

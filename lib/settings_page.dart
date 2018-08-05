@@ -119,7 +119,7 @@ class SettingsPageState extends State<SettingsPage>{
                 onTap: widget.toggleTheme,
                 leading: new Icon(widget.darkEnabled ? Icons.brightness_3 : Icons.brightness_7),
                 subtitle: new Text(widget.themeMode),
-                title: new Text("Theme Mode"),
+                title: new Text("Theme"),
               )
             ),
             new Container(
