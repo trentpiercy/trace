@@ -311,7 +311,7 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
                             new Row(
                               mainAxisSize: MainAxisSize.max,
                               children: <Widget>[
-                                new Text("\$"+ numCommaParseNoDollar(value.toStringAsFixed(2)),
+                                new Text("\$"+ numCommaParse(value.toStringAsFixed(2)),
                                     style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)
                                 ),
                                 new Padding(padding: const EdgeInsets.symmetric(horizontal: 3.0)),
@@ -535,7 +535,7 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
                       new Text("Portfolio Value", style: Theme.of(context).textTheme.caption),
                       new Row(
                         children: <Widget>[
-                          new Text("\$" + numCommaParseNoDollar(value.toStringAsFixed(2)),
+                          new Text("\$" + numCommaParse(value.toStringAsFixed(2)),
                               style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)),
                         ],
                       ),
@@ -555,7 +555,7 @@ class PortfolioTabsState extends State<PortfolioTabs> with SingleTickerProviderS
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
                       new Text("Total Cost", style: Theme.of(context).textTheme.caption),
-                      new Text("\$" + numCommaParseNoDollar(cost.toStringAsFixed(2)),
+                      new Text("\$" + numCommaParse(cost.toStringAsFixed(2)),
                           style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.4))
                     ],
                   ),

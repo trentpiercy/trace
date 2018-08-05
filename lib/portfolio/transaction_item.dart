@@ -56,7 +56,7 @@ class TransactionItem extends StatelessWidget {
               style: Theme.of(context).textTheme.body2.apply(color: changePercent > 0 ? Colors.green : Colors.red)
           ),
         ])),
-        subtitle: new Text("$exchange (\$${numCommaParseNoDollar((snapshot["quantity"]*snapshot["price_usd"]).toStringAsFixed(2))})\n$date"),
+        subtitle: new Text("$exchange (\$${numCommaParse((snapshot["quantity"]*snapshot["price_usd"]).toStringAsFixed(2))})\n$date"),
         trailing: snapshot["notes"] != "" ? new Container(
           alignment: Alignment.topRight,
           width: MediaQuery.of(context).size.width * .3,

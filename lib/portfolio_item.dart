@@ -53,7 +53,7 @@ class PortfolioListItem extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
-                      new Text("\$"+numCommaParseNoDollar((snapshot["total_quantity"]*snapshot["price_usd"]).toStringAsFixed(2)), style: Theme.of(context).textTheme.body2),
+                      new Text("\$"+numCommaParse((snapshot["total_quantity"]*snapshot["price_usd"]).toStringAsFixed(2)), style: Theme.of(context).textTheme.body2),
                       new Padding(padding: const EdgeInsets.only(bottom: 4.0)),
                       new Text(num.parse(snapshot["total_quantity"].toStringAsPrecision(9)).toString(), style: Theme.of(context).textTheme.body2.apply(color: Theme.of(context).hintColor))
                     ],

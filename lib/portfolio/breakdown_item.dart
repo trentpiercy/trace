@@ -54,7 +54,7 @@ class PortfolioBreakdownItem extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
-                  new Text("\$"+numCommaParseNoDollar((snapshot["total_quantity"]*snapshot["price_usd"]).toStringAsFixed(2)),
+                  new Text("\$"+numCommaParse((snapshot["total_quantity"]*snapshot["price_usd"]).toStringAsFixed(2)),
                       style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.05)),
                 ],
               ),

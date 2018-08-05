@@ -392,7 +392,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             new Text("Total Portfolio Value", style: Theme.of(context).textTheme.caption),
-                            new Text("\$"+ numCommaParseNoDollar(totalPortfolioStats["value_usd"].toStringAsFixed(2)),
+                            new Text("\$"+ numCommaParse(totalPortfolioStats["value_usd"].toStringAsFixed(2)),
                                 style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)
                             ),
                           ],
@@ -619,10 +619,10 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                           new Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: <Widget>[
-                              new Text(numCommaParse(globalData["total_market_cap"].toString()),
+                              new Text("\$"+normalizeNum(globalData["total_market_cap"]),
                                   style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2, fontWeightDelta: 2)
                               ),
-                              new Text(numCommaParse(globalData["total_volume_24h"].toString()),
+                              new Text("\$"+normalizeNum(globalData["total_volume_24h"]),
                                   style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.2, fontWeightDelta: 2)
                               ),
                             ],

@@ -91,25 +91,23 @@ numCommaParse(numString) {
     List<String> strList = str.split(",");
 
     if (strList.length > 3) {
-      return "\$"+strList[0] + "." + strList[1].substring(0, 4-strList[0].length)+"B";
-    } else if (str.length > 2) {
-      return "\$"+strList[0] +"." + strList[1].substring(0, 4-strList[0].length)+"M";
+      return strList[0] + "." + strList[1].substring(0, 4-strList[0].length)+"B";
+    } else if (strList.length > 2) {
+      return strList[0] +"." + strList[1].substring(0, 4-strList[0].length)+"M";
+    } else {
+      return num.parse(numString).toString().replaceAllMapped(new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
     }
   }
 
-  return "\$"+ num.parse(numString).round().toString().replaceAllMapped(new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
-}
-
-numCommaParseNoDollar(numString) {
-  return numString.replaceAllMapped(new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
+  return num.parse(numString).toString().replaceAllMapped(new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
 }
 
 normalizeNum(num input) {
   if (input >= 100000) {
-   return numCommaParseNoDollar(input.round().toString());
+   return numCommaParse(input.round().toString());
   }
   else if (input >= 1000) {
-    return numCommaParseNoDollar(input.toStringAsFixed(2));
+    return numCommaParse(input.toStringAsFixed(2));
   } else {
     return input.toStringAsFixed(6 - input.round().toString().length);
   }

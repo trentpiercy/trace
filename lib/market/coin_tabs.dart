@@ -250,9 +250,9 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
                               new Column(
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: <Widget>[
-                                  new Text(generalStats != null ? numCommaParse(generalStats["market_cap"].toString()) : "0",
+                                  new Text(generalStats != null ? "\$"+normalizeNum(generalStats["market_cap"]) : "0",
                                       style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1, fontWeightDelta: 2)),
-                                  new Text(generalStats != null ? numCommaParse(generalStats["volume_24h"].toString()) : "0",
+                                  new Text(generalStats != null ? "\$"+normalizeNum(generalStats["volume_24h"]) : "0",
                                       style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 1.1, fontWeightDelta: 2, color: Theme.of(context).hintColor)),
                                 ],
                               ),
@@ -649,7 +649,7 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
                     new Row(
                       mainAxisSize: MainAxisSize.max,
                       children: <Widget>[
-                        new Text("\$"+ numCommaParseNoDollar(value.toStringAsFixed(2)),
+                        new Text("\$"+ numCommaParse(value.toStringAsFixed(2)),
                             style: Theme.of(context).textTheme.body2.apply(fontSizeFactor: 2.2)
                         ),
                       ],
@@ -672,7 +672,7 @@ class CoinDetailsState extends State<CoinDetails> with SingleTickerProviderState
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     new Text("Total Cost", style: Theme.of(context).textTheme.caption),
-                    new Text("\$"+numCommaParseNoDollar(cost.toStringAsFixed(2)),
+                    new Text("\$"+numCommaParse(cost.toStringAsFixed(2)),
                         style: Theme.of(context).primaryTextTheme.body2.apply(fontSizeFactor: 1.5))
                   ],
                 ),
