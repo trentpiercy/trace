@@ -64,7 +64,7 @@ void main() async {
       jsonFile.writeAsStringSync("{}");
       portfolioMap = {};
     }
-
+    if (portfolioMap == null) {portfolioMap = {};}
     jsonFile = new File(directory.path + "/marketData.json");
     if (jsonFile.existsSync()) {
       marketListData = json.decode(jsonFile.readAsStringSync());
@@ -208,7 +208,7 @@ class TraceAppState extends State<TraceApp> {
 
     brightness: Brightness.dark,
     accentColor: Colors.deepPurpleAccent[100],
-    primaryColor: Color.fromRGBO(50, 50, 60, 1.0),
+    primaryColor: Color.fromRGBO(50, 50, 57, 1.0),
     primaryColorLight: Colors.deepPurpleAccent[100],
 
 //    textSelectionColor: Colors.white,

@@ -7,9 +7,6 @@ import 'package:path_provider/path_provider.dart';
 
 import '../main.dart';
 
-import 'package:flutter/services.dart';
-//TODO: temp workaround
-
 class TransactionSheet extends StatefulWidget {
   TransactionSheet(
       this.loadPortfolio,
@@ -224,10 +221,11 @@ class TransactionSheetState extends State<TransactionSheet> {
           };
 
           Map jsonContent = json.decode(jsonFile.readAsStringSync());
+          if (jsonContent == null) {jsonContent = {};}
 
-          if (jsonContent[symbol] != null) {
+          try {
             jsonContent[symbol].add(newEntry);
-          } else {
+          } catch (e) {
             jsonContent[symbol] = [];
             jsonContent[symbol].add(newEntry);
           }
@@ -250,7 +248,9 @@ class TransactionSheetState extends State<TransactionSheet> {
 
           Navigator.of(context).pop();
         } else {
-          print("FAILED - file does not exist");
+          print("FAILED file does not exist");
+          jsonFile.createSync();
+          jsonFile.writeAsStringSync("{}");
         }
       });
       widget.loadPortfolio();

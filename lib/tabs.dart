@@ -10,9 +10,6 @@ import 'portfolio_item.dart';
 import 'portfolio/transaction_sheet.dart';
 import 'market_coin_item.dart';
 
-import 'package:flutter/services.dart';
-//TODO: temp workaround
-
 class Tabs extends StatefulWidget {
   Tabs(
       this.toggleTheme,
@@ -163,6 +160,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         _tabIndex = 1;
         _tabController.animateTo(1);
         //TODO: doesn't wait on animation before opening search
+        // if already on tab it works
         _startSearch();
       } else if (type == "new_transaction") {
         _tabController.animateTo(0);
