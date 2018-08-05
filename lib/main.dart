@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:quick_actions/quick_actions.dart';
+
+import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 
 import 'tabs.dart';
 import 'settings_page.dart';
@@ -76,13 +79,15 @@ void main() async {
   });
 
   String themeMode = "Automatic";
+  bool darkOLED = false;
   SharedPreferences prefs = await SharedPreferences.getInstance();
   if (prefs.getBool("shortenOn") != null && prefs.getString("themeMode") != null) {
     shortenOn = prefs.getBool("shortenOn");
     themeMode = prefs.getString("themeMode");
+    darkOLED = prefs.getBool("darkOLED");
   }
 
-  runApp(new TraceApp(themeMode));
+  runApp(new TraceApp(themeMode, darkOLED));
 }
 
 numCommaParse(numString) {
@@ -122,8 +127,9 @@ normalizeNumNoCommas(num input) {
 }
 
 class TraceApp extends StatefulWidget {
-  TraceApp(this.themeMode);
+  TraceApp(this.themeMode, this.darkOLED);
   final themeMode;
+  final darkOLED;
 
   @override
   TraceAppState createState() => new TraceAppState();
@@ -132,6 +138,7 @@ class TraceApp extends StatefulWidget {
 class TraceAppState extends State<TraceApp> {
   bool darkEnabled;
   String themeMode;
+  bool darkOLED;
 
   void savePreferences() async {
     print("----- saving prefs");
@@ -139,6 +146,7 @@ class TraceAppState extends State<TraceApp> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("themeMode", themeMode);
     prefs.setBool("shortenOn", shortenOn);
+    prefs.setBool("darkOLED", darkOLED);
   }
 
   toggleTheme() {
@@ -157,7 +165,7 @@ class TraceAppState extends State<TraceApp> {
     savePreferences();
   }
 
-  setDarkMode() {
+  setDarkMode() async {
     switch (themeMode) {
       case "Automatic":
         int nowHour = new DateTime.now().hour;
@@ -174,12 +182,29 @@ class TraceAppState extends State<TraceApp> {
         darkEnabled = false;
         break;
     }
+    try {
+      await FlutterStatusbarcolor.setNavigationBarColor(darkEnabled ? darkOLED ? darkThemeOLED.primaryColor : darkTheme.primaryColor : lightTheme.primaryColor);
+    } catch (e) {
+      print(e);
+    }
   }
 
   handleUpdate() {
     setState(() {
       setDarkMode();
     });
+  }
+
+  switchOLED({state}) async {
+    setState(() {
+      darkOLED = state ?? !darkOLED;
+    });
+    savePreferences();
+    try {
+      await FlutterStatusbarcolor.setNavigationBarColor(darkEnabled ? darkOLED ? darkThemeOLED.primaryColor : darkTheme.primaryColor : lightTheme.primaryColor);
+    } catch (e) {
+      print(e);
+    }
   }
 
   final ThemeData lightTheme = new ThemeData(
@@ -219,10 +244,31 @@ class TraceAppState extends State<TraceApp> {
     bottomAppBarColor: Colors.black26,
   );
 
+  final ThemeData darkThemeOLED = new ThemeData(
+    brightness: Brightness.dark,
+    accentColor: Colors.deepPurpleAccent[100],
+
+    primaryColor: Color.fromRGBO(5, 5, 5, 1.0),
+    backgroundColor: Colors.black,
+    canvasColor: Colors.black,
+    primaryColorLight: Colors.deepPurple[300],
+    buttonColor: Colors.deepPurpleAccent[100],
+    accentIconTheme: new IconThemeData(color: Colors.deepPurple[300]),
+
+    cardColor: Color.fromRGBO(12, 12, 12, 1.0),
+    dividerColor: Color.fromRGBO(17, 17, 17, 1.0),
+    bottomAppBarColor: Color.fromRGBO(15, 15, 15, 1.0),
+    dialogBackgroundColor: Colors.black,
+
+    textSelectionHandleColor: Colors.deepPurpleAccent[100],
+    iconTheme: new IconThemeData(color: Colors.white),
+  );
+
   @override
   void initState() {
     super.initState();
     themeMode = widget.themeMode ?? "Automatic";
+    darkOLED = widget.darkOLED ?? false;
     setDarkMode();
   }
 
@@ -230,12 +276,19 @@ class TraceAppState extends State<TraceApp> {
   Widget build(BuildContext context) {
     print("BUILT MAIN APP ==========");
     return new MaterialApp(
-      color: darkEnabled ? darkTheme.primaryColor : lightTheme.primaryColor,
+      color: darkEnabled ? darkOLED ? darkThemeOLED.primaryColor : darkTheme.primaryColor : lightTheme.primaryColor,
       title: "Trace",
       home: new Tabs(toggleTheme, savePreferences, handleUpdate, darkEnabled, themeMode),
-      theme: darkEnabled ? darkTheme : lightTheme,
+      theme: darkEnabled ? darkOLED ? darkThemeOLED : darkTheme : lightTheme,
       routes: <String, WidgetBuilder> {
-        "/settings": (BuildContext context) => new SettingsPage(savePreferences: savePreferences),
+        "/settings": (BuildContext context) => new SettingsPage(
+          savePreferences: savePreferences,
+          toggleTheme: toggleTheme,
+          darkEnabled: darkEnabled,
+          themeMode: themeMode,
+          switchOLED: switchOLED,
+          darkOLED: darkOLED,
+        ),
       },
     );
   }

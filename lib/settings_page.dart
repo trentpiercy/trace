@@ -8,8 +8,20 @@ import 'package:path_provider/path_provider.dart';
 import 'main.dart';
 
 class SettingsPage extends StatefulWidget {
-  SettingsPage({this.savePreferences});
+  SettingsPage({
+    this.savePreferences,
+    this.toggleTheme,
+    this.darkEnabled,
+    this.themeMode,
+    this.switchOLED,
+    this.darkOLED
+  });
   final Function savePreferences;
+  final Function toggleTheme;
+  final bool darkEnabled;
+  final String themeMode;
+  final Function switchOLED;
+  final bool darkOLED;
 
   @override
   SettingsPageState createState() => new SettingsPageState();
@@ -104,8 +116,42 @@ class SettingsPageState extends State<SettingsPage>{
             new Container(
               color: Theme.of(context).cardColor,
               child: new ListTile(
+                onTap: widget.toggleTheme,
+                leading: new Icon(widget.darkEnabled ? Icons.brightness_3 : Icons.brightness_7),
+                subtitle: new Text(widget.themeMode),
+                title: new Text("Theme Mode"),
+              )
+            ),
+            new Container(
+              color: Theme.of(context).cardColor,
+              child: new ListTile(
+                leading: new Icon(Icons.opacity),
+                title: new Text("OLED Dark Mode"),
+                trailing: new Switch(
+                  activeColor: Theme.of(context).accentColor,
+                  value: widget.darkOLED,
+                  onChanged: (onOff) {
+                    widget.switchOLED(state: onOff);
+                  },
+                ),
+                onTap: widget.switchOLED,
+              ),
+            ),
+            new Container(
+              color: Theme.of(context).cardColor,
+              child: new ListTile(
                 leading: new Icon(Icons.short_text),
-                title: new Text(shortenOn ? "Abbreviated Numbers" : "Full Numbers"),
+                title: new Text("Abbreviate Numbers"),
+                trailing: new Switch(
+                  activeColor: Theme.of(context).accentColor,
+                  value: shortenOn,
+                  onChanged: (onOff) {
+                    setState(() {
+                      shortenOn = onOff;
+                    });
+                    widget.savePreferences();
+                  }
+                ),
                 onTap: () {
                   setState(() {
                     shortenOn = !shortenOn;
@@ -173,7 +219,7 @@ class ImportPageState extends State<ImportPage> {
         throw "failed at empty map";
       }
       for (String symbol in checkMap.keys) {
-        if (!validSymbols.contains(symbol.toUpperCase())) {
+        if (!validSymbols.contains(symbol)) {
           throw "symbol not valid";
         }
       }

@@ -8,8 +8,8 @@ dependencies:
   path_provider: ^0.4.0
   quick_actions: ^0.2.1
   flutter_circular_chart: ^0.0.3
-
   cupertino_icons: ^0.1.0
+  flutter_statusbarcolor: any
 
 dev_dependencies:
   flutter_test:
