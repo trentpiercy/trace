@@ -11,13 +11,15 @@ import 'portfolio/transaction_sheet.dart';
 import 'market_coin_item.dart';
 
 class Tabs extends StatefulWidget {
-  Tabs(
-      this.toggleTheme,
-      this.savePreferences,
-      this.handleUpdate,
-      this.darkEnabled,
-      this.themeMode,
-      );
+  Tabs({
+    this.toggleTheme,
+    this.savePreferences,
+    this.handleUpdate,
+    this.darkEnabled,
+    this.themeMode,
+    this.switchOLED,
+    this.darkOLED
+  });
 
   final Function toggleTheme;
   final Function handleUpdate;
@@ -25,6 +27,9 @@ class Tabs extends StatefulWidget {
 
   final bool darkEnabled;
   final String themeMode;
+
+  final Function switchOLED;
+  final bool darkOLED;
 
   @override
   TabsState createState() => new TabsState();
@@ -224,7 +229,45 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                       onTap: () => Navigator.push(context, new MaterialPageRoute(
                           builder: (context) => new PortfolioTabs(1, _makePortfolioDisplay)
                       )),
-                    )
+                    ),
+                    new Container(
+                      decoration: new BoxDecoration(
+                          border: new Border(bottom: new BorderSide(color: Theme.of(context).bottomAppBarColor, width: 1.0))
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    ),
+                    new ListTile(
+                      leading: new Icon(Icons.short_text),
+                      title: new Text("Abbreviate Numbers"),
+                      trailing: new Switch(
+                          activeColor: Theme.of(context).accentColor,
+                          value: shortenOn,
+                          onChanged: (onOff) {
+                            setState(() {
+                              shortenOn = onOff;
+                            });
+                            widget.savePreferences();
+                          }
+                      ),
+                      onTap: () {
+                        setState(() {
+                          shortenOn = !shortenOn;
+                        });
+                        widget.savePreferences();
+                      },
+                    ),
+                    new ListTile(
+                      leading: new Icon(Icons.opacity),
+                      title: new Text("OLED Dark Mode"),
+                      trailing: new Switch(
+                        activeColor: Theme.of(context).accentColor,
+                        value: widget.darkOLED,
+                        onChanged: (onOff) {
+                          widget.switchOLED(state: onOff);
+                        },
+                      ),
+                      onTap: widget.switchOLED,
+                    ),
                   ],
                 )
             )

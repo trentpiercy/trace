@@ -163,7 +163,7 @@ class TraceAppState extends State<TraceApp> {
     savePreferences();
   }
 
-  setDarkMode() {
+  setDarkEnabled() {
     switch (themeMode) {
       case "Automatic":
         int nowHour = new DateTime.now().hour;
@@ -185,7 +185,7 @@ class TraceAppState extends State<TraceApp> {
 
   handleUpdate() {
     setState(() {
-      setDarkMode();
+      setDarkEnabled();
     });
   }
 
@@ -273,7 +273,7 @@ class TraceAppState extends State<TraceApp> {
     super.initState();
     themeMode = widget.themeMode ?? "Automatic";
     darkOLED = widget.darkOLED ?? false;
-    setDarkMode();
+    setDarkEnabled();
   }
 
   @override
@@ -282,7 +282,15 @@ class TraceAppState extends State<TraceApp> {
     return new MaterialApp(
       color: darkEnabled ? darkOLED ? darkThemeOLED.primaryColor : darkTheme.primaryColor : lightTheme.primaryColor,
       title: "Trace",
-      home: new Tabs(toggleTheme, savePreferences, handleUpdate, darkEnabled, themeMode),
+      home: new Tabs(
+        savePreferences: savePreferences,
+        toggleTheme: toggleTheme,
+        handleUpdate: handleUpdate,
+        darkEnabled: darkEnabled,
+        themeMode: themeMode,
+        switchOLED: switchOLED,
+        darkOLED: darkOLED,
+      ),
       theme: darkEnabled ? darkOLED ? darkThemeOLED : darkTheme : lightTheme,
       routes: <String, WidgetBuilder> {
         "/settings": (BuildContext context) => new SettingsPage(
