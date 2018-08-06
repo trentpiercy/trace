@@ -15,8 +15,9 @@ class OHLCVGraph extends StatelessWidget {
     this.labelPrefix = "\$",
     @required this.enableGridLines,
     @required this.volumeProp,
-  })  : assert(data != null),
-        assert(lineWidth != null),
+    this.increaseColor = Colors.green,
+    this.decreaseColor = Colors.red,
+  }) : assert(data != null),
         super(key: key);
 
   /// OHLCV data to graph  /// List of Maps containing open, high, low, close and volumeto
@@ -50,6 +51,12 @@ class OHLCVGraph extends StatelessWidget {
   /// Symbol prefix for grid line labels
   final String labelPrefix;
 
+  /// Increase color
+  final Color increaseColor;
+
+  /// Decrease color
+  final Color decreaseColor;
+
   @override
   Widget build(BuildContext context) {
     return new LimitedBox(
@@ -67,6 +74,8 @@ class OHLCVGraph extends StatelessWidget {
           enableGridLines: enableGridLines,
           volumeProp: volumeProp,
           labelPrefix: labelPrefix,
+          increaseColor: increaseColor,
+          decreaseColor: decreaseColor
         ),
       ),
     );
@@ -84,19 +93,21 @@ class _OHLCVPainter extends CustomPainter {
         @required this.gridLineLabelColor,
         @required this.volumeProp,
         @required this.labelPrefix,
+        @required this.increaseColor,
+        @required this.decreaseColor
       });
 
   final List data;
   final double lineWidth;
-
   final bool enableGridLines;
   final Color gridLineColor;
   final int gridLineAmount;
   final double gridLineWidth;
   final Color gridLineLabelColor;
   final String labelPrefix;
-
   final double volumeProp;
+  final Color increaseColor;
+  final Color decreaseColor;
 
   double _min;
   double _max;
@@ -225,7 +236,7 @@ class _OHLCVPainter extends CustomPainter {
         rectTop = height - (data[i]["open"] - _min) * heightNormalizer;
         rectBottom = height - (data[i]["close"] - _min) * heightNormalizer;
         rectPaint = new Paint()
-          ..color = Colors.red
+          ..color = decreaseColor
           ..strokeWidth = lineWidth;
 
         Rect ocRect =
@@ -243,7 +254,7 @@ class _OHLCVPainter extends CustomPainter {
         rectBottom = (height - (data[i]["open"] - _min) * heightNormalizer) -
             lineWidth / 2;
         rectPaint = new Paint()
-          ..color = Colors.green
+          ..color = increaseColor
           ..strokeWidth = lineWidth;
 
         canvas.drawLine(new Offset(rectLeft, rectBottom - lineWidth / 2),

@@ -259,9 +259,9 @@ class TraceAppState extends State<TraceApp> {
     buttonColor: Colors.deepPurpleAccent[100],
     accentIconTheme: new IconThemeData(color: Colors.deepPurple[300]),
 
-    cardColor: Color.fromRGBO(12, 12, 12, 1.0),
-    dividerColor: Color.fromRGBO(17, 17, 17, 1.0),
-    bottomAppBarColor: Color.fromRGBO(15, 15, 15, 1.0),
+    cardColor: Color.fromRGBO(16, 16, 16, 1.0),
+    dividerColor: Color.fromRGBO(20, 20, 20, 1.0),
+    bottomAppBarColor: Color.fromRGBO(19, 19, 19, 1.0),
     dialogBackgroundColor: Colors.black,
 
     textSelectionHandleColor: Colors.deepPurpleAccent[100],
