@@ -163,9 +163,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     quickActions.initialize((type) {
       if (type == "search") {
         _tabIndex = 1;
-        _tabController.animateTo(1);
-        //TODO: doesn't wait on animation before opening search
-        // if already on tab it works
+        _tabController.index = 1;
         _startSearch();
       } else if (type == "new_transaction") {
         _tabController.animateTo(0);
@@ -337,7 +335,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                         labelColor: Theme.of(context).accentIconTheme.color,
                         tabs: <Tab>[
                           new Tab(icon: new Icon(Icons.person)),
-                          new Tab(icon: new Icon(Icons.menu)),
+                          new Tab(icon: new Icon(Icons.filter_list)),
 //                          new Tab(icon: new Icon(Icons.notifications))
                         ],
                       ),

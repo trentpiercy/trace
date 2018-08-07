@@ -199,12 +199,12 @@ class TraceAppState extends State<TraceApp> {
 
   setNavBarColor() async {
     if (darkEnabled) {
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
           systemNavigationBarIconBrightness: Brightness.light,
           systemNavigationBarColor: darkOLED ? darkThemeOLED.primaryColor : darkTheme.primaryColor
       ));
     } else {
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
           systemNavigationBarIconBrightness: Brightness.dark,
           systemNavigationBarColor: lightTheme.primaryColor
       ));

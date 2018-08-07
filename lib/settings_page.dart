@@ -33,8 +33,8 @@ class SettingsPageState extends State<SettingsPage>{
       context: context,
       builder: (context) {
         return new AlertDialog(
-          title: new Text("Delete Portfolio File?"),
-          content: new Text("This cannot be undone."),
+          title: new Text("Clear Portfolio?"),
+          content: new Text("This will permanently delete all transactions."),
           actions: <Widget>[
             new FlatButton(onPressed: () async {
               await _deletePortfolio();
@@ -71,18 +71,20 @@ class SettingsPageState extends State<SettingsPage>{
               title: new Text("Export Portfolio"),
             ),
           ),
-          body: new InkWell(
-            onTap: () {
-              Clipboard.setData(new ClipboardData(text: text));
-              _scaffoldKey.currentState.showSnackBar(
-                new SnackBar(content: new Text("Copied to Clipboard!"))
-              );
-            },
-            child: new Container(
-              padding: const EdgeInsets.all(12.0),
-              child: new Text(text,
-                style: Theme.of(context).textTheme.body1.apply(fontSizeFactor: 1.1))
-            ),
+          body: new SingleChildScrollView(
+            child: new InkWell(
+              onTap: () {
+                Clipboard.setData(new ClipboardData(text: text));
+                _scaffoldKey.currentState.showSnackBar(
+                    new SnackBar(content: new Text("Copied to Clipboard!"))
+                );
+              },
+              child: new Container(
+                  padding: const EdgeInsets.all(10.0),
+                  child: new Text(text,
+                      style: Theme.of(context).textTheme.body1.apply(fontSizeFactor: 1.1))
+              ),
+            )
           )
         );
       })
@@ -167,7 +169,7 @@ class SettingsPageState extends State<SettingsPage>{
             new Container(
               color: Theme.of(context).cardColor,
               child: new ListTile(
-                title: new Text("Export portfolio JSON"),
+                title: new Text("Export Portfolio"),
                 leading: new Icon(Icons.file_upload),
                 onTap: _exportPortfolio,
               ),
@@ -175,7 +177,7 @@ class SettingsPageState extends State<SettingsPage>{
             new Container(
               color: Theme.of(context).cardColor,
               child: new ListTile(
-                title: new Text("Import portfolio JSON"),
+                title: new Text("Import Portfolio"),
                 leading: new Icon(Icons.file_download),
                 onTap: _showImportPage,
               ),
@@ -183,7 +185,7 @@ class SettingsPageState extends State<SettingsPage>{
             new Container(
               color: Theme.of(context).cardColor,
               child: new ListTile(
-                title: new Text("Delete portfolio"),
+                title: new Text("Clear Portfolio"),
                 leading: new Icon(Icons.delete),
                 onTap: _confirmDeletePortfolio,
               ),
@@ -212,6 +214,7 @@ class ImportPageState extends State<ImportPage> {
   Map<String, dynamic> newPortfolioMap;
   Color textColor = Colors.red;
   List validSymbols = [];
+
   _checkImport(text) {
     try {
       Map<String, dynamic> checkMap = json.decode(text);
@@ -257,8 +260,8 @@ class ImportPageState extends State<ImportPage> {
         context: context,
         builder: (context) {
           return new AlertDialog(
-            title: new Text("Import portfolio JSON?"),
-            content: new Text("This will permanently overwrite current portfolio."),
+            title: new Text("Import Portfolio?"),
+            content: new Text("This will permanently overwrite current portfolio and transactions."),
             actions: <Widget>[
               new FlatButton(onPressed: () async {
                 portfolioMap = newPortfolioMap;
@@ -301,10 +304,8 @@ class ImportPageState extends State<ImportPage> {
         body: new SingleChildScrollView(
           child: new Column(
             children: <Widget>[
-              new Padding(padding: const EdgeInsets.symmetric(vertical: 2.0)),
               new Container(
-                margin: const EdgeInsets.all(4.0),
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(10.0),
                 child: new TextField(
                   controller: _importController,
                   autofocus: true,
@@ -316,7 +317,7 @@ class ImportPageState extends State<ImportPage> {
                       borderSide: new BorderSide(color: Theme.of(context).accentColor, width: 2.0)
                     ),
                     border: new OutlineInputBorder(),
-                    hintText: "Portfolio JSON"
+                    hintText: "Enter Portfolio JSON"
                   ),
                   onChanged: _checkImport,
                 ),
