@@ -189,50 +189,47 @@ class Sparkline extends StatelessWidget {
       maxHeight: fallbackHeight,
       child: new CustomPaint(
         size: Size.infinite,
-        painter: new _SparklinePainter(
-          data,
-          lineWidth: lineWidth,
-          lineColor: lineColor,
-          lineGradient: lineGradient,
-          sharpCorners: sharpCorners,
-          fillMode: fillMode,
-          fillColor: fillColor,
-          fillGradient: fillGradient,
-          pointsMode: pointsMode,
-          pointSize: pointSize,
-          pointColor: pointColor,
-          enableGridLines: enableGridLines,
-          gridLineColor: gridLineColor,
-          gridLineAmount: gridLineAmount,
-          gridLineLabelColor: gridLineLabelColor,
-          gridLineWidth: gridLineWidth,
-          labelPrefix: labelPrefix
-        ),
+        painter: new _SparklinePainter(data,
+            lineWidth: lineWidth,
+            lineColor: lineColor,
+            lineGradient: lineGradient,
+            sharpCorners: sharpCorners,
+            fillMode: fillMode,
+            fillColor: fillColor,
+            fillGradient: fillGradient,
+            pointsMode: pointsMode,
+            pointSize: pointSize,
+            pointColor: pointColor,
+            enableGridLines: enableGridLines,
+            gridLineColor: gridLineColor,
+            gridLineAmount: gridLineAmount,
+            gridLineLabelColor: gridLineLabelColor,
+            gridLineWidth: gridLineWidth,
+            labelPrefix: labelPrefix),
       ),
     );
   }
 }
 
 class _SparklinePainter extends CustomPainter {
-  _SparklinePainter(
-    this.dataPoints, {
-    @required this.lineWidth,
-    @required this.lineColor,
-    this.lineGradient,
-    @required this.sharpCorners,
-    @required this.fillMode,
-    @required this.fillColor,
-    this.fillGradient,
-    @required this.pointsMode,
-    @required this.pointSize,
-    @required this.pointColor,
-    @required this.enableGridLines,
-    this.gridLineColor,
-    this.gridLineAmount,
-    this.gridLineWidth,
-    this.gridLineLabelColor,
-    this.labelPrefix
-  })  : _max = dataPoints.reduce(math.max),
+  _SparklinePainter(this.dataPoints,
+      {@required this.lineWidth,
+      @required this.lineColor,
+      this.lineGradient,
+      @required this.sharpCorners,
+      @required this.fillMode,
+      @required this.fillColor,
+      this.fillGradient,
+      @required this.pointsMode,
+      @required this.pointSize,
+      @required this.pointColor,
+      @required this.enableGridLines,
+      this.gridLineColor,
+      this.gridLineAmount,
+      this.gridLineWidth,
+      this.gridLineLabelColor,
+      this.labelPrefix})
+      : _max = dataPoints.reduce(math.max),
         _min = dataPoints.reduce(math.min);
 
   final List<double> dataPoints;
@@ -276,9 +273,10 @@ class _SparklinePainter extends CustomPainter {
         } else if (gridLineValue < 1000) {
           gridLineText = gridLineValue.toStringAsFixed(2);
         } else {
-          gridLineText = gridLineValue.round().toString().replaceAllMapped(new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
+          gridLineText = gridLineValue.round().toString().replaceAllMapped(
+              new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+              (Match m) => "${m[1]},");
         }
-
 
         gridLineTextPainters.add(new TextPainter(
             text: new TextSpan(
@@ -335,8 +333,6 @@ class _SparklinePainter extends CustomPainter {
       double x = i * widthNormalizer + lineWidth / 2;
       double y =
           height - (dataPoints[i] - _min) * heightNormalizer + lineWidth / 2;
-
-
 
       if (pointsMode == PointsMode.all) {
         points.add(new Offset(x, y));

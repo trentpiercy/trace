@@ -9,14 +9,13 @@ import 'package:path_provider/path_provider.dart';
 import 'main.dart';
 
 class SettingsPage extends StatefulWidget {
-  SettingsPage({
-    this.savePreferences,
-    this.toggleTheme,
-    this.darkEnabled,
-    this.themeMode,
-    this.switchOLED,
-    this.darkOLED
-  });
+  SettingsPage(
+      {this.savePreferences,
+      this.toggleTheme,
+      this.darkEnabled,
+      this.themeMode,
+      this.switchOLED,
+      this.darkOLED});
   final Function savePreferences;
   final Function toggleTheme;
   final bool darkEnabled;
@@ -28,30 +27,32 @@ class SettingsPage extends StatefulWidget {
   SettingsPageState createState() => new SettingsPageState();
 }
 
-class SettingsPageState extends State<SettingsPage>{
+class SettingsPageState extends State<SettingsPage> {
   _confirmDeletePortfolio() {
     showDialog(
-      context: context,
-      builder: (context) {
-        return new AlertDialog(
-          title: new Text("Clear Portfolio?"),
-          content: new Text("This will permanently delete all transactions."),
-          actions: <Widget>[
-            new FlatButton(onPressed: () async {
-              await _deletePortfolio();
-              Navigator.of(context).pop();
-              }, child: new Text("Delete")),
-            new FlatButton(onPressed: () => Navigator.of(context).pop(), child: new Text("Cancel"))
-          ],
-        );
-      }
-    );
+        context: context,
+        builder: (context) {
+          return new AlertDialog(
+            title: new Text("Clear Portfolio?"),
+            content: new Text("This will permanently delete all transactions."),
+            actions: <Widget>[
+              new FlatButton(
+                  onPressed: () async {
+                    await _deletePortfolio();
+                    Navigator.of(context).pop();
+                  },
+                  child: new Text("Delete")),
+              new FlatButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: new Text("Cancel"))
+            ],
+          );
+        });
   }
 
   Future<Null> _deletePortfolio() async {
     getApplicationDocumentsDirectory().then((Directory directory) {
       File jsonFile = new File(directory.path + "/portfolio.json");
-      print("DELETING PORTFOLIO...");
       jsonFile.delete();
       portfolioMap = {};
     });
@@ -60,9 +61,8 @@ class SettingsPageState extends State<SettingsPage>{
   _exportPortfolio() {
     String text = json.encode(portfolioMap);
     GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-    Navigator.of(context).push(
-      new MaterialPageRoute(builder: (context) {
-        return new Scaffold(
+    Navigator.of(context).push(new MaterialPageRoute(builder: (context) {
+      return new Scaffold(
           key: _scaffoldKey,
           appBar: new PreferredSize(
             preferredSize: const Size.fromHeight(appBarHeight),
@@ -73,32 +73,27 @@ class SettingsPageState extends State<SettingsPage>{
             ),
           ),
           body: new SingleChildScrollView(
-            child: new InkWell(
-              onTap: () {
-                Clipboard.setData(new ClipboardData(text: text));
-                _scaffoldKey.currentState.showSnackBar(
-                    new SnackBar(
-                      backgroundColor: Theme.of(context).indicatorColor,
-                      content: new Text("Copied to Clipboard!")
-                    )
-                );
-              },
-              child: new Container(
-                  padding: const EdgeInsets.all(10.0),
-                  child: new Text(text,
-                      style: Theme.of(context).textTheme.body1.apply(fontSizeFactor: 1.1))
-              ),
-            )
-          )
-        );
-      })
-    );
+              child: new InkWell(
+            onTap: () {
+              Clipboard.setData(new ClipboardData(text: text));
+              _scaffoldKey.currentState.showSnackBar(new SnackBar(
+                  backgroundColor: Theme.of(context).indicatorColor,
+                  content: new Text("Copied to Clipboard!")));
+            },
+            child: new Container(
+                padding: const EdgeInsets.all(10.0),
+                child: new Text(text,
+                    style: Theme.of(context)
+                        .textTheme
+                        .body1
+                        .apply(fontSizeFactor: 1.1))),
+          )));
+    }));
   }
 
   _showImportPage() {
-    Navigator.of(context).push(
-      new MaterialPageRoute(builder: (context) => new ImportPage())
-    );
+    Navigator.of(context)
+        .push(new MaterialPageRoute(builder: (context) => new ImportPage()));
   }
 
   _launchUrl(url) async {
@@ -112,51 +107,53 @@ class SettingsPageState extends State<SettingsPage>{
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        appBar: new PreferredSize(
-          preferredSize: const Size.fromHeight(appBarHeight),
-          child: new AppBar(
-            backgroundColor: Theme.of(context).primaryColor,
-            titleSpacing: 0.0,
-            elevation: appBarElevation,
-            title: new Text("Settings", style: Theme.of(context).textTheme.title),
-          ),
+      appBar: new PreferredSize(
+        preferredSize: const Size.fromHeight(appBarHeight),
+        child: new AppBar(
+          backgroundColor: Theme.of(context).primaryColor,
+          titleSpacing: 0.0,
+          elevation: appBarElevation,
+          title: new Text("Settings", style: Theme.of(context).textTheme.title),
         ),
-        body: new ListView(
-          children: <Widget>[
-            new Container(
-              padding: const EdgeInsets.all(10.0),
-              child: new Text("Preferences", style: Theme.of(context).textTheme.body2),
-            ),
-            new Container(
+      ),
+      body: new ListView(
+        children: <Widget>[
+          new Container(
+            padding: const EdgeInsets.all(10.0),
+            child: new Text("Preferences",
+                style: Theme.of(context).textTheme.body2),
+          ),
+          new Container(
               color: Theme.of(context).cardColor,
               child: new ListTile(
                 onTap: widget.toggleTheme,
-                leading: new Icon(widget.darkEnabled ? Icons.brightness_3 : Icons.brightness_7),
+                leading: new Icon(widget.darkEnabled
+                    ? Icons.brightness_3
+                    : Icons.brightness_7),
                 subtitle: new Text(widget.themeMode),
                 title: new Text("Theme"),
-              )
-            ),
-            new Container(
-              color: Theme.of(context).cardColor,
-              child: new ListTile(
-                leading: new Icon(Icons.opacity),
-                title: new Text("OLED Dark Mode"),
-                trailing: new Switch(
-                  activeColor: Theme.of(context).accentColor,
-                  value: widget.darkOLED,
-                  onChanged: (onOff) {
-                    widget.switchOLED(state: onOff);
-                  },
-                ),
-                onTap: widget.switchOLED,
+              )),
+          new Container(
+            color: Theme.of(context).cardColor,
+            child: new ListTile(
+              leading: new Icon(Icons.opacity),
+              title: new Text("OLED Dark Mode"),
+              trailing: new Switch(
+                activeColor: Theme.of(context).accentColor,
+                value: widget.darkOLED,
+                onChanged: (onOff) {
+                  widget.switchOLED(state: onOff);
+                },
               ),
+              onTap: widget.switchOLED,
             ),
-            new Container(
-              color: Theme.of(context).cardColor,
-              child: new ListTile(
-                leading: new Icon(Icons.short_text),
-                title: new Text("Abbreviate Numbers"),
-                trailing: new Switch(
+          ),
+          new Container(
+            color: Theme.of(context).cardColor,
+            child: new ListTile(
+              leading: new Icon(Icons.short_text),
+              title: new Text("Abbreviate Numbers"),
+              trailing: new Switch(
                   activeColor: Theme.of(context).accentColor,
                   value: shortenOn,
                   onChanged: (onOff) {
@@ -164,63 +161,63 @@ class SettingsPageState extends State<SettingsPage>{
                       shortenOn = onOff;
                     });
                     widget.savePreferences();
-                  }
-                ),
-                onTap: () {
-                  setState(() {
-                    shortenOn = !shortenOn;
-                  });
-                  widget.savePreferences();
-                },
-              ),
+                  }),
+              onTap: () {
+                setState(() {
+                  shortenOn = !shortenOn;
+                });
+                widget.savePreferences();
+              },
             ),
-            new Container(
-              padding: const EdgeInsets.all(10.0),
-              child: new Text("Debug", style: Theme.of(context).textTheme.body2),
+          ),
+          new Container(
+            padding: const EdgeInsets.all(10.0),
+            child: new Text("Debug", style: Theme.of(context).textTheme.body2),
+          ),
+          new Container(
+            color: Theme.of(context).cardColor,
+            child: new ListTile(
+              title: new Text("Export Portfolio"),
+              leading: new Icon(Icons.file_upload),
+              onTap: _exportPortfolio,
             ),
-            new Container(
-              color: Theme.of(context).cardColor,
-              child: new ListTile(
-                title: new Text("Export Portfolio"),
-                leading: new Icon(Icons.file_upload),
-                onTap: _exportPortfolio,
-              ),
+          ),
+          new Container(
+            color: Theme.of(context).cardColor,
+            child: new ListTile(
+              title: new Text("Import Portfolio"),
+              leading: new Icon(Icons.file_download),
+              onTap: _showImportPage,
             ),
-            new Container(
-              color: Theme.of(context).cardColor,
-              child: new ListTile(
-                title: new Text("Import Portfolio"),
-                leading: new Icon(Icons.file_download),
-                onTap: _showImportPage,
-              ),
+          ),
+          new Container(
+            color: Theme.of(context).cardColor,
+            child: new ListTile(
+              title: new Text("Clear Portfolio"),
+              leading: new Icon(Icons.delete),
+              onTap: _confirmDeletePortfolio,
             ),
-            new Container(
-              color: Theme.of(context).cardColor,
-              child: new ListTile(
-                title: new Text("Clear Portfolio"),
-                leading: new Icon(Icons.delete),
-                onTap: _confirmDeletePortfolio,
-              ),
+          ),
+          new Container(
+            color: Theme.of(context).cardColor,
+            child: new ListTile(
+              title: new Text("Version 0.0.1"),
+              subtitle: new Text("github.com/trentpiercy/trace"),
+              leading: new Icon(Icons.info_outline),
+              onTap: () => _launchUrl("https://github.com/trentpiercy/trace"),
             ),
-            new Container(
-              color: Theme.of(context).cardColor,
-              child: new ListTile(
-                title: new Text("Version 0.0.1"),
-                subtitle: new Text("github.com/trentpiercy/trace"),
-                leading: new Icon(Icons.info_outline),
-                onTap: () => _launchUrl("https://github.com/trentpiercy/trace"),
-              ),
+          ),
+          new Container(
+            color: Theme.of(context).cardColor,
+            child: new ListTile(
+              title: new Text("Issues & Feature Requests"),
+              leading: new Icon(Icons.bug_report),
+              onTap: () =>
+                  _launchUrl("https://github.com/trentpiercy/trace/issues"),
             ),
-            new Container(
-              color: Theme.of(context).cardColor,
-              child: new ListTile(
-                title: new Text("Issues & Feature Requests"),
-                leading: new Icon(Icons.help_outline),
-                onTap: () => _launchUrl("https://github.com/trentpiercy/trace/issues"),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -229,6 +226,7 @@ class ImportPage extends StatefulWidget {
   @override
   ImportPageState createState() => new ImportPageState();
 }
+
 class ImportPageState extends State<ImportPage> {
   TextEditingController _importController = new TextEditingController();
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -252,7 +250,9 @@ class ImportPageState extends State<ImportPage> {
           throw "failed at emtpy transaction list";
         }
         for (Map transaction in transactions) {
-          if ((transaction.keys.toList()..sort()).toString() != ["exchange", "notes", "price_usd", "quantity", "time_epoch"].toString()) {
+          if ((transaction.keys.toList()..sort()).toString() !=
+              ["exchange", "notes", "price_usd", "quantity", "time_epoch"]
+                  .toString()) {
             throw "failed formatting check at transaction keys";
           }
           for (String K in transaction.keys) {
@@ -268,7 +268,7 @@ class ImportPageState extends State<ImportPage> {
         textColor = Theme.of(context).textTheme.body1.color;
       });
     } catch (e) {
-      print("$e");
+      print("Invalid JSON: $e");
       newPortfolioMap = null;
       setState(() {
         textColor = Colors.red;
@@ -282,24 +282,29 @@ class ImportPageState extends State<ImportPage> {
         builder: (context) {
           return new AlertDialog(
             title: new Text("Import Portfolio?"),
-            content: new Text("This will permanently overwrite current portfolio and transactions."),
+            content: new Text(
+                "This will permanently overwrite current portfolio and transactions."),
             actions: <Widget>[
-              new FlatButton(onPressed: () async {
-                portfolioMap = newPortfolioMap;
-                await getApplicationDocumentsDirectory().then((Directory directory) {
-                  File jsonFile = new File(directory.path + "/portfolio.json");
-                  jsonFile.writeAsStringSync(json.encode(portfolioMap));
-                });
-                Navigator.of(context).pop();
-                _scaffoldKey.currentState.showSnackBar(
-                    new SnackBar(content: new Text("Success!"))
-                );
-              }, child: new Text("Import")),
-              new FlatButton(onPressed: () => Navigator.of(context).pop(), child: new Text("Cancel"))
+              new FlatButton(
+                  onPressed: () async {
+                    portfolioMap = newPortfolioMap;
+                    await getApplicationDocumentsDirectory()
+                        .then((Directory directory) {
+                      File jsonFile =
+                          new File(directory.path + "/portfolio.json");
+                      jsonFile.writeAsStringSync(json.encode(portfolioMap));
+                    });
+                    Navigator.of(context).pop();
+                    _scaffoldKey.currentState.showSnackBar(
+                        new SnackBar(content: new Text("Success!")));
+                  },
+                  child: new Text("Import")),
+              new FlatButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: new Text("Cancel"))
             ],
           );
-        }
-    );
+        });
   }
 
   @override
@@ -331,27 +336,30 @@ class ImportPageState extends State<ImportPage> {
                   controller: _importController,
                   autofocus: true,
                   maxLines: null,
-                  style: Theme.of(context).textTheme.body1.apply(
-                      color: textColor, fontSizeFactor: 1.1),
+                  style: Theme.of(context)
+                      .textTheme
+                      .body1
+                      .apply(color: textColor, fontSizeFactor: 1.1),
                   decoration: new InputDecoration(
-                    focusedBorder: new OutlineInputBorder(
-                      borderSide: new BorderSide(color: Theme.of(context).accentColor, width: 2.0)
-                    ),
-                    border: new OutlineInputBorder(),
-                    hintText: "Enter Portfolio JSON"
-                  ),
+                      focusedBorder: new OutlineInputBorder(
+                          borderSide: new BorderSide(
+                              color: Theme.of(context).accentColor,
+                              width: 2.0)),
+                      border: new OutlineInputBorder(),
+                      hintText: "Enter Portfolio JSON"),
                   onChanged: _checkImport,
                 ),
               ),
               new RaisedButton(
                 onPressed: textColor != Colors.red ? _importPortfolio : null,
-                child: new Text("Import", style: Theme.of(context).textTheme.body2.apply(
-                  color: Theme.of(context).iconTheme.color
-                )),
+                child: new Text("Import",
+                    style: Theme.of(context)
+                        .textTheme
+                        .body2
+                        .apply(color: Theme.of(context).iconTheme.color)),
               )
             ],
           ),
-        )
-    );
+        ));
   }
 }

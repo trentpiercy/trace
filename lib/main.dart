@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:quick_actions/quick_actions.dart';
 
 import 'tabs.dart';
 import 'settings_page.dart';
@@ -28,29 +27,28 @@ Future<Null> getMarketData() async {
   _pullData(start, limit) async {
     var response = await http.get(
         Uri.encodeFull("https://api.coinmarketcap.com/v2/ticker/" +
-            "?start=" + start.toString() +
-            "&limit=" + limit.toString()),
-        headers: {"Accept": "application/json"}
-    );
+            "?start=" +
+            start.toString() +
+            "&limit=" +
+            limit.toString()),
+        headers: {"Accept": "application/json"});
 
     Map rawMarketListData = new JsonDecoder().convert(response.body)["data"];
     rawMarketListData.forEach((key, value) => tempMarketListData.add(value));
 
-    print("pulled market data [$start - $limit]");
-
     if (tempMarketListData.length == numberOfCoins) {
-      print("\$\$\$\$ FINISHED GETTING NEW MARKET DATA");
       marketListData = tempMarketListData;
       getApplicationDocumentsDirectory().then((Directory directory) async {
         File jsonFile = new File(directory.path + "/marketData.json");
         jsonFile.writeAsStringSync(json.encode(marketListData));
       });
+      print("got new market data");
     }
   }
 
-  for (int i = 0; i <= numberOfCoins/100 - 1; i++) {
-    int start = i*100 + 1;
-    int limit = i*100 + 100;
+  for (int i = 0; i <= numberOfCoins / 100 - 1; i++) {
+    int start = i * 100 + 1;
+    int limit = i * 100 + 100;
     _pullData(start, limit);
   }
 }
@@ -65,7 +63,9 @@ void main() async {
       jsonFile.writeAsStringSync("{}");
       portfolioMap = {};
     }
-    if (portfolioMap == null) {portfolioMap = {};}
+    if (portfolioMap == null) {
+      portfolioMap = {};
+    }
     jsonFile = new File(directory.path + "/marketData.json");
     if (jsonFile.existsSync()) {
       marketListData = json.decode(jsonFile.readAsStringSync());
@@ -79,7 +79,8 @@ void main() async {
   String themeMode = "Automatic";
   bool darkOLED = false;
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  if (prefs.getBool("shortenOn") != null && prefs.getString("themeMode") != null) {
+  if (prefs.getBool("shortenOn") != null &&
+      prefs.getString("themeMode") != null) {
     shortenOn = prefs.getBool("shortenOn");
     themeMode = prefs.getString("themeMode");
     darkOLED = prefs.getBool("darkOLED");
@@ -90,26 +91,34 @@ void main() async {
 
 numCommaParse(numString) {
   if (shortenOn) {
-    String str = num.parse(numString).round().toString().replaceAllMapped(new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
+    String str = num.parse(numString).round().toString().replaceAllMapped(
+        new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
     List<String> strList = str.split(",");
 
     if (strList.length > 3) {
-      return strList[0] + "." + strList[1].substring(0, 4-strList[0].length)+"B";
+      return strList[0] +
+          "." +
+          strList[1].substring(0, 4 - strList[0].length) +
+          "B";
     } else if (strList.length > 2) {
-      return strList[0] +"." + strList[1].substring(0, 4-strList[0].length)+"M";
+      return strList[0] +
+          "." +
+          strList[1].substring(0, 4 - strList[0].length) +
+          "M";
     } else {
-      return num.parse(numString).toString().replaceAllMapped(new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
+      return num.parse(numString).toString().replaceAllMapped(
+          new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
     }
   }
 
-  return num.parse(numString).toString().replaceAllMapped(new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
+  return num.parse(numString).toString().replaceAllMapped(
+      new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
 }
 
 normalizeNum(num input) {
   if (input >= 100000) {
-   return numCommaParse(input.round().toString());
-  }
-  else if (input >= 1000) {
+    return numCommaParse(input.round().toString());
+  } else if (input >= 1000) {
     return numCommaParse(input.toStringAsFixed(2));
   } else {
     return input.toStringAsFixed(6 - input.round().toString().length);
@@ -139,8 +148,6 @@ class TraceAppState extends State<TraceApp> {
   bool darkOLED;
 
   void savePreferences() async {
-    print("----- saving prefs");
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("themeMode", themeMode);
     prefs.setBool("shortenOn", shortenOn);
@@ -201,25 +208,21 @@ class TraceAppState extends State<TraceApp> {
     if (darkEnabled) {
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
           systemNavigationBarIconBrightness: Brightness.light,
-          systemNavigationBarColor: darkOLED ? darkThemeOLED.primaryColor : darkTheme.primaryColor
-      ));
+          systemNavigationBarColor:
+              darkOLED ? darkThemeOLED.primaryColor : darkTheme.primaryColor));
     } else {
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
           systemNavigationBarIconBrightness: Brightness.dark,
-          systemNavigationBarColor: lightTheme.primaryColor
-      ));
+          systemNavigationBarColor: lightTheme.primaryColor));
     }
   }
 
   final ThemeData lightTheme = new ThemeData(
     primarySwatch: Colors.purple,
-
     brightness: Brightness.light,
     accentColor: Colors.purpleAccent[100],
     primaryColor: Colors.white,
     primaryColorLight: Colors.purple[700],
-
-//    textSelectionColor: Colors.black,
     textSelectionHandleColor: Colors.purple[700],
     dividerColor: Colors.grey[200],
     bottomAppBarColor: Colors.grey[200],
@@ -232,13 +235,10 @@ class TraceAppState extends State<TraceApp> {
 
   final ThemeData darkTheme = new ThemeData(
     primarySwatch: Colors.purple,
-
     brightness: Brightness.dark,
     accentColor: Colors.deepPurpleAccent[100],
     primaryColor: Color.fromRGBO(50, 50, 57, 1.0),
     primaryColorLight: Colors.deepPurpleAccent[100],
-
-//    textSelectionColor: Colors.white,
     textSelectionHandleColor: Colors.deepPurpleAccent[100],
     buttonColor: Colors.deepPurpleAccent[100],
     iconTheme: new IconThemeData(color: Colors.white),
@@ -251,19 +251,16 @@ class TraceAppState extends State<TraceApp> {
   final ThemeData darkThemeOLED = new ThemeData(
     brightness: Brightness.dark,
     accentColor: Colors.deepPurpleAccent[100],
-
     primaryColor: Color.fromRGBO(5, 5, 5, 1.0),
     backgroundColor: Colors.black,
     canvasColor: Colors.black,
     primaryColorLight: Colors.deepPurple[300],
     buttonColor: Colors.deepPurpleAccent[100],
     accentIconTheme: new IconThemeData(color: Colors.deepPurple[300]),
-
     cardColor: Color.fromRGBO(16, 16, 16, 1.0),
     dividerColor: Color.fromRGBO(20, 20, 20, 1.0),
     bottomAppBarColor: Color.fromRGBO(19, 19, 19, 1.0),
     dialogBackgroundColor: Colors.black,
-
     textSelectionHandleColor: Colors.deepPurpleAccent[100],
     iconTheme: new IconThemeData(color: Colors.white),
   );
@@ -278,9 +275,10 @@ class TraceAppState extends State<TraceApp> {
 
   @override
   Widget build(BuildContext context) {
-    print("BUILT MAIN APP ==========");
     return new MaterialApp(
-      color: darkEnabled ? darkOLED ? darkThemeOLED.primaryColor : darkTheme.primaryColor : lightTheme.primaryColor,
+      color: darkEnabled
+          ? darkOLED ? darkThemeOLED.primaryColor : darkTheme.primaryColor
+          : lightTheme.primaryColor,
       title: "Trace",
       home: new Tabs(
         savePreferences: savePreferences,
@@ -292,15 +290,15 @@ class TraceAppState extends State<TraceApp> {
         darkOLED: darkOLED,
       ),
       theme: darkEnabled ? darkOLED ? darkThemeOLED : darkTheme : lightTheme,
-      routes: <String, WidgetBuilder> {
+      routes: <String, WidgetBuilder>{
         "/settings": (BuildContext context) => new SettingsPage(
-          savePreferences: savePreferences,
-          toggleTheme: toggleTheme,
-          darkEnabled: darkEnabled,
-          themeMode: themeMode,
-          switchOLED: switchOLED,
-          darkOLED: darkOLED,
-        ),
+              savePreferences: savePreferences,
+              toggleTheme: toggleTheme,
+              darkEnabled: darkEnabled,
+              themeMode: themeMode,
+              switchOLED: switchOLED,
+              darkOLED: darkOLED,
+            ),
       },
     );
   }

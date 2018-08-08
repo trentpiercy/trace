@@ -9,13 +9,13 @@ import '../main.dart';
 
 class TransactionSheet extends StatefulWidget {
   TransactionSheet(
-      this.loadPortfolio,
-      this.marketListData,
-      {Key key,
-        this.editMode: false,
-        this.snapshot,
-        this.symbol,
-      }) : super(key: key);
+    this.loadPortfolio,
+    this.marketListData, {
+    Key key,
+    this.editMode: false,
+    this.snapshot,
+    this.symbol,
+  }) : super(key: key);
 
   final Function loadPortfolio;
   final List marketListData;
@@ -54,7 +54,7 @@ class TransactionSheetState extends State<TransactionSheet> {
   Color quantityTextColor;
   num quantity;
 
-  Color priceTextColor ;
+  Color priceTextColor;
   num price;
 
   List exchangesList;
@@ -84,8 +84,7 @@ class TransactionSheetState extends State<TransactionSheet> {
         context: context,
         initialDate: new DateTime.now(),
         firstDate: new DateTime(1950),
-        lastDate: new DateTime.now()
-    );
+        lastDate: new DateTime.now());
     if (pick != null) {
       setState(() {
         pickedDate = pick;
@@ -96,9 +95,7 @@ class TransactionSheetState extends State<TransactionSheet> {
 
   Future<Null> _selectTime() async {
     TimeOfDay pick = await showTimePicker(
-        context: context,
-        initialTime: new TimeOfDay.now()
-    );
+        context: context, initialTime: new TimeOfDay.now());
     if (pick != null) {
       setState(() {
         pickedTime = pick;
@@ -108,17 +105,9 @@ class TransactionSheetState extends State<TransactionSheet> {
   }
 
   _makeEpoch() {
-    epochDate = new DateTime(
-        pickedDate.year,
-        pickedDate.month,
-        pickedDate.day,
-        pickedTime.hour,
-        pickedTime.minute
-    ).millisecondsSinceEpoch;
-
-    print("epoch ms timestamp");
-    print(epochDate.toString());
-
+    epochDate = new DateTime(pickedDate.year, pickedDate.month, pickedDate.day,
+            pickedTime.hour, pickedTime.minute)
+        .millisecondsSinceEpoch;
   }
 
   _checkValidSymbol(String inputSymbol) async {
@@ -145,7 +134,6 @@ class TransactionSheetState extends State<TransactionSheet> {
       _exchangeController.text = "Aggregated";
       symbolTextColor = validColor;
       _checkValidQuantity(_quantityController.text);
-
     } else {
       symbol = null;
       exchangesList = null;
@@ -161,7 +149,8 @@ class TransactionSheetState extends State<TransactionSheet> {
   _checkValidQuantity(String quantityString) {
     try {
       quantity = num.parse(quantityString);
-      if (quantity <= 0 || radioValue == 1 && totalQuantities[symbol] - quantity < 0) {
+      if (quantity <= 0 ||
+          radioValue == 1 && totalQuantities[symbol] - quantity < 0) {
         quantity = null;
         setState(() {
           quantityTextColor = errorColor;
@@ -180,7 +169,6 @@ class TransactionSheetState extends State<TransactionSheet> {
   }
 
   _checkValidPrice(String priceString) {
-    print(portfolioDisplay);
     try {
       price = num.parse(priceString);
       if (price.isNegative) {
@@ -202,7 +190,10 @@ class TransactionSheetState extends State<TransactionSheet> {
   }
 
   _handleSave() async {
-    if (symbol != null && quantity != null && exchange != null && price != null) {
+    if (symbol != null &&
+        quantity != null &&
+        exchange != null &&
+        price != null) {
       print("WRITING TO JSON...");
 
       await getApplicationDocumentsDirectory().then((Directory directory) {
@@ -213,15 +204,17 @@ class TransactionSheetState extends State<TransactionSheet> {
           }
 
           Map newEntry = {
-            "quantity":quantity,
-            "price_usd":price,
-            "exchange":exchange,
-            "time_epoch":epochDate,
-            "notes":_notesController.text
+            "quantity": quantity,
+            "price_usd": price,
+            "exchange": exchange,
+            "time_epoch": epochDate,
+            "notes": _notesController.text
           };
 
           Map jsonContent = json.decode(jsonFile.readAsStringSync());
-          if (jsonContent == null) {jsonContent = {};}
+          if (jsonContent == null) {
+            jsonContent = {};
+          }
 
           try {
             jsonContent[symbol].add(newEntry);
@@ -248,7 +241,6 @@ class TransactionSheetState extends State<TransactionSheet> {
 
           Navigator.of(context).pop();
         } else {
-          print("FAILED file does not exist");
           jsonFile.createSync();
           jsonFile.writeAsStringSync("{}");
         }
@@ -271,7 +263,7 @@ class TransactionSheetState extends State<TransactionSheet> {
           }
           index += 1;
         }
-        
+
         if (jsonContent[widget.symbol].isEmpty) {
           jsonContent.remove(widget.symbol);
         }
@@ -280,31 +272,27 @@ class TransactionSheetState extends State<TransactionSheet> {
         Navigator.of(context).pop();
         jsonFile.writeAsStringSync(json.encode(jsonContent));
 
-        Scaffold.of(context).showSnackBar(
-            new SnackBar(
-              duration: new Duration(seconds: 5),
-              content: new Text("Transaction Deleted."),
-              action: new SnackBarAction(
-                label: "Undo",
-                onPressed: () {
-                  if (jsonContent[widget.symbol] != null) {
-                    jsonContent[widget.symbol].add(widget.snapshot);
-                  } else {
-                    jsonContent[widget.symbol] = [];
-                    jsonContent[widget.symbol].add(widget.snapshot);
-                  }
-                  
-                  jsonFile.writeAsStringSync(json.encode(jsonContent));
+        Scaffold.of(context).showSnackBar(new SnackBar(
+          duration: new Duration(seconds: 5),
+          content: new Text("Transaction Deleted."),
+          action: new SnackBarAction(
+            label: "Undo",
+            onPressed: () {
+              if (jsonContent[widget.symbol] != null) {
+                jsonContent[widget.symbol].add(widget.snapshot);
+              } else {
+                jsonContent[widget.symbol] = [];
+                jsonContent[widget.symbol].add(widget.snapshot);
+              }
 
-                  portfolioMap = jsonContent;
+              jsonFile.writeAsStringSync(json.encode(jsonContent));
 
-                  print("UNDID");
+              portfolioMap = jsonContent;
 
-                  widget.loadPortfolio();
-                },
-              ),
-            )
-        );
+              widget.loadPortfolio();
+            },
+          ),
+        ));
       }
     });
     widget.loadPortfolio();
@@ -312,17 +300,16 @@ class TransactionSheetState extends State<TransactionSheet> {
 
   Future<Null> _getExchangeList() async {
     var response = await http.get(
-        Uri.encodeFull("https://min-api.cryptocompare.com/data/top/exchanges?fsym="+symbol+"&tsym=USD&limit=100"),
-        headers: {"Accept": "application/json"}
-    );
+        Uri.encodeFull(
+            "https://min-api.cryptocompare.com/data/top/exchanges?fsym=" +
+                symbol +
+                "&tsym=USD&limit=100"),
+        headers: {"Accept": "application/json"});
 
     exchangesList = [];
 
     List exchangeData = new JsonDecoder().convert(response.body)["Data"];
     exchangeData.forEach((value) => exchangesList.add(value["exchange"]));
-
-    print("exchanges:");
-    print(exchangesList);
   }
 
   _initEditMode() {
@@ -348,13 +335,13 @@ class TransactionSheetState extends State<TransactionSheet> {
 
     _notesController.text = widget.snapshot["notes"];
 
-    pickedDate = new DateTime.fromMillisecondsSinceEpoch(widget.snapshot["time_epoch"]);
+    pickedDate =
+        new DateTime.fromMillisecondsSinceEpoch(widget.snapshot["time_epoch"]);
     pickedTime = new TimeOfDay.fromDateTime(pickedDate);
   }
 
   @override
   void initState() {
-    print("INIT transaction sheet");
     super.initState();
     symbolTextColor = errorColor;
     quantityTextColor = errorColor;
@@ -372,10 +359,12 @@ class TransactionSheetState extends State<TransactionSheet> {
     validColor = Theme.of(context).textTheme.body2.color;
     return new Container(
         decoration: new BoxDecoration(
-          border: new Border(top: new BorderSide(color: Theme.of(context).bottomAppBarColor)),
+          border: new Border(
+              top: new BorderSide(color: Theme.of(context).bottomAppBarColor)),
           color: Theme.of(context).primaryColor,
         ),
-        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, right: 16.0, left: 16.0),
+        padding: const EdgeInsets.only(
+            top: 8.0, bottom: 8.0, right: 16.0, left: 16.0),
         child: new Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -389,33 +378,53 @@ class TransactionSheetState extends State<TransactionSheet> {
 //                    ),
                     new Row(
                       children: <Widget>[
-                        new Text("Buy", style: Theme.of(context).textTheme.caption),
-                        new Radio(value: 0, groupValue: radioValue, onChanged: _handleRadioValueChange,
+                        new Text("Buy",
+                            style: Theme.of(context).textTheme.caption),
+                        new Radio(
+                            value: 0,
+                            groupValue: radioValue,
+                            onChanged: _handleRadioValueChange,
                             activeColor: Theme.of(context).buttonColor),
-                        new Text("Sell", style: Theme.of(context).textTheme.caption),
-                        new Radio(value: 1, groupValue: radioValue, onChanged: _handleRadioValueChange,
+                        new Text("Sell",
+                            style: Theme.of(context).textTheme.caption),
+                        new Radio(
+                            value: 1,
+                            groupValue: radioValue,
+                            onChanged: _handleRadioValueChange,
                             activeColor: Theme.of(context).buttonColor),
-                        new Padding(padding: const EdgeInsets.symmetric(horizontal: 6.0)),
+                        new Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 6.0)),
                         new GestureDetector(
                           onTap: () => _selectDate(),
                           child: new Text(
-                              pickedDate.month.toString()
-                                  + "/" + pickedDate.day.toString()
-                                  + "/" + pickedDate.year.toString().substring(2),
-                              style: Theme.of(context).textTheme.button
-                          ),
+                              pickedDate.month.toString() +
+                                  "/" +
+                                  pickedDate.day.toString() +
+                                  "/" +
+                                  pickedDate.year.toString().substring(2),
+                              style: Theme.of(context).textTheme.button),
                         ),
-                        new Padding(padding: const EdgeInsets.symmetric(horizontal: 4.0)),
+                        new Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 4.0)),
                         new GestureDetector(
                           onTap: () => _selectTime(),
                           child: new Text(
-                            (pickedTime.hourOfPeriod == 0 ? "12" : pickedTime.hourOfPeriod.toString()) + ":" +
-                                (pickedTime.minute > 9 ? pickedTime.minute.toString() : "0" + pickedTime.minute.toString())
-                                + (pickedTime.hour >= 12 ? "PM" : "AM"),
+                            (pickedTime.hourOfPeriod == 0
+                                    ? "12"
+                                    : pickedTime.hourOfPeriod.toString()) +
+                                ":" +
+                                (pickedTime.minute > 9
+                                    ? pickedTime.minute.toString()
+                                    : "0" + pickedTime.minute.toString()) +
+                                (pickedTime.hour >= 12 ? "PM" : "AM"),
                             style: Theme.of(context).textTheme.button,
                           ),
                         ),
-                        new Padding(padding: const EdgeInsets.symmetric(horizontal: 6.0)),
+                        new Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 6.0)),
                       ],
                     ),
                     new Row(
@@ -430,8 +439,12 @@ class TransactionSheetState extends State<TransactionSheet> {
                             autocorrect: false,
                             textCapitalization: TextCapitalization.characters,
                             onChanged: _checkValidSymbol,
-                            onSubmitted: (_) => FocusScope.of(context).requestFocus(_quantityFocusNode),
-                            style: Theme.of(context).textTheme.body2.apply(color: symbolTextColor),
+                            onSubmitted: (_) => FocusScope.of(context)
+                                .requestFocus(_quantityFocusNode),
+                            style: Theme.of(context)
+                                .textTheme
+                                .body2
+                                .apply(color: symbolTextColor),
                             decoration: new InputDecoration(
                               border: InputBorder.none,
                               hintText: "Symbol",
@@ -446,8 +459,12 @@ class TransactionSheetState extends State<TransactionSheet> {
                             controller: _quantityController,
                             autocorrect: false,
                             onChanged: _checkValidQuantity,
-                            onSubmitted: (_) => FocusScope.of(context).requestFocus(_priceFocusNode),
-                            style: Theme.of(context).textTheme.body2.apply(color: quantityTextColor),
+                            onSubmitted: (_) => FocusScope.of(context)
+                                .requestFocus(_priceFocusNode),
+                            style: Theme.of(context)
+                                .textTheme
+                                .body2
+                                .apply(color: quantityTextColor),
                             keyboardType: TextInputType.number,
                             decoration: new InputDecoration(
                               border: InputBorder.none,
@@ -456,22 +473,28 @@ class TransactionSheetState extends State<TransactionSheet> {
                           ),
                         ),
                         new Container(
-                          width: MediaQuery.of(context).size.width*0.3,
+                          width: MediaQuery.of(context).size.width * 0.3,
                           padding: const EdgeInsets.only(right: 4.0),
                           child: new TextField(
                             focusNode: _priceFocusNode,
                             controller: _priceController,
                             autocorrect: false,
                             onChanged: _checkValidPrice,
-                            onSubmitted: (_) => FocusScope.of(context).requestFocus(_notesFocusNode),
-                            style: Theme.of(context).textTheme.body2.apply(color: priceTextColor),
+                            onSubmitted: (_) => FocusScope.of(context)
+                                .requestFocus(_notesFocusNode),
+                            style: Theme.of(context)
+                                .textTheme
+                                .body2
+                                .apply(color: priceTextColor),
                             keyboardType: TextInputType.number,
                             decoration: new InputDecoration(
                                 border: InputBorder.none,
                                 hintText: "Price",
                                 prefixText: "\$",
-                                prefixStyle: Theme.of(context).textTheme.body2.apply(color: priceTextColor)
-                            ),
+                                prefixStyle: Theme.of(context)
+                                    .textTheme
+                                    .body2
+                                    .apply(color: priceTextColor)),
                           ),
                         )
                       ],
@@ -488,14 +511,14 @@ class TransactionSheetState extends State<TransactionSheet> {
                                   value: "CCCAGG",
                                 ),
                               ];
-                              if (exchangesList != null && exchangesList.isEmpty != true) {
+                              if (exchangesList != null &&
+                                  exchangesList.isEmpty != true) {
                                 options.add(new PopupMenuDivider());
-                                exchangesList.forEach((exchange) => options.add(
-                                    new PopupMenuItem(
-                                      child: new Text(exchange),
-                                      value: exchange,
-                                    )
-                                ));
+                                exchangesList.forEach(
+                                    (exchange) => options.add(new PopupMenuItem(
+                                          child: new Text(exchange),
+                                          value: exchange,
+                                        )));
                               }
                               return options;
                             },
@@ -507,64 +530,75 @@ class TransactionSheetState extends State<TransactionSheet> {
                                 } else {
                                   _exchangeController.text = selected;
                                 }
-                                FocusScope.of(context).requestFocus(_notesFocusNode);
+                                FocusScope.of(context)
+                                    .requestFocus(_notesFocusNode);
                               });
                             },
                             child: new Text(
-                              _exchangeController.text == "" ? "Exchange" : _exchangeController.text,
-                              style: Theme.of(context).textTheme.body2.apply(color:
-                              _exchangeController.text == "" ? Theme.of(context).hintColor : validColor
-                              ),
+                              _exchangeController.text == ""
+                                  ? "Exchange"
+                                  : _exchangeController.text,
+                              style: Theme.of(context).textTheme.body2.apply(
+                                  color: _exchangeController.text == ""
+                                      ? Theme.of(context).hintColor
+                                      : validColor),
                             ),
                           ),
                         ),
                         new Container(
-                          width: MediaQuery.of(context).size.width*0.50,
+                          width: MediaQuery.of(context).size.width * 0.50,
                           child: new TextField(
                             focusNode: _notesFocusNode,
                             controller: _notesController,
                             autocorrect: true,
                             textCapitalization: TextCapitalization.none,
-                            style: Theme.of(context).textTheme.body2.apply(color: validColor),
+                            style: Theme.of(context)
+                                .textTheme
+                                .body2
+                                .apply(color: validColor),
                             keyboardType: TextInputType.text,
                             decoration: new InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Notes"
-                            ),
+                                border: InputBorder.none, hintText: "Notes"),
                           ),
                         ),
                       ],
                     )
-                  ]
-              ),
+                  ]),
               new Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  widget.editMode ? new Container(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: new FloatingActionButton(
-                        child: Icon(Icons.delete),
-                        backgroundColor: Colors.red,
-                        foregroundColor: Theme.of(context).iconTheme.color,
-                        elevation: 2.0,
-                        onPressed: _deleteTransaction
-                    ),
-                  ) : new Container(),
+                  widget.editMode
+                      ? new Container(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: new FloatingActionButton(
+                              child: Icon(Icons.delete),
+                              backgroundColor: Colors.red,
+                              foregroundColor:
+                                  Theme.of(context).iconTheme.color,
+                              elevation: 2.0,
+                              onPressed: _deleteTransaction),
+                        )
+                      : new Container(),
                   new Container(
                     child: new FloatingActionButton(
                         child: Icon(Icons.check),
-                        elevation: symbol != null && quantity != null && exchange != null && price != null ?
-                        4.0 : 0.0,
-                        backgroundColor:
-                        symbol != null && quantity != null && exchange != null && price != null ?
-                        Colors.green : Theme.of(context).disabledColor,
+                        elevation: symbol != null &&
+                                quantity != null &&
+                                exchange != null &&
+                                price != null
+                            ? 4.0
+                            : 0.0,
+                        backgroundColor: symbol != null &&
+                                quantity != null &&
+                                exchange != null &&
+                                price != null
+                            ? Colors.green
+                            : Theme.of(context).disabledColor,
                         foregroundColor: Theme.of(context).iconTheme.color,
-                        onPressed: _handleSave
-                    ),
+                        onPressed: _handleSave),
                   )
                 ],
               )
-            ])
-    );
+            ]));
   }
 }
