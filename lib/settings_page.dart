@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'dart:convert';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -76,7 +77,10 @@ class SettingsPageState extends State<SettingsPage>{
               onTap: () {
                 Clipboard.setData(new ClipboardData(text: text));
                 _scaffoldKey.currentState.showSnackBar(
-                    new SnackBar(content: new Text("Copied to Clipboard!"))
+                    new SnackBar(
+                      backgroundColor: Theme.of(context).indicatorColor,
+                      content: new Text("Copied to Clipboard!")
+                    )
                 );
               },
               child: new Container(
@@ -95,6 +99,14 @@ class SettingsPageState extends State<SettingsPage>{
     Navigator.of(context).push(
       new MaterialPageRoute(builder: (context) => new ImportPage())
     );
+  }
+
+  _launchUrl(url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   @override
@@ -193,9 +205,18 @@ class SettingsPageState extends State<SettingsPage>{
             new Container(
               color: Theme.of(context).cardColor,
               child: new ListTile(
-                title: new Text("Version"),
-                subtitle: new Text("0.0.1"),
+                title: new Text("Version 0.0.1"),
+                subtitle: new Text("github.com/trentpiercy/trace"),
                 leading: new Icon(Icons.info_outline),
+                onTap: () => _launchUrl("https://github.com/trentpiercy/trace"),
+              ),
+            ),
+            new Container(
+              color: Theme.of(context).cardColor,
+              child: new ListTile(
+                title: new Text("Issues & Feature Requests"),
+                leading: new Icon(Icons.help_outline),
+                onTap: () => _launchUrl("https://github.com/trentpiercy/trace/issues"),
               ),
             ),
           ],
