@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:trace/portfolio/portfolio_tabs.dart';
-import '../flutter_candlesticks.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../flutter_candlesticks.dart';
 
-import '../market_coin_item.dart';
 import '../portfolio/transaction_sheet.dart';
 import '../main.dart';
 import 'change_bar.dart';
 import 'exchange_list_item.dart';
 import '../portfolio/transaction_item.dart';
+import '../portfolio/portfolio_tabs.dart';
 
 class CoinDetails extends StatefulWidget {
   CoinDetails({
