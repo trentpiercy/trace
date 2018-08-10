@@ -2,8 +2,8 @@
 Modern Crypto Portfolio & Market Explorer. Built with [Flutter](https://github.com/flutter/flutter).  
 Open Source. Clean. Straightforward. Fast. Powerful.
 
-Download for Android on [Google Play](https://play.google.com/store/apps/details?id=com.trentpiercy.trace)  
-iOS not yet avaliable.
+Download for Android on [Google Play](https://play.google.com/store/apps/details?id=com.trentpiercy.trace). Join [Android Beta](https://play.google.com/apps/testing/com.trentpiercy.trace)!  
+iOS version in development.
 
 ## Screenshots
 💸 <i>Portfolio</i>: Home screen displaying portfolio value, 7D Change, 24h Change, and value and amount of each coin
