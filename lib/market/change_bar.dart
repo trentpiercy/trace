@@ -53,10 +53,15 @@ final Map ohlcvWidthOptions = {
 
 class QuickPercentChangeBar extends StatelessWidget {
   QuickPercentChangeBar({this.snapshot});
-  final snapshot;
+  final Map snapshot;
 
   @override
   Widget build(BuildContext context) {
+    snapshot.forEach((K, V) {
+      if (V == null) {
+        snapshot[K] = 0;
+      }
+    });
     return new Container(
       padding:
           const EdgeInsets.only(left: 6.0, right: 6.0, bottom: 3.0, top: 3.0),

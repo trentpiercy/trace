@@ -21,7 +21,7 @@ List portfolioDisplay;
 Map totalPortfolioStats;
 
 Future<Null> getMarketData() async {
-  int numberOfCoins = 500;
+  int numberOfCoins = 1500;
   List tempMarketListData = [];
 
   _pullData(start, limit) async {
@@ -34,7 +34,12 @@ Future<Null> getMarketData() async {
         headers: {"Accept": "application/json"});
 
     Map rawMarketListData = new JsonDecoder().convert(response.body)["data"];
-    rawMarketListData.forEach((key, value) => tempMarketListData.add(value));
+    tempMarketListData.addAll(rawMarketListData.values);
+
+    if (rawMarketListData.values.length < 100) {
+      numberOfCoins = rawMarketListData.values.last["rank"];
+      print("found < 100. total now $numberOfCoins");
+    }
 
     if (tempMarketListData.length == numberOfCoins) {
       marketListData = tempMarketListData;
@@ -91,7 +96,7 @@ void main() async {
 
 numCommaParse(numString) {
   if (shortenOn) {
-    String str = num.parse(numString).round().toString().replaceAllMapped(
+    String str = num.parse(numString ?? "0").round().toString().replaceAllMapped(
         new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
     List<String> strList = str.split(",");
 
@@ -106,16 +111,18 @@ numCommaParse(numString) {
           strList[1].substring(0, 4 - strList[0].length) +
           "M";
     } else {
-      return num.parse(numString).toString().replaceAllMapped(
+      return num.parse(numString ?? "0").toString().replaceAllMapped(
           new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
     }
   }
 
-  return num.parse(numString).toString().replaceAllMapped(
+  return num.parse(numString ?? "0").toString().replaceAllMapped(
       new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
 }
 
 normalizeNum(num input) {
+  if (input == null) {
+    input = 0;}
   if (input >= 100000) {
     return numCommaParse(input.round().toString());
   } else if (input >= 1000) {
@@ -126,6 +133,8 @@ normalizeNum(num input) {
 }
 
 normalizeNumNoCommas(num input) {
+  if (input == null) {
+    input = 0;}
   if (input >= 1000) {
     return input.toStringAsFixed(2);
   } else {

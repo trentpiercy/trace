@@ -693,26 +693,26 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
 
   List marketSortType = ["market_cap", true];
   _sortMarketData() {
-    print("sorting market data");
     if (marketSortType[1]) {
       if (marketSortType[0] == "market_cap" ||
           marketSortType[0] == "volume_24h" ||
           marketSortType[0] == "percent_change_24h") {
-        filteredMarketData.sort((a, b) => b["quotes"]["USD"][marketSortType[0]]
-            .compareTo(a["quotes"]["USD"][marketSortType[0]]));
+        filteredMarketData.sort((a, b) => (b["quotes"]["USD"][marketSortType[0]] ?? 0)
+            .compareTo(a["quotes"]["USD"][marketSortType[0]] ?? 0));
       } else {
         filteredMarketData.sort(
-            (a, b) => b[marketSortType[0]].compareTo(a[marketSortType[0]]));
+            (a, b) => (b[marketSortType[0]] ?? 0).compareTo(a[marketSortType[0]] ?? 0));
       }
     } else {
       if (marketSortType[0] == "market_cap" ||
           marketSortType[0] == "volume_24h" ||
           marketSortType[0] == "percent_change_24h") {
-        filteredMarketData.sort((a, b) => a["quotes"]["USD"][marketSortType[0]]
-            .compareTo(b["quotes"]["USD"][marketSortType[0]]));
+
+        filteredMarketData.sort((a, b) => (a["quotes"]["USD"][marketSortType[0]] ?? 0)
+            .compareTo(b["quotes"]["USD"][marketSortType[0]] ?? 0));
       } else {
         filteredMarketData.sort(
-            (a, b) => a[marketSortType[0]].compareTo(b[marketSortType[0]]));
+            (a, b) => (a[marketSortType[0]] ?? 0).compareTo(b[marketSortType[0]] ?? 0));
       }
     }
   }
