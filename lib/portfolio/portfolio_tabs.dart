@@ -277,7 +277,6 @@ class PortfolioTabsState extends State<PortfolioTabs>
 
   Widget _timeline(BuildContext context) {
     _makeTransactionList();
-    print(timelineData);
     return portfolioMap.isNotEmpty
         ? new RefreshIndicator(
             onRefresh: _refresh,
@@ -748,20 +747,20 @@ class PercentDollarChange extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Text.rich(new TextSpan(children: [
-      percent > 0
+      (percent ?? 0) > 0
           ? new TextSpan(
-              text: "+${percent.toStringAsFixed(2)}%\n",
+              text: "+${(percent ?? 0).toStringAsFixed(2)}%\n",
               style: Theme.of(context)
                   .textTheme
                   .body2
                   .apply(color: Colors.green, fontSizeFactor: 1.1))
           : new TextSpan(
-              text: "${percent.toStringAsFixed(2)}%\n",
+              text: "${(percent ?? 0).toStringAsFixed(2)}%\n",
               style: Theme.of(context)
                   .textTheme
                   .body2
                   .apply(color: Colors.red, fontSizeFactor: 1.1)),
-      exact > 0
+      (exact ?? 0) > 0
           ? new TextSpan(
               text: "(\$${normalizeNum(exact)})",
               style: Theme.of(context)

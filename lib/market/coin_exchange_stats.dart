@@ -149,6 +149,7 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
 
   @override
   Widget build(BuildContext context) {
+    print(normalizeNum(exchangeData["VOLUME24HOURTO"]));
     return new Scaffold(
       appBar: new PreferredSize(
         preferredSize: const Size.fromHeight(appBarHeight),
@@ -187,10 +188,8 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
                             children: <Widget>[
                               new Text("24h Volume",
                                   style: Theme.of(context).textTheme.caption),
-                              new Text(
-                                  "\$" +
-                                      normalizeNum(
-                                          exchangeData["VOLUME24HOURTO"]),
+                              new Text( //TODO: no commas for some reason?
+                                  "\$" + numCommaParse(exchangeData["VOLUME24HOURTO"].toStringAsFixed(0)),
                                   style: Theme.of(context)
                                       .textTheme
                                       .body2

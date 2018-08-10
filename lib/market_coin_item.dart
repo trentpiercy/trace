@@ -434,18 +434,13 @@ class CoinListItem extends StatelessWidget {
                             snapshot["quotes"]["USD"]["price"])),
                     new Padding(padding: const EdgeInsets.only(bottom: 4.0)),
                     new Text(
-                        snapshot["quotes"]["USD"]["percent_change_24h"] >= 0
-                            ? "+" +
-                                snapshot["quotes"]["USD"]["percent_change_24h"]
-                                    .toStringAsFixed(2) +
-                                "%"
-                            : snapshot["quotes"]["USD"]["percent_change_24h"]
-                                    .toStringAsFixed(2) +
-                                "%",
+                        (snapshot["quotes"]["USD"]["percent_change_24h"] ?? 0) >= 0
+                            ? "+" + (snapshot["quotes"]["USD"]["percent_change_24h"] ?? 0)
+                                    .toStringAsFixed(2) + "%"
+                            : (snapshot["quotes"]["USD"]["percent_change_24h"] ?? 0)
+                                    .toStringAsFixed(2) + "%",
                         style: Theme.of(context).primaryTextTheme.body1.apply(
-                            color: snapshot["quotes"]["USD"]
-                                        ["percent_change_24h"] >=
-                                    0
+                            color: (snapshot["quotes"]["USD"]["percent_change_24h"] ?? 0) >= 0
                                 ? Colors.green
                                 : Colors.red)),
                   ],

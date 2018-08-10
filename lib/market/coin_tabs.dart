@@ -195,7 +195,7 @@ class CoinDetailsState extends State<CoinDetails>
     var start = historyOHLCV[0]["open"] == 0 ? 1 : historyOHLCV[0]["open"];
     var end = historyOHLCV.last["close"];
     var changePercent = (end - start) / start * 100;
-    _change = changePercent.toString().substring(0, changePercent > 0 ? 5 : 6);
+    _change = changePercent.toStringAsFixed(2);
   }
 
   Future<Null> changeHistory(
