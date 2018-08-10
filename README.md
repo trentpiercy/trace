@@ -2,7 +2,7 @@
 Modern Crypto Portfolio & Market Explorer. Built with [Flutter](https://github.com/flutter/flutter).  
 Open Source. Clean. Straightforward. Fast. Powerful.
 
-Download for Android on [Google Play](https://https://play.google.com/store/apps/details?id=com.trentpiercy.trace)  
+Download for Android on [Google Play](https://play.google.com/store/apps/details?id=com.trentpiercy.trace)  
 iOS not yet avaliable.
 
 ## Screenshots
