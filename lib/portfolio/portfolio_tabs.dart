@@ -206,15 +206,11 @@ class PortfolioTabsState extends State<PortfolioTabs>
       num averagePrice = (point["open"] + point["close"]) / 2;
 
       portfolioMap[coin["symbol"]].forEach((transaction) {
-        /// Uncomment to show $0 on timeline
-//        if (timedData[point["time"]] == null) {
-//          timedData[point["time"]] = 0.0;
-//        }
+        if (timedData[point["time"]] == null) {
+          timedData[point["time"]] = 0.0;
+        }
 
-        if (transaction["time_epoch"] < point["time"] * 1000) {
-          if (timedData[point["time"]] == null) {
-            timedData[point["time"]] = 0.0;
-          }
+        if (transaction["time_epoch"] - 900000 < point["time"] * 1000) {
           timedData[point["time"]] +=
               (transaction["quantity"] * averagePrice).toDouble();
         }
@@ -281,6 +277,7 @@ class PortfolioTabsState extends State<PortfolioTabs>
 
   Widget _timeline(BuildContext context) {
     _makeTransactionList();
+    print(timelineData);
     return portfolioMap.isNotEmpty
         ? new RefreshIndicator(
             onRefresh: _refresh,
@@ -422,19 +419,26 @@ class PortfolioTabsState extends State<PortfolioTabs>
                       const EdgeInsets.only(top: 16.0, left: 4.0, right: 2.0),
                   height: MediaQuery.of(context).size.height * .6,
                   child: timelineData != null
-                      ? new Sparkline(
-                          data: timelineData,
-                          lineGradient: new LinearGradient(
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
-                              colors: [
-                                Theme.of(context).buttonColor,
-                                Colors.purpleAccent[100]
-                              ]),
-                          enableGridLines: true,
-                          gridLineColor: Theme.of(context).dividerColor,
-                          gridLineLabelColor: Theme.of(context).hintColor,
-                          gridLineAmount: 4,
+                      ? new Container(
+                          child: timelineData.last != 0.0
+                            ? new Sparkline(
+                            data: timelineData,
+                            lineGradient: new LinearGradient(
+                                begin: Alignment.bottomCenter,
+                                end: Alignment.topCenter,
+                                colors: [
+                                  Theme.of(context).buttonColor,
+                                  Colors.purpleAccent[100]
+                                ]),
+                            enableGridLines: true,
+                            gridLineColor: Theme.of(context).dividerColor,
+                            gridLineLabelColor: Theme.of(context).hintColor,
+                            gridLineAmount: 4,
+                          )
+                      : new Container(
+                          alignment: Alignment.center,
+                          child: new Text("Transactions either very recent or in the future.",
+                              style: Theme.of(context).textTheme.caption))
                         )
                       : new Container(
                           alignment: Alignment.center,
@@ -468,7 +472,6 @@ class PortfolioTabsState extends State<PortfolioTabs>
 
   final columnProps = [.2, .3, .3];
   final List colors = [
-    Colors.red[400],
     Colors.purple[400],
     Colors.indigo[400],
     Colors.blue[400],
@@ -476,6 +479,7 @@ class PortfolioTabsState extends State<PortfolioTabs>
     Colors.green[400],
     Colors.lime[400],
     Colors.orange[400],
+    Colors.red[400],
   ];
 
   num net;
