@@ -437,7 +437,7 @@ class PortfolioTabsState extends State<PortfolioTabs>
                           )
                       : new Container(
                           alignment: Alignment.center,
-                          child: new Text("Transactions either very recent or in the future.",
+                          child: new Text("Transactions too recent or in the future.",
                               style: Theme.of(context).textTheme.caption))
                         )
                       : new Container(
