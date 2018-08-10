@@ -201,7 +201,7 @@ class SettingsPageState extends State<SettingsPage> {
           new Container(
             color: Theme.of(context).cardColor,
             child: new ListTile(
-              title: new Text("Version 1.0.2 (3)"),
+              title: new Text("Version 1.0.3 (4)"),
               subtitle: new Text("github.com/trentpiercy/trace"),
               leading: new Icon(Icons.info_outline),
               onTap: () => _launchUrl("https://github.com/trentpiercy/trace"),

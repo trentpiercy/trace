@@ -163,6 +163,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         _handleTabChange();
       }
     });
+
     _makePortfolioDisplay();
     _filterMarketData();
     _refreshMarketPage();
@@ -390,10 +391,9 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   Future<Null> _refreshPortfolioPage() async {
     await getMarketData();
     getGlobalData();
-    setState(() {
-      _makePortfolioDisplay();
-      _filterMarketData();
-    });
+    _makePortfolioDisplay();
+    _filterMarketData();
+    setState(() {});
   }
 
   List portfolioSortType = ["holdings", true];
@@ -669,10 +669,9 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   Future<Null> _refreshMarketPage() async {
     await getGlobalData();
     await getMarketData();
-    setState(() {
-      _filterMarketData();
-      _makePortfolioDisplay();
-    });
+    _filterMarketData();
+    _makePortfolioDisplay();
+    setState(() {});
   }
 
   _filterMarketData() {
