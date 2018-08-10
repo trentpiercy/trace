@@ -1,6 +1,9 @@
-# trace
+# Trace
+Modern Crypto Portfolio & Market Explorer. Built with [Flutter](https://github.com/flutter/flutter).  
+Open Source. Clean. Straightforward. Fast. Powerful.
 
-WIP.
+Download for Android on [Google Play](https://https://play.google.com/store/apps/details?id=com.trentpiercy.trace)  
+iOS not yet avaliable.
 
 ## Screenshots
 <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_01.png" width="45%"> <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_02.png" width="45%">
