@@ -365,6 +365,11 @@ class CoinListItem extends StatelessWidget {
         snapshot[k] = "0";
       }
     });
+    snapshot["quotes"]["USD"].forEach((k, v) {
+      if (v == null) {
+        snapshot["quotes"]["USD"][k] = 0;
+      }
+    });
 
     return new InkWell(
         onTap: () {
