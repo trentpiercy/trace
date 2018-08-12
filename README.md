@@ -56,3 +56,8 @@ iOS version in development.
 - Clear Portfolio
 
 <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_05.png" width="45%"> <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_06.png" width="45%">
+
+## Building Source
+- Set your working directory to the root of your git clone
+- Make sure your Android SDK and Flutter are up to date (`flutter upgrade`)
+- Execute `flutter run`
