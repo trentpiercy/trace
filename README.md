@@ -9,7 +9,7 @@ iOS version in development.
 
 <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/gifs/portfolio.gif" width="32%"> <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/gifs/markets.gif" width="32%"> <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/gifs/themes.gif" width="32%">
 
-<img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/gifs/timeline_breakdown.gif" width="48%"> <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/gifs/themes.gif" width="48%">
+<img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/gifs/coin_stats.gif" width="48%"> <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/gifs/timeline_breakdown.gif" width="48%">
 
 ## Screenshots
 💸 <i>Portfolio</i>: Home screen displaying portfolio value, 7D Change, 24h Change, and value and amount of each coin
