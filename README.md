@@ -5,18 +5,24 @@ Open Source. Clean. Straightforward. Fast. Powerful.
 Download for Android on [Google Play](https://play.google.com/store/apps/details?id=com.trentpiercy.trace). Join [Android Beta](https://play.google.com/apps/testing/com.trentpiercy.trace)!  
 iOS version in development.
 
+**[Full Video](https://youtu.be/Di7MxXioESQ)**
+
+<img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/gifs/portfolio.gif" width="32%"> <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/gifs/markets.gif" width="32%"> <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/gifs/themes.gif" width="32%">
+
+<img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/gifs/timeline_breakdown.gif" width="48%"> <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/gifs/themes.gif" width="48%">
+
 ## Screenshots
 💸 <i>Portfolio</i>: Home screen displaying portfolio value, 7D Change, 24h Change, and value and amount of each coin
 - Sort coins by name, holdings, and 24h change percent
 - Add transactions using bottom right button
 
-<img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_01.png" width="45%"> <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_04.png" width="45%">
+<img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_01.png" width="48%"> <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_04.png" width="48%">
 
 🌎 <i>Aggregate Markets</i>: Swipe to second tab displaying aggregate market stats of every cryptocurrency
 - Search by any coin's symbol or name
 - Sort coins by name, market cap, 24h trade volume and 24h change percent
 
-<img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_02.png" width="45%"> <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_03.png" width="45%">
+<img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_02.png" width="48%"> <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_03.png" width="48%">
 
 📈 <i>Portfolio Timeline</i>: Navigate to timeline through drawer menu or swipe from breakdown
 - Tap clock to control timeline period from 1 day to all
@@ -28,7 +34,7 @@ iOS version in development.
 - Displays total portfolio value, net percent, net amount and total cost
 - Lists each coin as percent of total portfolio
 
-<img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_07.png" width="30%"> <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_09.png" width="30%"> <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_10.png" width="30%">
+<img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_07.png" width="31%"> <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_09.png" width="31%"> <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_10.png" width="31%">
 
 📊 <i>Detailed Market Data</i>: Tap on any coin to view detailed market data
 - Tap clock to control candlestick data period from 1 hour to 1 year
@@ -39,15 +45,15 @@ iOS version in development.
 - Sort by exchange name, 24h volume, price and 24h change
 - Tap on any exchange to get even more detailed data
 
-<img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_11.png" width="30%"> <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_12.png" width="30%"> <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_17.png" width="30%">
+<img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_11.png" width="31%"> <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_12.png" width="31%"> <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_17.png" width="31%">
 
 ☀️ <i>Light Theme</i>
 
-<img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_13.png" width="45%"> <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_16.png" width="45%">
+<img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_13.png" width="48%"> <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_16.png" width="48%">
 
 🌙 <i>OLED Dark Theme</i>
 
-<img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_14.png" width="45%"> <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_15.png" width="45%">m
+<img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_14.png" width="48%"> <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_15.png" width="48%">m
 
 ⚙️ <i>Settings</i>: Navigate to settings through drawer menu
 - Theme Toggles: automatic, light, dark and dark OLED
@@ -55,7 +61,7 @@ iOS version in development.
 - Export/Import portfolio JSON to/from text
 - Clear Portfolio
 
-<img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_05.png" width="45%"> <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_06.png" width="45%">
+<img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_05.png" width="48%"> <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/flutter_06.png" width="48%">
 
 ## Building Source
 - Set your working directory to the root of your git clone
