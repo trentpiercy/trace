@@ -9,7 +9,7 @@ iOS version in development.
 
 <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/gifs/coin_stats.gif" width="48%"> <img src="https://raw.githubusercontent.com/trentpiercy/trace/master/screenshots/gifs/timeline_breakdown.gif" width="48%">
 
-### 🌟 Features
+### Features
 💰 Portfolio Overview  
 🌎 Aggregate Market Explorer  
 📊 Detailed Aggregate/Exchange Specific Market Data for every Coin  
@@ -21,7 +21,7 @@ iOS version in development.
 
 **[📹 Full Video](https://youtu.be/Di7MxXioESQ)**
 
-## 📷 Screenshots
+## Screenshots
 💰 **Portfolio**: Home screen displaying portfolio value, 7D Change, 24h Change, and value and amount of each coin
 - Sort coins by name, holdings, and 24h change percent
 - Add transactions using bottom right button
