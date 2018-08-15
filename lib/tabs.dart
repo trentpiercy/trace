@@ -662,15 +662,14 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         Uri.encodeFull("https://api.coinmarketcap.com/v2/global/"),
         headers: {"Accept": "application/json"});
 
-    globalData =
-        new JsonDecoder().convert(response.body)["data"]["quotes"]["USD"];
+    globalData = new JsonDecoder().convert(response.body)["data"]["quotes"]["USD"];
   }
 
   Future<Null> _refreshMarketPage() async {
-    await getGlobalData();
     await getMarketData();
-    _filterMarketData();
+    await getGlobalData();
     _makePortfolioDisplay();
+    _filterMarketData();
     setState(() {});
   }
 

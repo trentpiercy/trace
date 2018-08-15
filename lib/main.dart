@@ -24,7 +24,9 @@ Future<Null> getMarketData() async {
   int numberOfCoins = 1500;
   List tempMarketListData = [];
 
-  _pullData(start, limit) async {
+  Future<Null> _pullData(start, limit) async {
+//    print("pulling market data $start - $limit");
+
     var response = await http.get(
         Uri.encodeFull("https://api.coinmarketcap.com/v2/ticker/" +
             "?start=" +
@@ -51,11 +53,14 @@ Future<Null> getMarketData() async {
     }
   }
 
+  List<Future> futures = [];
   for (int i = 0; i <= numberOfCoins / 100 - 1; i++) {
     int start = i * 100 + 1;
     int limit = i * 100 + 100;
-    _pullData(start, limit);
+    futures.add(_pullData(start, limit));
   }
+
+  await Future.wait(futures);
 }
 
 void main() async {
