@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:quick_actions/quick_actions.dart';
 
 import 'portfolio/portfolio_tabs.dart';
 import 'main.dart';
@@ -167,27 +166,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     _makePortfolioDisplay();
     _filterMarketData();
     _refreshMarketPage();
-
-    final QuickActions quickActions = const QuickActions();
-    quickActions.initialize((type) {
-      if (type == "search") {
-        _tabIndex = 1;
-        _tabController.index = 1;
-        _startSearch();
-      } else if (type == "new_transaction") {
-        _tabController.animateTo(0);
-        _openTransaction();
-      }
-    });
-
-    quickActions.setShortcutItems(<ShortcutItem>[
-      const ShortcutItem(
-          type: 'new_transaction',
-          localizedTitle: 'New Transaction',
-          icon: 'icon_new_transaction'),
-      const ShortcutItem(
-          type: 'search', localizedTitle: 'Search', icon: 'icon_search'),
-    ]);
   }
 
   @override
