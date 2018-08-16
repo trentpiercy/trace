@@ -25,8 +25,6 @@ Future<Null> getMarketData() async {
   List tempMarketListData = [];
 
   Future<Null> _pullData(start, limit) async {
-//    print("pulling market data $start - $limit");
-
     var response = await http.get(
         Uri.encodeFull("https://api.coinmarketcap.com/v2/ticker/" +
             "?start=" +
@@ -37,20 +35,6 @@ Future<Null> getMarketData() async {
 
     Map rawMarketListData = new JsonDecoder().convert(response.body)["data"];
     tempMarketListData.addAll(rawMarketListData.values);
-
-    if (rawMarketListData.values.length < 100) {
-      numberOfCoins = rawMarketListData.values.last["rank"];
-      print("found < 100. total now $numberOfCoins");
-    }
-
-    if (tempMarketListData.length == numberOfCoins) {
-      marketListData = tempMarketListData;
-      getApplicationDocumentsDirectory().then((Directory directory) async {
-        File jsonFile = new File(directory.path + "/marketData.json");
-        jsonFile.writeAsStringSync(json.encode(marketListData));
-      });
-      print("got new market data");
-    }
   }
 
   List<Future> futures = [];
@@ -59,8 +43,14 @@ Future<Null> getMarketData() async {
     int limit = i * 100 + 100;
     futures.add(_pullData(start, limit));
   }
-
   await Future.wait(futures);
+
+  marketListData = tempMarketListData;
+  getApplicationDocumentsDirectory().then((Directory directory) async {
+    File jsonFile = new File(directory.path + "/marketData.json");
+    jsonFile.writeAsStringSync(json.encode(marketListData));
+  });
+  print("got new market data");
 }
 
 void main() async {
