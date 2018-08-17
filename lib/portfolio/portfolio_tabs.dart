@@ -148,33 +148,30 @@ class PortfolioTabsState extends State<PortfolioTabs>
     setState(() {});
   }
 
-  List<Map> needed;
-  List retrieved;
   Map<int, double> timedData;
   DateTime oldestPoint = new DateTime.now();
+  List<int> times;
   _getTimelineData() async {
     value = totalPortfolioStats["value_usd"];
 
     timedData = {};
-    needed = [];
-    retrieved = [];
+    List<Future> futures = [];
+    times = [];
 
     portfolioMap.forEach((symbol, transactions) {
       num oldest = double.infinity;
-
       transactions.forEach((transaction) {
         if (transaction["time_epoch"] < oldest) {
           oldest = transaction["time_epoch"];
         }
       });
 
-      needed.add({"symbol": symbol, "oldest": oldest});
+      futures.add(_pullData({"symbol": symbol, "oldest": oldest}));
+      times.add(oldest);
     });
 
-    needed.forEach((Map coin) async {
-      await _pullData(coin);
-      _finalizeTimelineData();
-    });
+    await Future.wait(futures);
+    _finalizeTimelineData();
   }
 
   Future<Null> _pullData(coin) async {
@@ -216,41 +213,34 @@ class PortfolioTabsState extends State<PortfolioTabs>
         }
       });
     });
-
-    retrieved.add(coin["symbol"]);
   }
 
   _finalizeTimelineData() {
-    if (retrieved.length == needed.length) {
-      List<int> times = [];
-      needed.forEach((e) => times.add(e["oldest"]));
+    int oldestInData = times.reduce(min);
+    int oldestInRange = new DateTime.now().millisecondsSinceEpoch -
+        periodOptions[periodSetting]["unit_in_ms"] *
+            periodOptions[periodSetting]["limit"];
 
-      int oldestInData = times.reduce(min);
-      int oldestInRange = new DateTime.now().millisecondsSinceEpoch -
-          periodOptions[periodSetting]["unit_in_ms"] *
-              periodOptions[periodSetting]["limit"];
-
-      if (oldestInData > oldestInRange || periodSetting == "All") {
-        oldestPoint = new DateTime.fromMillisecondsSinceEpoch(oldestInData);
-      } else {
-        oldestPoint = new DateTime.fromMillisecondsSinceEpoch(oldestInRange);
-      }
-
-      timelineData = [];
-      timedData.keys.toList()
-        ..sort()
-        ..forEach((key) => timelineData.add(timedData[key]));
-
-      high = timelineData.reduce(max);
-      low = timelineData.reduce(min);
-
-      num start = timelineData[0] != 0 ? timelineData[0] : 1;
-      num end = timelineData.last;
-      changePercent = (end - start) / start * 100;
-      changeAmt = end - start;
-
-      setState(() {});
+    if (oldestInData > oldestInRange || periodSetting == "All") {
+      oldestPoint = new DateTime.fromMillisecondsSinceEpoch(oldestInData);
+    } else {
+      oldestPoint = new DateTime.fromMillisecondsSinceEpoch(oldestInRange);
     }
+
+    timelineData = [];
+    timedData.keys.toList()
+      ..sort()
+      ..forEach((key) => timelineData.add(timedData[key]));
+
+    high = timelineData.reduce(max);
+    low = timelineData.reduce(min);
+
+    num start = timelineData[0] != 0 ? timelineData[0] : 1;
+    num end = timelineData.last;
+    changePercent = (end - start) / start * 100;
+    changeAmt = end - start;
+
+    setState(() {});
   }
 
   _makeTransactionList() {
