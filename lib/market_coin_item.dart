@@ -340,7 +340,22 @@ final assetImages = [
   'zen',
   'zil',
   'zilla',
-  'zrx'
+  'zrx',
+  'aeon',
+  'btdx',
+  'colx',
+  'drop',
+  'gxlt',
+  'hodl',
+  'ht',
+  'msr',
+  'neu',
+  'npxs',
+  'safe',
+  'sqt',
+  'tusd',
+  'vrsc',
+  'xmo'
 ];
 
 class CoinListItem extends StatelessWidget {
