@@ -544,7 +544,6 @@ class CoinDetailsState extends State<CoinDetails>
                                       volumeProp: 0.2,
                                       lineWidth: 1.0,
                                       decreaseColor: Colors.red[600],
-//                          increaseColor: Colors.green[600],
                                     )
                                   : new Container(
                                       padding: const EdgeInsets.all(30.0),
