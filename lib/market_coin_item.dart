@@ -1,10 +1,4 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'dart:async';
-import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
-import 'dart:convert';
 
 import 'main.dart';
 import 'market/coin_tabs.dart';
