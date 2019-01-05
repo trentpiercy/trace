@@ -220,14 +220,7 @@ class CoinDetailsState extends State<CoinDetails>
   Widget aggregateStats(BuildContext context) {
     return new Scaffold(
       resizeToAvoidBottomPadding: false,
-      body: new RefreshIndicator(
-          onRefresh: () =>
-              changeHistory(historyType, historyAmt, historyTotal, historyAgg),
-          child: new ListView(
-            children: <Widget>[
-              new Container(
-                height:
-                    MediaQuery.of(context).size.height - (appBarHeight + 75.0),
+      body: new Container(
                 child: new Column(
                   children: <Widget>[
                     new Container(
@@ -246,7 +239,7 @@ class CoinDetailsState extends State<CoinDetails>
                               style: Theme.of(context)
                                   .textTheme
                                   .body2
-                                  .apply(fontSizeFactor: 2.2)),
+                                  .apply(fontSizeFactor: 2.4)),
                           new Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             crossAxisAlignment: CrossAxisAlignment.end,
@@ -561,10 +554,8 @@ class CoinDetailsState extends State<CoinDetails>
                             ),
                     )
                   ],
-                ),
-              )
-            ],
-          )),
+            )
+          ),
       bottomNavigationBar: new BottomAppBar(
         elevation: appBarElevation,
         child: generalStats != null

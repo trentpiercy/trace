@@ -160,14 +160,7 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
         ),
       ),
       resizeToAvoidBottomPadding: false,
-      body: new RefreshIndicator(
-          onRefresh: () =>
-              changeHistory(historyType, historyAmt, historyTotal, historyAgg),
-          child: new ListView(
-            children: <Widget>[
-              new Container(
-                height:
-                    MediaQuery.of(context).size.height - (appBarHeight + 25.0),
+      body: new Container(
                 child: new Column(
                   children: <Widget>[
                     new Container(
@@ -181,7 +174,7 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
                               style: Theme.of(context)
                                   .textTheme
                                   .body2
-                                  .apply(fontSizeFactor: 2.2)),
+                                  .apply(fontSizeFactor: 2.4)),
                           new Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: <Widget>[
@@ -433,9 +426,7 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
                     )
                   ],
                 ),
-              )
-            ],
-          )),
+          )
     );
   }
 }
