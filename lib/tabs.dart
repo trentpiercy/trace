@@ -631,7 +631,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         ));
   }
 
-  final marketColumnProps = [.3, .3, .25];
+  final marketColumnProps = [.3, .35, .28];
   List filteredMarketData;
   Map globalData;
 
