@@ -174,7 +174,7 @@ class CoinMarketStatsState extends State<CoinMarketStats> {
                               style: Theme.of(context)
                                   .textTheme
                                   .body2
-                                  .apply(fontSizeFactor: 2.4)),
+                                  .apply(fontSizeFactor: 2.2)),
                           new Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: <Widget>[

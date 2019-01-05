@@ -239,7 +239,7 @@ class CoinDetailsState extends State<CoinDetails>
                               style: Theme.of(context)
                                   .textTheme
                                   .body2
-                                  .apply(fontSizeFactor: 2.4)),
+                                  .apply(fontSizeFactor: 2.2)),
                           new Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             crossAxisAlignment: CrossAxisAlignment.end,
