@@ -364,7 +364,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           );
   }
 
-  final columnProps = [.2, .3, .3];
+  final portfolioColumnProps = [.25, .35, .3];
 
   Future<Null> _refreshPortfolioPage() async {
     await getMarketData();
@@ -515,12 +515,12 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                       child: new Container(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         width:
-                            MediaQuery.of(context).size.width * columnProps[0],
+                            MediaQuery.of(context).size.width * portfolioColumnProps[0],
                         child: portfolioSortType[0] == "symbol"
                             ? new Text(
                                 portfolioSortType[1] == true
-                                    ? "Currency ⬆"
-                                    : "Currency ⬇",
+                                    ? "Currency " + upArrow
+                                    : "Currency " + downArrow,
                                 style: Theme.of(context).textTheme.body2)
                             : new Text(
                                 "Currency",
@@ -546,12 +546,12 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                         alignment: Alignment.centerRight,
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         width:
-                            MediaQuery.of(context).size.width * columnProps[1],
+                            MediaQuery.of(context).size.width * portfolioColumnProps[1],
                         child: portfolioSortType[0] == "holdings"
                             ? new Text(
                                 portfolioSortType[1] == true
-                                    ? "Holdings ⬇"
-                                    : "Holdings ⬆",
+                                    ? "Holdings " + downArrow
+                                    : "Holdings " + upArrow,
                                 style: Theme.of(context).textTheme.body2)
                             : new Text("Holdings",
                                 style: Theme.of(context)
@@ -575,12 +575,12 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                         alignment: Alignment.centerRight,
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         width:
-                            MediaQuery.of(context).size.width * columnProps[2],
+                            MediaQuery.of(context).size.width * portfolioColumnProps[2],
                         child: portfolioSortType[0] == "percent_change_24h"
                             ? new Text(
                                 portfolioSortType[1] == true
-                                    ? "Price/24h ⬇"
-                                    : "Price/24h ⬆",
+                                    ? "Price/24h " + downArrow
+                                    : "Price/24h " + upArrow,
                                 style: Theme.of(context).textTheme.body2)
                             : new Text("Price/24h",
                                 style: Theme.of(context)
@@ -597,7 +597,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                 ? new SliverList(
                     delegate: new SliverChildBuilderDelegate(
                         (context, index) => new PortfolioListItem(
-                            sortedPortfolioDisplay[index]),
+                            sortedPortfolioDisplay[index], portfolioColumnProps),
                         childCount: sortedPortfolioDisplay != null
                             ? sortedPortfolioDisplay.length
                             : 0))
@@ -631,7 +631,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
         ));
   }
 
-  final marketColumnProps = [.3, .35, .28];
+  final marketColumnProps = [.32, .35, .28];
   List filteredMarketData;
   Map globalData;
 
@@ -790,8 +790,8 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                             child: marketSortType[0] == "symbol"
                                 ? new Text(
                                     marketSortType[1]
-                                        ? "Currency ⬆"
-                                        : "Currency ⬇",
+                                        ? "Currency " + upArrow
+                                        : "Currency " + downArrow,
                                     style: Theme.of(context).textTheme.body2)
                                 : new Text("Currency",
                                     style: Theme.of(context)
@@ -825,8 +825,8 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                                     child: marketSortType[0] == "market_cap"
                                         ? new Text(
                                             marketSortType[1]
-                                                ? "Market Cap ⬇"
-                                                : "Market Cap ⬆",
+                                                ? "Market Cap " + downArrow
+                                                : "Market Cap " + upArrow,
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .body2)
@@ -860,7 +860,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                                       const EdgeInsets.symmetric(vertical: 8.0),
                                   child: marketSortType[0] == "volume_24h"
                                       ? new Text(
-                                          marketSortType[1] ? "24h ⬇" : "24h ⬆",
+                                          marketSortType[1] ? "24h " + downArrow : "24h " + upArrow,
                                           style:
                                               Theme.of(context).textTheme.body2)
                                       : new Text("24h",
@@ -894,8 +894,8 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                             child: marketSortType[0] == "percent_change_24h"
                                 ? new Text(
                                     marketSortType[1] == true
-                                        ? "Price/24h ⬇"
-                                        : "Price/24h ⬆",
+                                        ? "Price/24h " + downArrow
+                                        : "Price/24h " + upArrow,
                                     style: Theme.of(context).textTheme.body2)
                                 : new Text("Price/24h",
                                     style: Theme.of(context)

@@ -20,6 +20,10 @@ Map portfolioMap;
 List portfolioDisplay;
 Map totalPortfolioStats;
 
+bool isIOS;
+String upArrow = "⬆";
+String downArrow = "⬇";
+
 Future<Null> getMarketData() async {
   int numberOfCoins = 1500;
   List tempMarketListData = [];
@@ -279,6 +283,12 @@ class TraceAppState extends State<TraceApp> {
 
   @override
   Widget build(BuildContext context) {
+    isIOS = Theme.of(context).platform == TargetPlatform.iOS;
+    if (isIOS) {
+      upArrow = "↑";
+      downArrow = "↓";
+    }
+
     return new MaterialApp(
       color: darkEnabled
           ? darkOLED ? darkThemeOLED.primaryColor : darkTheme.primaryColor

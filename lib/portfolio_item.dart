@@ -5,10 +5,9 @@ import 'market/coin_tabs.dart';
 import 'market_coin_item.dart';
 
 class PortfolioListItem extends StatelessWidget {
-  PortfolioListItem(this.snapshot);
+  PortfolioListItem(this.snapshot, this.columnProps);
   final snapshot;
-
-  final columnProps = [.2, .3, .3];
+  final columnProps;
 
   _getImage() {
     if (assetImages.contains(snapshot["symbol"].toLowerCase())) {
