@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:package_info/package_info.dart';
 
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -104,6 +105,22 @@ class SettingsPageState extends State<SettingsPage> {
     }
   }
 
+
+  String version = "";
+  String buildNumber = "";
+  _getVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    setState(() {
+      version = packageInfo.version;
+      buildNumber = packageInfo.buildNumber; 
+    });
+  }
+
+  void initState() { 
+    super.initState();
+    _getVersion();
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -201,7 +218,7 @@ class SettingsPageState extends State<SettingsPage> {
           new Container(
             color: Theme.of(context).cardColor,
             child: new ListTile(
-              title: new Text("Version 1.0.6 (7)"),
+              title: new Text("Version $version ($buildNumber)"),
               subtitle: new Text("github.com/trentpiercy/trace"),
               leading: new Icon(Icons.info_outline),
               onTap: () => _launchUrl("https://github.com/trentpiercy/trace"),
