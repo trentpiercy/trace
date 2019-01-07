@@ -649,8 +649,8 @@ class CoinDetailsState extends State<CoinDetails>
                                   child: sortType[0] == "MARKET"
                                       ? new Text(
                                           sortType[1] == true
-                                              ? "Exchange ⬆"
-                                              : "Exchange ⬇",
+                                              ? "Exchange $upArrow"
+                                              : "Exchange $downArrow",
                                           style:
                                               Theme.of(context).textTheme.body2)
                                       : new Text(
@@ -684,8 +684,8 @@ class CoinDetailsState extends State<CoinDetails>
                                   child: sortType[0] == "VOLUME24HOURTO"
                                       ? new Text(
                                           sortType[1] == true
-                                              ? "24h Volume ⬇"
-                                              : "24h Volume ⬆",
+                                              ? "24h Volume $downArrow"
+                                              : "24h Volume $upArrow",
                                           style:
                                               Theme.of(context).textTheme.body2)
                                       : new Text("24h Volume",
@@ -720,8 +720,8 @@ class CoinDetailsState extends State<CoinDetails>
                                         child: sortType[0] == "PRICE"
                                             ? new Text(
                                                 sortType[1] == true
-                                                    ? "Price ⬇"
-                                                    : "Price ⬆",
+                                                    ? "Price $downArrow"
+                                                    : "Price $upArrow",
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .body2)
@@ -757,7 +757,7 @@ class CoinDetailsState extends State<CoinDetails>
                                             vertical: 8.0),
                                         child: sortType[0] == "CHANGEPCT24HOUR"
                                             ? new Text(
-                                                sortType[1] ? "24h ⬇" : "24h ⬆",
+                                                sortType[1] ? "24h $downArrow" : "24h $upArrow",
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .body2)

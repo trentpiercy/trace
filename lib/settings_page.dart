@@ -105,7 +105,6 @@ class SettingsPageState extends State<SettingsPage> {
     }
   }
 
-
   String version = "";
   String buildNumber = "";
   _getVersion() async {
