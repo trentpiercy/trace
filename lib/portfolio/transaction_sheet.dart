@@ -465,7 +465,7 @@ class TransactionSheetState extends State<TransactionSheet> {
                                 .textTheme
                                 .body2
                                 .apply(color: quantityTextColor),
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
                             decoration: new InputDecoration(
                               border: InputBorder.none,
                               hintText: "Quantity",
@@ -486,7 +486,7 @@ class TransactionSheetState extends State<TransactionSheet> {
                                 .textTheme
                                 .body2
                                 .apply(color: priceTextColor),
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
                             decoration: new InputDecoration(
                                 border: InputBorder.none,
                                 hintText: "Price",
