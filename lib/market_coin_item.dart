@@ -47,20 +47,22 @@ class CoinListItem extends StatelessWidget {
             children: <Widget>[
               new Container(
                 width: MediaQuery.of(context).size.width * columnProps[0],
-                child: new Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    new Text(snapshot["rank"].toString(),
-                        style: Theme.of(context)
-                            .textTheme
-                            .body2
-                            .apply(fontWeightDelta: 2)),
-                    new Padding(padding: const EdgeInsets.only(right: 7.0)),
-                    _getImage(),
-                    new Padding(padding: const EdgeInsets.only(right: 7.0)),
-                    new Text(snapshot["symbol"],
-                        style: Theme.of(context).textTheme.body2),
-                  ],
+                child: SingleChildScrollView( scrollDirection: Axis.horizontal,
+                                  child: new Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      new Text(snapshot["rank"].toString(),
+                          style: Theme.of(context)
+                              .textTheme
+                              .body2
+                              .apply(fontWeightDelta: 2)),
+                      new Padding(padding: const EdgeInsets.only(right: 7.0)),
+                      _getImage(),
+                      new Padding(padding: const EdgeInsets.only(right: 7.0)),
+                      new Text(snapshot["symbol"],
+                          style: Theme.of(context).textTheme.body2),
+                    ],
+                  ),
                 ),
               ),
               new Container(

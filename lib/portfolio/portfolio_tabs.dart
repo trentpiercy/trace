@@ -275,134 +275,136 @@ class PortfolioTabsState extends State<PortfolioTabs>
                   delegate: new SliverChildListDelegate(<Widget>[
                 new Container(
                     padding: const EdgeInsets.all(10.0),
-                    child: new Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          new Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              new Text("Portfolio Value",
-                                  style: Theme.of(context).textTheme.caption),
-                              new Row(
-                                mainAxisSize: MainAxisSize.max,
-                                children: <Widget>[
-                                  new Text(
-                                      "\$" +
-                                          numCommaParse(
-                                              value.toStringAsFixed(2)),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .body2
-                                          .apply(fontSizeFactor: 2.2)),
-                                  new Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 3.0)),
-                                  timelineData != null
-                                      ? new PercentDollarChange(
-                                          percent: changePercent,
-                                          exact: changeAmt,
-                                        )
-                                      : new Container(),
-                                ],
-                              ),
-//                          new Padding(padding: const EdgeInsets.symmetric(vertical: 2.5)),
-                              timelineData != null
-                                  ? new Row(
-                                      children: <Widget>[
-                                        new Text("High",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .caption),
-                                        new Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 2.0)),
-                                        new Text("\$" + normalizeNum(high),
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .body2
-                                                .apply(fontSizeFactor: 1.1))
-                                      ],
-                                    )
-                                  : new Container(),
-                              timelineData != null
-                                  ? new Row(
-                                      children: <Widget>[
-                                        new Text("Low",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .caption),
-                                        new Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 3.0)),
-                                        new Text("\$" + normalizeNum(low),
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .body2
-                                                .apply(fontSizeFactor: 1.1))
-                                      ],
-                                    )
-                                  : new Container(),
-                            ],
-                          ),
-                          new Card(
-                            elevation: 2.0,
-                            child: new Container(
-                              margin: const EdgeInsets.only(
-                                  left: 14.0, bottom: 12.0),
-                              child: new Column(
-//                            crossAxisAlignment: CrossAxisAlignment.end,
-                                children: <Widget>[
-                                  new Row(
-                                    children: <Widget>[
-                                      new Text(periodSetting,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .body2
-                                              .apply(
-                                                  fontWeightDelta: 2,
-                                                  fontSizeFactor: 1.2)),
-                                      new Container(
-                                        child: new PopupMenuButton(
-                                          icon: new Icon(Icons.access_time,
-                                              color: Theme.of(context)
-                                                  .buttonColor),
-                                          tooltip: "Select Period",
-                                          itemBuilder: (context) {
-                                            List<PopupMenuEntry<dynamic>>
-                                                options = [];
-                                            periodOptions.forEach((K, V) =>
-                                                options.add(new PopupMenuItem(
-                                                    child: new Text(K),
-                                                    value: K)));
-                                            return options;
-                                          },
-                                          onSelected: (chosen) {
-                                            setState(() {
-                                              periodSetting = chosen;
-                                              timelineData = null;
-                                            });
-                                            _getTimelineData();
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  new Container(
-                                    padding: const EdgeInsets.only(right: 14.0),
-                                    child: new Text(
-                                        "${oldestPoint.month.toString()}/${oldestPoint.day.toString()}"
-                                        "/${oldestPoint.year.toString().substring(2)} ➞ Now",
+                    child: SingleChildScrollView(scrollDirection: Axis.horizontal,
+                                          child: new Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            new Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                new Text("Portfolio Value",
+                                    style: Theme.of(context).textTheme.caption),
+                                new Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: <Widget>[
+                                    new Text(
+                                        "\$" +
+                                            numCommaParse(
+                                                value.toStringAsFixed(2)),
                                         style: Theme.of(context)
                                             .textTheme
                                             .body2
-                                            .apply(fontSizeFactor: .9)),
-                                  ),
-                                ],
-                              ),
+                                            .apply(fontSizeFactor: 2.2)),
+                                    new Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 3.0)),
+                                    timelineData != null
+                                        ? new PercentDollarChange(
+                                            percent: changePercent,
+                                            exact: changeAmt,
+                                          )
+                                        : new Container(),
+                                  ],
+                                ),
+//                          new Padding(padding: const EdgeInsets.symmetric(vertical: 2.5)),
+                                timelineData != null
+                                    ? new Row(
+                                        children: <Widget>[
+                                          new Text("High",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .caption),
+                                          new Padding(
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 2.0)),
+                                          new Text("\$" + normalizeNum(high),
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .body2
+                                                  .apply(fontSizeFactor: 1.1))
+                                        ],
+                                      )
+                                    : new Container(),
+                                timelineData != null
+                                    ? new Row(
+                                        children: <Widget>[
+                                          new Text("Low",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .caption),
+                                          new Padding(
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 3.0)),
+                                          new Text("\$" + normalizeNum(low),
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .body2
+                                                  .apply(fontSizeFactor: 1.1))
+                                        ],
+                                      )
+                                    : new Container(),
+                              ],
                             ),
-                          )
-                        ])),
+                            new Card(
+                              elevation: 2.0,
+                              child: new Container(
+                                margin: const EdgeInsets.only(
+                                    left: 14.0, bottom: 12.0),
+                                child: new Column(
+//                            crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: <Widget>[
+                                    new Row(
+                                      children: <Widget>[
+                                        new Text(periodSetting,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .body2
+                                                .apply(
+                                                    fontWeightDelta: 2,
+                                                    fontSizeFactor: 1.2)),
+                                        new Container(
+                                          child: new PopupMenuButton(
+                                            icon: new Icon(Icons.access_time,
+                                                color: Theme.of(context)
+                                                    .buttonColor),
+                                            tooltip: "Select Period",
+                                            itemBuilder: (context) {
+                                              List<PopupMenuEntry<dynamic>>
+                                                  options = [];
+                                              periodOptions.forEach((K, V) =>
+                                                  options.add(new PopupMenuItem(
+                                                      child: new Text(K),
+                                                      value: K)));
+                                              return options;
+                                            },
+                                            onSelected: (chosen) {
+                                              setState(() {
+                                                periodSetting = chosen;
+                                                timelineData = null;
+                                              });
+                                              _getTimelineData();
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    new Container(
+                                      padding: const EdgeInsets.only(right: 14.0),
+                                      child: new Text(
+                                          "${oldestPoint.month.toString()}/${oldestPoint.day.toString()}"
+                                          "/${oldestPoint.year.toString().substring(2)} ➞ Now",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .body2
+                                              .apply(fontSizeFactor: .9)),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          ]),
+                    )),
                 new Container(
                   padding:
                       const EdgeInsets.only(top: 16.0, left: 4.0, right: 2.0),
