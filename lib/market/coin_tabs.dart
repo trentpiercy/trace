@@ -136,7 +136,10 @@ class CoinDetailsState extends State<CoinDetails>
   String historyAgg = "2";
 
   _getGeneralStats() async {
-    await getMarketData();
+    const int fifteenMin = 15*60*1000;
+    if (DateTime.now().millisecondsSinceEpoch - lastUpdate >= fifteenMin) {
+      await getMarketData();
+    }
     _makeGeneralStats();
   }
 

@@ -24,6 +24,8 @@ bool isIOS;
 String upArrow = "⬆";
 String downArrow = "⬇";
 
+int lastUpdate;
+
 Future<Null> getMarketData() async {
   int numberOfCoins = 1500;
   List tempMarketListData = [];
@@ -54,7 +56,8 @@ Future<Null> getMarketData() async {
     File jsonFile = new File(directory.path + "/marketData.json");
     jsonFile.writeAsStringSync(json.encode(marketListData));
   });
-  print("got new market data");
+  print("Got new market data.");
+  lastUpdate = DateTime.now().millisecondsSinceEpoch;
 }
 
 void main() async {
