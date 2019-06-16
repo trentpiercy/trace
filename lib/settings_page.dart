@@ -217,6 +217,15 @@ class SettingsPageState extends State<SettingsPage> {
           new Container(
             color: Theme.of(context).cardColor,
             child: new ListTile(
+              title: new Text("Issues & Feature Requests"),
+              leading: new Icon(Icons.bug_report),
+              onTap: () =>
+                  _launchUrl("https://github.com/trentpiercy/trace/issues"),
+            ),
+          ),
+          new Container(
+            color: Theme.of(context).cardColor,
+            child: new ListTile(
               title: new Text("Version $version ($buildNumber)"),
               subtitle: new Text("github.com/trentpiercy/trace"),
               leading: new Icon(Icons.info_outline),
@@ -224,12 +233,25 @@ class SettingsPageState extends State<SettingsPage> {
             ),
           ),
           new Container(
+            padding: const EdgeInsets.all(10.0),
+            child: new Text("Credit", style: Theme.of(context).textTheme.body2),
+          ),
+          new Container(
             color: Theme.of(context).cardColor,
             child: new ListTile(
-              title: new Text("Issues & Feature Requests"),
-              leading: new Icon(Icons.bug_report),
-              onTap: () =>
-                  _launchUrl("https://github.com/trentpiercy/trace/issues"),
+              title: new RichText(
+                text: new TextSpan(
+                  text: "Maintained with love by ",
+                  style: Theme.of(context).textTheme.subhead,
+                  children: <TextSpan>[
+                    TextSpan(text: "@TrentPiercy", style: Theme.of(context).textTheme.subhead
+                      .apply(color: Theme.of(context).buttonColor, fontWeightDelta: 2))
+                  ]
+                )
+              ),
+              subtitle: new Text("twitter.com/trentpiercy"),
+              leading: new Icon(Icons.favorite),
+              onTap: () => _launchUrl("https://twitter.com/trentpiercy"),
             ),
           ),
         ],
