@@ -75,11 +75,11 @@ class SettingsPageState extends State<SettingsPage> {
           ),
           body: new SingleChildScrollView(
               child: new InkWell(
-            onTap: () {
-              Clipboard.setData(new ClipboardData(text: text));
-              _scaffoldKey.currentState.showSnackBar(new SnackBar(
-                  backgroundColor: Theme.of(context).indicatorColor,
-                  content: new Text("Copied to Clipboard!")));
+              onTap: () {
+                Clipboard.setData(new ClipboardData(text: text));
+                _scaffoldKey.currentState.showSnackBar(new SnackBar(
+                    backgroundColor: Theme.of(context).indicatorColor,
+                    content: new Text("Copied to Clipboard!")));
             },
             child: new Container(
                 padding: const EdgeInsets.all(10.0),
@@ -368,11 +368,42 @@ class ImportPageState extends State<ImportPage> {
         body: new SingleChildScrollView(
           child: new Column(
             children: <Widget>[
+              new Padding(
+                    padding: EdgeInsets.only(top: 6.0),
+              ),
+              new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  new RaisedButton(
+                    onPressed: () async {
+                      String clipText = (await Clipboard.getData('text/plain')).text;
+                      _importController.text = clipText;
+                      _checkImport(clipText);
+                    },
+                    child: new Text("Paste",
+                        style: Theme.of(context)
+                            .textTheme
+                            .body2
+                            .apply(color: Theme.of(context).iconTheme.color)),
+                  ),
+                  new Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 6.0),
+                  ),
+                  new RaisedButton(
+                    onPressed: textColor != Colors.red ? _importPortfolio : null,
+                    child: new Text("Import",
+                        style: Theme.of(context)
+                            .textTheme
+                            .body2
+                            .apply(color: Theme.of(context).iconTheme.color)),
+                    color: Colors.green,
+                  ),
+                ],
+              ),
               new Container(
                 padding: const EdgeInsets.all(10.0),
                 child: new TextField(
                   controller: _importController,
-                  autofocus: true,
                   maxLines: null,
                   style: Theme.of(context)
                       .textTheme
@@ -388,14 +419,6 @@ class ImportPageState extends State<ImportPage> {
                   onChanged: _checkImport,
                 ),
               ),
-              new RaisedButton(
-                onPressed: textColor != Colors.red ? _importPortfolio : null,
-                child: new Text("Import",
-                    style: Theme.of(context)
-                        .textTheme
-                        .body2
-                        .apply(color: Theme.of(context).iconTheme.color)),
-              )
             ],
           ),
         ));
