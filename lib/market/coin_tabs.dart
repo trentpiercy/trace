@@ -25,7 +25,7 @@ class CoinDetails extends StatefulWidget {
 }
 
 class CoinDetailsState extends State<CoinDetails>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   TabController _tabController;
   int _tabAmt;
   List<Widget> _tabBarChildren;
@@ -67,7 +67,19 @@ class CoinDetailsState extends State<CoinDetails>
     }
 
     _refreshTransactions();
+
+    _animationController = new AnimationController(duration: Duration(milliseconds: 500), vsync: this);
+    _animationController.addListener(() {
+      if (_animationController.isCompleted != true) {
+        print(_animationController.value.toString());
+        setState(() {
+          animationMultiplier = _animationController.value;
+        });
+      }
+    });
   }
+  double animationMultiplier = 0.0;
+  AnimationController _animationController;
 
   @override
   Widget build(BuildContext context) {
@@ -218,6 +230,8 @@ class CoinDetailsState extends State<CoinDetails>
     _getGeneralStats();
     await getHistoryOHLCV();
     _getHL();
+    _animationController.reset();
+    _animationController.forward();
   }
 
   Widget aggregateStats(BuildContext context) {
@@ -314,7 +328,6 @@ class CoinDetailsState extends State<CoinDetails>
                         children: <Widget>[
                           new Flexible(
                             child: new Container(
-//                                color: Theme.of(context).canvasColor,
                                 padding: const EdgeInsets.all(6.0),
                                 child: new Column(
                                   children: <Widget>[
@@ -402,7 +415,6 @@ class CoinDetailsState extends State<CoinDetails>
                                         ),
                                         historyOHLCV != null
                                             ? new Row(
-//                                          mainAxisSize: MainAxisSize.min,
                                                 children: <Widget>[
                                                   new Column(
                                                     crossAxisAlignment:
@@ -540,6 +552,7 @@ class CoinDetailsState extends State<CoinDetails>
                                       volumeProp: 0.2,
                                       lineWidth: 1.0,
                                       decreaseColor: Colors.red[600],
+                                      animationMultiplier: animationMultiplier,
                                     )
                                   : new Container(
                                       padding: const EdgeInsets.all(30.0),

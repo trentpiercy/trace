@@ -15,6 +15,7 @@ class OHLCVGraph extends StatelessWidget {
     this.labelPrefix = "\$",
     @required this.enableGridLines,
     @required this.volumeProp,
+    this.animationMultiplier = 1.0,
     this.increaseColor = Colors.green,
     this.decreaseColor = Colors.red,
   })  : assert(data != null),
@@ -57,6 +58,8 @@ class OHLCVGraph extends StatelessWidget {
   /// Decrease color
   final Color decreaseColor;
 
+  final double animationMultiplier;
+
   @override
   Widget build(BuildContext context) {
     return new LimitedBox(
@@ -74,7 +77,9 @@ class OHLCVGraph extends StatelessWidget {
             volumeProp: volumeProp,
             labelPrefix: labelPrefix,
             increaseColor: increaseColor,
-            decreaseColor: decreaseColor),
+            decreaseColor: decreaseColor,
+            animationMultiplier: animationMultiplier,
+        ),
       ),
     );
   }
@@ -91,7 +96,8 @@ class _OHLCVPainter extends CustomPainter {
       @required this.volumeProp,
       @required this.labelPrefix,
       @required this.increaseColor,
-      @required this.decreaseColor});
+      @required this.decreaseColor,
+      @required this.animationMultiplier});
 
   final List data;
   final double lineWidth;
@@ -104,6 +110,7 @@ class _OHLCVPainter extends CustomPainter {
   final double volumeProp;
   final Color increaseColor;
   final Color decreaseColor;
+  final double animationMultiplier;
 
   double _min;
   double _max;
@@ -164,7 +171,7 @@ class _OHLCVPainter extends CustomPainter {
       // Label volume line
       maxVolumePainter = new TextPainter(
           text: new TextSpan(
-              text: "\$" + numCommaParse(_maxVolume),
+              text: labelPrefix + numCommaParse(_maxVolume),
               style: new TextStyle(
                   color: gridLineLabelColor,
                   fontSize: 10.0,
@@ -176,6 +183,8 @@ class _OHLCVPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    print("painting");
+
     if (_min == null || _max == null || _maxVolume == null) {
       update();
     }
@@ -243,7 +252,7 @@ class _OHLCVPainter extends CustomPainter {
 
         // Draw volume bars
         Rect volumeRect = new Rect.fromLTRB(
-            rectLeft, volumeBarTop, rectRight, volumeBarBottom);
+            rectLeft, volumeBarTop + ((volumeBarBottom - volumeBarTop) * (1-animationMultiplier)), rectRight, volumeBarBottom);
         canvas.drawRect(volumeRect, rectPaint);
       } else {
         // Draw candlestick if increase
@@ -298,6 +307,7 @@ class _OHLCVPainter extends CustomPainter {
         gridLineAmount != old.gridLineAmount ||
         gridLineWidth != old.gridLineWidth ||
         volumeProp != old.volumeProp ||
-        gridLineLabelColor != old.gridLineLabelColor;
+        gridLineLabelColor != old.gridLineLabelColor ||
+        animationMultiplier != old.animationMultiplier;
   }
 }
