@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -172,7 +173,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   void dispose() {
     _tabController.dispose();
     _textController.dispose();
-    _tabController.animation.removeListener(_handleTabChange);
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -278,7 +279,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
               new SliverAppBar(
                 title: [
                   new Text("Portfolio"),
-
                   isSearching
                       ? new TextField(
                           controller: _textController,
@@ -295,8 +295,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                           onTap: () => _startSearch(),
                           child: new Text("Aggregate Markets"),
                         ),
-
-//                  new Text("Alerts")
                 ][_tabIndex],
                 actions: <Widget>[
                   [
@@ -330,7 +328,6 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                         tabs: <Tab>[
                           new Tab(icon: new Icon(Icons.person)),
                           new Tab(icon: new Icon(Icons.filter_list)),
-//                          new Tab(icon: new Icon(Icons.notifications))
                         ],
                       ),
                     )),
@@ -354,14 +351,15 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
             elevation: 4.0,
             tooltip: "Close Transaction",
           )
-        : new FloatingActionButton(
-            onPressed: _openTransaction,
-            child: Icon(Icons.add),
-            foregroundColor: Theme.of(context).iconTheme.color,
-            backgroundColor: Theme.of(context).accentIconTheme.color,
-            elevation: 4.0,
-            tooltip: "Add Transaction",
-          );
+        : new FloatingActionButton.extended(
+              onPressed: _openTransaction,
+              icon: Icon(Icons.add),
+              label: new Text("Add Transaction"),
+              foregroundColor: Theme.of(context).iconTheme.color,
+              backgroundColor: Theme.of(context).accentIconTheme.color,
+              elevation: 4.0,
+              tooltip: "Add Transaction",
+        );
   }
 
   final portfolioColumnProps = [.25, .35, .3];
