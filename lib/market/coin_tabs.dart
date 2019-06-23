@@ -314,7 +314,6 @@ class CoinDetailsState extends State<CoinDetails>
                         children: <Widget>[
                           new Flexible(
                             child: new Container(
-//                                color: Theme.of(context).canvasColor,
                                 padding: const EdgeInsets.all(6.0),
                                 child: new Column(
                                   children: <Widget>[
@@ -402,7 +401,6 @@ class CoinDetailsState extends State<CoinDetails>
                                         ),
                                         historyOHLCV != null
                                             ? new Row(
-//                                          mainAxisSize: MainAxisSize.min,
                                                 children: <Widget>[
                                                   new Column(
                                                     crossAxisAlignment:

@@ -164,7 +164,7 @@ class _OHLCVPainter extends CustomPainter {
       // Label volume line
       maxVolumePainter = new TextPainter(
           text: new TextSpan(
-              text: "\$" + numCommaParse(_maxVolume),
+              text: labelPrefix + numCommaParse(_maxVolume),
               style: new TextStyle(
                   color: gridLineLabelColor,
                   fontSize: 10.0,
