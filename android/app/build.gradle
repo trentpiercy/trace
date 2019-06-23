@@ -30,9 +30,9 @@ android {
     defaultConfig {
         applicationId "com.trentpiercy.trace"
         minSdkVersion 21
-        targetSdkVersion 27
-        versionCode 8
-        versionName "1.0.7"
+        targetSdkVersion 28
+        versionCode 9
+        versionName "1.0.8"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
