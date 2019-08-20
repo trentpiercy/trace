@@ -59,6 +59,36 @@ class SettingsPageState extends State<SettingsPage> {
     });
   }
 
+  _confirmDeleteWallets() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return new AlertDialog(
+            title: new Text("Clear Wallets?"),
+            content: new Text("This will permanently delete all scanned in wallets."),
+            actions: <Widget>[
+              new FlatButton(
+                  onPressed: () async {
+                    await _deleteWallets();
+                    Navigator.of(context).pop();
+                  },
+                  child: new Text("Delete")),
+              new FlatButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: new Text("Cancel"))
+            ],
+          );
+        });
+  }
+
+  Future<Null> _deleteWallets() async {
+    getApplicationDocumentsDirectory().then((Directory directory) {
+      File confirmeratorFile = new File(directory.path + "/confirmerator.json");
+      confirmeratorFile.delete();
+      confirmeratorMap = {};
+    });
+  }
+
   _exportPortfolio() {
     String text = json.encode(portfolioMap);
     GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -212,6 +242,14 @@ class SettingsPageState extends State<SettingsPage> {
               title: new Text("Clear Portfolio"),
               leading: new Icon(Icons.delete),
               onTap: _confirmDeletePortfolio,
+            ),
+          ),
+          new Container(
+            color: Theme.of(context).cardColor,
+            child: new ListTile(
+              title: new Text("Clear Wallets"),
+              leading: new Icon(Icons.delete),
+              onTap: _confirmDeleteWallets,
             ),
           ),
           new Container(

@@ -6,9 +6,12 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import 'tabs.dart';
 import 'settings_page.dart';
+import 'models/user.dart';
+import 'models/device.dart';
 
 const double appBarHeight = 48.0;
 const double appBarElevation = 1.0;
@@ -17,12 +20,27 @@ bool shortenOn = false;
 
 List marketListData;
 Map portfolioMap;
+Map confirmeratorMap;
 List portfolioDisplay;
+List confirmeratorDisplay;
 Map totalPortfolioStats;
+Map totalConfirmationStats;
+List<String> walletAccounts;
 
 bool isIOS;
 String upArrow = "⬆";
 String downArrow = "⬇";
+//String confirmeratorURL = "http://confirmerator.com";
+String confirmeratorURL = "test.confirmerator.com:8042";
+const String userID = "userID";
+const String userGID = "userGID";
+const String deviceTokenName = "deviceToken";
+const String walletAccountName = "walletAccounts";
+const String prodEnv = "http://confirmerator.com/v1/api/";
+const String testEnv = "http://test.confirmerator.com:8042/v1/api/";
+const String ApiUser = "user";
+const String ApiDevice = "device";
+const String ApiAccount = "account";
 
 int lastUpdate;
 
@@ -39,6 +57,7 @@ Future<Null> getMarketData() async {
             limit.toString()),
         headers: {"Accept": "application/json"});
 
+//    print("\n\nCMC Market response: \n" + response.body + "\n\n");
     Map rawMarketListData = new JsonDecoder().convert(response.body)["data"];
     tempMarketListData.addAll(rawMarketListData.values);
   }
@@ -60,6 +79,29 @@ Future<Null> getMarketData() async {
   lastUpdate = DateTime.now().millisecondsSinceEpoch;
 }
 
+GoogleSignIn _googleSignIn = GoogleSignIn(
+  scopes: [
+    'email',
+    'profile',
+  ],
+);
+
+class GoogleSignInAuthentication {
+  GoogleSignInAuthentication._(this._data);
+
+  final Map<String, dynamic> _data;
+
+  /// An OpenID Connect ID token that identifies the user.
+  String get idToken => _data['idToken'];
+
+  /// The OAuth2 access token to access Google services.
+  String get accessToken => _data['accessToken'];
+
+  @override
+  String toString() => 'GoogleSignInAuthentication:$_data';
+}
+
+
 void main() async {
   await getApplicationDocumentsDirectory().then((Directory directory) async {
     File jsonFile = new File(directory.path + "/portfolio.json");
@@ -73,6 +115,19 @@ void main() async {
     if (portfolioMap == null) {
       portfolioMap = {};
     }
+
+    jsonFile = new File(directory.path + "/confirmerator.json");
+    if (jsonFile.existsSync()) {
+      confirmeratorMap = json.decode(jsonFile.readAsStringSync());
+    } else {
+      jsonFile.createSync();
+      jsonFile.writeAsStringSync("{}");
+      confirmeratorMap = {};
+    }
+    if (confirmeratorMap == null) {
+      confirmeratorMap = {};
+    }
+
     jsonFile = new File(directory.path + "/marketData.json");
     if (jsonFile.existsSync()) {
       marketListData = json.decode(jsonFile.readAsStringSync());
@@ -157,6 +212,7 @@ class TraceAppState extends State<TraceApp> {
   bool darkEnabled;
   String themeMode;
   bool darkOLED;
+  GoogleSignInAccount _currentUser;
 
   void savePreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -220,7 +276,7 @@ class TraceAppState extends State<TraceApp> {
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
           systemNavigationBarIconBrightness: Brightness.light,
           systemNavigationBarColor:
-              darkOLED ? darkThemeOLED.primaryColor : darkTheme.primaryColor));
+          darkOLED ? darkThemeOLED.primaryColor : darkTheme.primaryColor));
     } else {
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
           systemNavigationBarIconBrightness: Brightness.dark,
@@ -276,12 +332,72 @@ class TraceAppState extends State<TraceApp> {
     iconTheme: new IconThemeData(color: Colors.white),
   );
 
+  void _handleSignIn() async {
+    try {
+      await _googleSignIn.signIn();
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  void _saveUser() async {
+    // Obtain shared preferences
+    final prefs = await SharedPreferences.getInstance();
+    // Read token from store, return empty string if not found
+    final storedUserID = prefs.getString(userGID) ?? "";
+    if (storedUserID.length != 0 && storedUserID == _currentUser.id) {
+      print("Stored userID $storedUserID");
+      print("CurrentUserID ${_currentUser.id}");
+      return; // don't notify the server, nothing changed
+    }
+
+    print("User changed!!!");
+    prefs.setString(userGID, _currentUser.id);
+
+    String confirmeratorUser;
+    User newUser;
+    newUser = User(42, "superRandomID", _currentUser.displayName, _currentUser.email);
+    String json = jsonEncode(newUser);
+    var client = new http.Client();
+    try {
+      var response = await client.post(testEnv + ApiUser,
+          body: json);
+      print('User update response status: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        Map<String, dynamic> newUser = jsonDecode(response.body);
+        confirmeratorUser = newUser['id'];
+
+        prefs.setString(userID, confirmeratorUser);
+        print("!!!! Hey the ID is:  $confirmeratorUser");
+      }
+    } finally {
+      client.close();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     themeMode = widget.themeMode ?? "Automatic";
     darkOLED = widget.darkOLED ?? false;
     setDarkEnabled();
+    _handleSignIn();
+
+    _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account) {
+      setState(() {
+        print("\n\n !!!!!!!!!! New User [ " + account.email + " ] !!!!!!!!!!! \n\n");
+        _currentUser = account;
+        _saveUser();
+
+      });
+      if (_currentUser != null) {
+        print("~~~~~~~~~ Logged in!!!!!!!");
+        print("User: " + _currentUser.email);
+        print("Name: " + _currentUser.displayName);
+        print("id: " + _currentUser.id + "\n");
+      }
+    });
+    _googleSignIn.signInSilently();
   }
 
   @override
@@ -296,7 +412,7 @@ class TraceAppState extends State<TraceApp> {
       color: darkEnabled
           ? darkOLED ? darkThemeOLED.primaryColor : darkTheme.primaryColor
           : lightTheme.primaryColor,
-      title: "Trace",
+      title: "Trace + Confirmerator",
       home: new Tabs(
         savePreferences: savePreferences,
         toggleTheme: toggleTheme,
@@ -309,14 +425,19 @@ class TraceAppState extends State<TraceApp> {
       theme: darkEnabled ? darkOLED ? darkThemeOLED : darkTheme : lightTheme,
       routes: <String, WidgetBuilder>{
         "/settings": (BuildContext context) => new SettingsPage(
-              savePreferences: savePreferences,
-              toggleTheme: toggleTheme,
-              darkEnabled: darkEnabled,
-              themeMode: themeMode,
-              switchOLED: switchOLED,
-              darkOLED: darkOLED,
-            ),
+          savePreferences: savePreferences,
+          toggleTheme: toggleTheme,
+          darkEnabled: darkEnabled,
+          themeMode: themeMode,
+          switchOLED: switchOLED,
+          darkOLED: darkOLED,
+        ),
       },
     );
   }
 }
+
+//void _notifyServer(String deviceToken) async {
+//
+//}
+//
