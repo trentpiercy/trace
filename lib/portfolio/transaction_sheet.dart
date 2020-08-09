@@ -113,7 +113,7 @@ class TransactionSheetState extends State<TransactionSheet> {
   _checkValidSymbol(String inputSymbol) async {
     if (symbolList == null || symbolList.isEmpty) {
       symbolList = [];
-      widget.marketListData.forEach((value) => symbolList.add(value["symbol"]));
+      widget.marketListData.forEach((value) => symbolList.add(value["CoinInfo"]["Name"]));
     }
 
     if (symbolList.contains(inputSymbol.toUpperCase())) {
@@ -122,8 +122,8 @@ class TransactionSheetState extends State<TransactionSheet> {
       _getExchangeList();
 
       for (var value in widget.marketListData) {
-        if (value["symbol"] == symbol) {
-          price = value["quotes"]["USD"]["price"];
+        if (value["CoinInfo"]["Name"] == symbol) {
+          price = value["RAW"]["USD"]["PRICE"];
           _priceController.text = price.toString();
           priceTextColor = validColor;
           break;

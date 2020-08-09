@@ -120,35 +120,36 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     portfolioDisplay = [];
     num totalPortfolioValue = 0;
     marketListData.forEach((coin) {
-      if (neededPriceSymbols.contains(coin["symbol"]) &&
-          portfolioTotals[coin["symbol"]] != 0) {
+      String symbol = coin["CoinInfo"]["Name"];
+      if (neededPriceSymbols.contains(symbol) &&
+          portfolioTotals[symbol] != 0) {
         portfolioDisplay.add({
-          "symbol": coin["symbol"],
-          "price_usd": coin["quotes"]["USD"]["price"],
-          "percent_change_24h": coin["quotes"]["USD"]["percent_change_24h"],
-          "percent_change_7d": coin["quotes"]["USD"]["percent_change_7d"],
-          "total_quantity": portfolioTotals[coin["symbol"]],
-          "id": coin["id"],
-          "name": coin["name"],
+          "symbol": symbol,
+          "price_usd": coin["RAW"]["USD"]["PRICE"],
+          "percent_change_24h": coin["RAW"]["USD"]["CHANGEPCT24HOUR"],
+          "percent_change_1h": coin["RAW"]["USD"]["CHANGEPCTHOUR"],
+          "total_quantity": portfolioTotals[symbol],
+          "id": coin["CoinInfo"]["Id"],
+          "name": coin["CoinInfo"]["FullName"],
+          "CoinInfo" : coin["CoinInfo"]
         });
-        totalPortfolioValue +=
-            (portfolioTotals[coin["symbol"]] * coin["quotes"]["USD"]["price"]);
+        totalPortfolioValue += (portfolioTotals[symbol] * coin["RAW"]["USD"]["PRICE"]);
       }
     });
 
     num total24hChange = 0;
-    num total7dChange = 0;
+    num total1hChange = 0;
     portfolioDisplay.forEach((coin) {
       total24hChange += (coin["percent_change_24h"] *
           ((coin["price_usd"] * coin["total_quantity"]) / totalPortfolioValue));
-      total7dChange += (coin["percent_change_7d"] *
+      total1hChange += (coin["percent_change_1h"] *
           ((coin["price_usd"] * coin["total_quantity"]) / totalPortfolioValue));
     });
 
     totalPortfolioStats = {
       "value_usd": totalPortfolioValue,
       "percent_change_24h": total24hChange,
-      "percent_change_7d": total7dChange
+      "percent_change_1h": total1hChange
     };
 
     _sortPortfolioDisplay();
@@ -434,23 +435,23 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                     ),
                     new Column(
                       children: <Widget>[
-                        new Text("7D Change",
+                        new Text("1h Change",
                             style: Theme.of(context).textTheme.caption),
                         new Padding(
                             padding: const EdgeInsets.symmetric(vertical: 1.0)),
                         new Text(
-                            totalPortfolioStats["percent_change_7d"] >= 0
+                            totalPortfolioStats["percent_change_1h"] >= 0
                                 ? "+" +
-                                    totalPortfolioStats["percent_change_7d"]
+                                    totalPortfolioStats["percent_change_1h"]
                                         .toStringAsFixed(2) +
                                     "%"
-                                : totalPortfolioStats["percent_change_7d"]
+                                : totalPortfolioStats["percent_change_1h"]
                                         .toStringAsFixed(2) +
                                     "%",
                             style:
                                 Theme.of(context).primaryTextTheme.body2.apply(
                                       color: totalPortfolioStats[
-                                                  "percent_change_7d"] >=
+                                                  "percent_change_1h"] >=
                                               0
                                           ? Colors.green
                                           : Colors.red,
@@ -634,11 +635,12 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
   Map globalData;
 
   Future<Null> getGlobalData() async {
-    var response = await http.get(
-        Uri.encodeFull("https://api.coinmarketcap.com/v2/global/"),
-        headers: {"Accept": "application/json"});
+    // var response = await http.get(
+    //     Uri.encodeFull("https://api.coinmarketcap.com/v1/global-metrics/quotes/latest"),
+    //     headers: {"Accept": "application/json"});
 
-    globalData = new JsonDecoder().convert(response.body)["data"]["quotes"]["USD"];
+    // globalData = new JsonDecoder().convert(response.body)["data"]["quotes"]["USD"];
+    globalData = null;
   }
 
   Future<Null> _refreshMarketPage() async {
@@ -655,8 +657,8 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     if (filter != "" && filter != null) {
       List tempFilteredMarketData = [];
       filteredMarketData.forEach((item) {
-        if (item["symbol"].toLowerCase().contains(filter.toLowerCase()) ||
-            item["name"].toLowerCase().contains(filter.toLowerCase())) {
+        if (item["CoinInfo"]["Name"].toLowerCase().contains(filter.toLowerCase()) ||
+            item["CoinInfo"]["FullName"].toLowerCase().contains(filter.toLowerCase())) {
           tempFilteredMarketData.add(item);
         }
       });
@@ -665,28 +667,42 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
     _sortMarketData();
   }
 
-  List marketSortType = ["market_cap", true];
+  List marketSortType = ["MKTCAP", true];
   _sortMarketData() {
+    if (filteredMarketData == [] || filteredMarketData == null) {
+      return;
+    }
+    // highest to lowest
     if (marketSortType[1]) {
-      if (marketSortType[0] == "market_cap" ||
-          marketSortType[0] == "volume_24h" ||
-          marketSortType[0] == "percent_change_24h") {
-        filteredMarketData.sort((a, b) => (b["quotes"]["USD"][marketSortType[0]] ?? 0)
-            .compareTo(a["quotes"]["USD"][marketSortType[0]] ?? 0));
+      if (marketSortType[0] == "MKTCAP" ||
+          marketSortType[0] == "TOTALVOLUME24H" ||
+          marketSortType[0] == "CHANGEPCT24HOUR") {
+            print(filteredMarketData);
+            filteredMarketData.sort((a, b) => (b["RAW"]["USD"][marketSortType[0]] ?? 0)
+              .compareTo(a["RAW"]["USD"][marketSortType[0]] ?? 0));
+          if (marketSortType[0] == "MKTCAP") {
+              print("adding ranks to filteredMarketData");
+              int i = 1;
+              for (Map coin in filteredMarketData) {
+                coin["rank"] = i;
+                i++;
+              }
+          }
       } else {
+        // Handle sorting by name
         filteredMarketData.sort(
-            (a, b) => (b[marketSortType[0]] ?? 0).compareTo(a[marketSortType[0]] ?? 0));
+            (a, b) => (b["CoinInfo"][marketSortType[0]] ?? 0).compareTo(a["CoinInfo"][marketSortType[0]] ?? 0));
       }
+      // lowest to highest
     } else {
-      if (marketSortType[0] == "market_cap" ||
-          marketSortType[0] == "volume_24h" ||
-          marketSortType[0] == "percent_change_24h") {
-
-        filteredMarketData.sort((a, b) => (a["quotes"]["USD"][marketSortType[0]] ?? 0)
-            .compareTo(b["quotes"]["USD"][marketSortType[0]] ?? 0));
+      if (marketSortType[0] == "MKTCAP" ||
+          marketSortType[0] == "TOTALVOLUME24H" ||
+          marketSortType[0] == "CHANGEPCT24HOUR") {
+        filteredMarketData.sort((a, b) => (a["RAW"]["USD"][marketSortType[0]] ?? 0)
+            .compareTo(b["RAW"]["USD"][marketSortType[0]] ?? 0));
       } else {
         filteredMarketData.sort(
-            (a, b) => (a[marketSortType[0]] ?? 0).compareTo(b[marketSortType[0]] ?? 0));
+            (a, b) => (a["CoinInfo"][marketSortType[0]] ?? 0).compareTo(b["CoinInfo"][marketSortType[0]] ?? 0));
       }
     }
   }
@@ -772,10 +788,10 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                       children: <Widget>[
                         new InkWell(
                           onTap: () {
-                            if (marketSortType[0] == "symbol") {
+                            if (marketSortType[0] == "Name") {
                               marketSortType[1] = !marketSortType[1];
                             } else {
-                              marketSortType = ["symbol", false];
+                              marketSortType = ["Name", false];
                             }
                             setState(() {
                               _sortMarketData();
@@ -785,7 +801,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                             padding: const EdgeInsets.symmetric(vertical: 8.0),
                             width: MediaQuery.of(context).size.width *
                                 marketColumnProps[0],
-                            child: marketSortType[0] == "symbol"
+                            child: marketSortType[0] == "Name"
                                 ? new Text(
                                     marketSortType[1]
                                         ? "Currency " + upArrow
@@ -808,10 +824,10 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                             children: <Widget>[
                               new InkWell(
                                   onTap: () {
-                                    if (marketSortType[0] == "market_cap") {
+                                    if (marketSortType[0] == "MKTCAP") {
                                       marketSortType[1] = !marketSortType[1];
                                     } else {
-                                      marketSortType = ["market_cap", true];
+                                      marketSortType = ["MKTCAP", true];
                                     }
                                     setState(() {
                                       _sortMarketData();
@@ -820,7 +836,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                                   child: new Padding(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 8.0),
-                                    child: marketSortType[0] == "market_cap"
+                                    child: marketSortType[0] == "MKTCAP"
                                         ? new Text(
                                             marketSortType[1]
                                                 ? "Market Cap " + downArrow
@@ -844,10 +860,10 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                                           color: Theme.of(context).hintColor)),
                               new InkWell(
                                 onTap: () {
-                                  if (marketSortType[0] == "volume_24h") {
+                                  if (marketSortType[0] == "TOTALVOLUME24H") {
                                     marketSortType[1] = !marketSortType[1];
                                   } else {
-                                    marketSortType = ["volume_24h", true];
+                                    marketSortType = ["TOTALVOLUME24H", true];
                                   }
                                   setState(() {
                                     _sortMarketData();
@@ -856,7 +872,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                                 child: new Padding(
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 8.0),
-                                  child: marketSortType[0] == "volume_24h"
+                                  child: marketSortType[0] == "TOTALVOLUME24H"
                                       ? new Text(
                                           marketSortType[1] ? "24h " + downArrow : "24h " + upArrow,
                                           style:
@@ -875,10 +891,10 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                         ),
                         new InkWell(
                           onTap: () {
-                            if (marketSortType[0] == "percent_change_24h") {
+                            if (marketSortType[0] == "CHANGEPCT24HOUR") {
                               marketSortType[1] = !marketSortType[1];
                             } else {
-                              marketSortType = ["percent_change_24h", true];
+                              marketSortType = ["CHANGEPCT24HOUR", true];
                             }
                             setState(() {
                               _sortMarketData();
@@ -889,7 +905,7 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                             padding: const EdgeInsets.symmetric(vertical: 8.0),
                             width: MediaQuery.of(context).size.width *
                                 marketColumnProps[2],
-                            child: marketSortType[0] == "percent_change_24h"
+                            child: marketSortType[0] == "CHANGEPCT24HOUR"
                                 ? new Text(
                                     marketSortType[1] == true
                                         ? "Price/24h " + downArrow

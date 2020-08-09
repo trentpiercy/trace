@@ -25,42 +25,47 @@ String upArrow = "⬆";
 String downArrow = "⬇";
 
 int lastUpdate;
-
 Future<Null> getMarketData() async {
-  int numberOfCoins = 1500;
+  int pages = 5;
   List tempMarketListData = [];
 
-  Future<Null> _pullData(start, limit) async {
+  Future<Null> _pullData(page) async {
     var response = await http.get(
-        Uri.encodeFull("https://api.coinmarketcap.com/v2/ticker/" +
-            "?start=" +
-            start.toString() +
-            "&limit=" +
-            limit.toString()),
+        Uri.encodeFull("https://min-api.cryptocompare.com/data/top/mktcapfull?tsym=USD&limit=100" +
+            "&page=" +
+            page.toString()),
         headers: {"Accept": "application/json"});
 
-    Map rawMarketListData = new JsonDecoder().convert(response.body)["data"];
-    tempMarketListData.addAll(rawMarketListData.values);
+    List rawMarketListData = new JsonDecoder().convert(response.body)["Data"];
+    tempMarketListData.addAll(rawMarketListData);
   }
 
   List<Future> futures = [];
-  for (int i = 0; i <= numberOfCoins / 100 - 1; i++) {
-    int start = i * 100 + 1;
-    int limit = i * 100 + 100;
-    futures.add(_pullData(start, limit));
+  for (int i = 0; i < pages; i++) {
+    futures.add(_pullData(i));                                       
   }
   await Future.wait(futures);
 
-  marketListData = tempMarketListData;
+  marketListData = [];
+  // Filter out lack of financial data
+  for (Map coin in tempMarketListData) {
+    if (coin.containsKey("RAW") && coin.containsKey("CoinInfo")) {
+      marketListData.add(coin);
+    }
+  }
+
   getApplicationDocumentsDirectory().then((Directory directory) async {
     File jsonFile = new File(directory.path + "/marketData.json");
     jsonFile.writeAsStringSync(json.encode(marketListData));
   });
   print("Got new market data.");
+
   lastUpdate = DateTime.now().millisecondsSinceEpoch;
 }
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   await getApplicationDocumentsDirectory().then((Directory directory) async {
     File jsonFile = new File(directory.path + "/portfolio.json");
     if (jsonFile.existsSync()) {
@@ -80,6 +85,7 @@ void main() async {
       jsonFile.createSync();
       jsonFile.writeAsStringSync("[]");
       marketListData = [];
+      // getMarketData(); ?does this work?
     }
   });
 
