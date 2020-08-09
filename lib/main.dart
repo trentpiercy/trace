@@ -26,7 +26,7 @@ String downArrow = "⬇";
 
 int lastUpdate;
 Future<Null> getMarketData() async {
-  int pages = 10;
+  int pages = 5;
   List tempMarketListData = [];
 
   Future<Null> _pullData(page) async {
@@ -49,7 +49,7 @@ Future<Null> getMarketData() async {
   marketListData = [];
   // Filter out lack of financial data
   for (Map coin in tempMarketListData) {
-    if (coin.containsKey("RAW")) {
+    if (coin.containsKey("RAW") && coin.containsKey("CoinInfo")) {
       marketListData.add(coin);
     }
   }

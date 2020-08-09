@@ -7,7 +7,7 @@ final assetImages = ['\$pac', 'block', 'ctxc', 'ethos', 'hush', 'msr', 'pot', 's
 class CoinListItem extends StatelessWidget {
   CoinListItem(this.snapshot, this.columnProps);
   final columnProps;
-  final snapshot;
+  final Map snapshot;
 
   _getImage() {
     if (assetImages.contains(snapshot["CoinInfo"]["Name"].toLowerCase())) {
@@ -21,18 +21,9 @@ class CoinListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // snapshot.forEach((k, v) {
-    //   if (v == null) {
-    //     snapshot[k] = "0";
-    //   }
-    // });
-    // snapshot["RAW"]["USD"].forEach((k, v) {
-    //   if (v == null) {
-    //     snapshot["RAW"]["USD"][k] = 0;
-    //   }
-    // });;
-    // print("snapshot: ");
-    // print(snapshot);
+    if (!snapshot.containsKey("CoinInfo") || !snapshot.containsKey("RAW") || snapshot == null || snapshot.isEmpty) {
+      return new Container();
+    }
 
     return new InkWell(
         onTap: () {

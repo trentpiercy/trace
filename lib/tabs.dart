@@ -127,28 +127,29 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
           "symbol": symbol,
           "price_usd": coin["RAW"]["USD"]["PRICE"],
           "percent_change_24h": coin["RAW"]["USD"]["CHANGEPCT24HOUR"],
-          "percent_change_7d": 0, // TODO
+          "percent_change_1h": coin["RAW"]["USD"]["CHANGEPCTHOUR"],
           "total_quantity": portfolioTotals[symbol],
           "id": coin["CoinInfo"]["Id"],
           "name": coin["CoinInfo"]["FullName"],
+          "CoinInfo" : coin["CoinInfo"]
         });
         totalPortfolioValue += (portfolioTotals[symbol] * coin["RAW"]["USD"]["PRICE"]);
       }
     });
 
     num total24hChange = 0;
-    num total7dChange = 0;
+    num total1hChange = 0;
     portfolioDisplay.forEach((coin) {
       total24hChange += (coin["percent_change_24h"] *
           ((coin["price_usd"] * coin["total_quantity"]) / totalPortfolioValue));
-      total7dChange += (coin["percent_change_7d"] *
+      total1hChange += (coin["percent_change_1h"] *
           ((coin["price_usd"] * coin["total_quantity"]) / totalPortfolioValue));
     });
 
     totalPortfolioStats = {
       "value_usd": totalPortfolioValue,
       "percent_change_24h": total24hChange,
-      "percent_change_7d": total7dChange
+      "percent_change_1h": total1hChange
     };
 
     _sortPortfolioDisplay();
@@ -434,23 +435,23 @@ class TabsState extends State<Tabs> with SingleTickerProviderStateMixin {
                     ),
                     new Column(
                       children: <Widget>[
-                        new Text("7D Change",
+                        new Text("1h Change",
                             style: Theme.of(context).textTheme.caption),
                         new Padding(
                             padding: const EdgeInsets.symmetric(vertical: 1.0)),
                         new Text(
-                            totalPortfolioStats["percent_change_7d"] >= 0
+                            totalPortfolioStats["percent_change_1h"] >= 0
                                 ? "+" +
-                                    totalPortfolioStats["percent_change_7d"]
+                                    totalPortfolioStats["percent_change_1h"]
                                         .toStringAsFixed(2) +
                                     "%"
-                                : totalPortfolioStats["percent_change_7d"]
+                                : totalPortfolioStats["percent_change_1h"]
                                         .toStringAsFixed(2) +
                                     "%",
                             style:
                                 Theme.of(context).primaryTextTheme.body2.apply(
                                       color: totalPortfolioStats[
-                                                  "percent_change_7d"] >=
+                                                  "percent_change_1h"] >=
                                               0
                                           ? Colors.green
                                           : Colors.red,

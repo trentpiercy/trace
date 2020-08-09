@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../main.dart';
 
 final Map ohlcvWidthOptions = {
   "1h": [
@@ -84,8 +85,8 @@ class QuickPercentChangeBar extends StatelessWidget {
               new Padding(padding: const EdgeInsets.only(right: 3.0)),
               new Text(
                   snapshot["CHANGEPCTHOUR"] >= 0
-                      ? "+" + snapshot["CHANGEPCTHOUR"].toString() + "%"
-                      : snapshot["CHANGEPCTHOUR"].toString() + "%",
+                      ? "+" + snapshot["CHANGEPCTHOUR"].toStringAsFixed(2) + "%"
+                      : snapshot["CHANGEPCTHOUR"].toStringAsFixed(2) + "%",
                   style: Theme.of(context).primaryTextTheme.body2.apply(
                       color: snapshot["CHANGEPCTHOUR"] >= 0
                           ? Colors.green
@@ -103,8 +104,8 @@ class QuickPercentChangeBar extends StatelessWidget {
               new Padding(padding: const EdgeInsets.only(right: 3.0)),
               new Text(
                   snapshot["CHANGEPCT24HOUR"] >= 0
-                      ? "+" + snapshot["CHANGEPCT24HOUR"].toString() + "%"
-                      : snapshot["CHANGEPCT24HOUR"].toString() + "%",
+                      ? "+" + snapshot["CHANGEPCT24HOUR"].toStringAsFixed(2) + "%"
+                      : snapshot["CHANGEPCT24HOUR"].toStringAsFixed(2) + "%",
                   style: Theme.of(context).primaryTextTheme.body2.apply(
                       color: snapshot["CHANGEPCT24HOUR"] >= 0
                           ? Colors.green
