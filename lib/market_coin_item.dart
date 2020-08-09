@@ -10,9 +10,9 @@ class CoinListItem extends StatelessWidget {
   final snapshot;
 
   _getImage() {
-    if (assetImages.contains(snapshot["symbol"].toLowerCase())) {
+    if (assetImages.contains(snapshot["CoinInfo"]["Name"].toLowerCase())) {
       return new Image.asset(
-          "assets/images/" + snapshot["symbol"].toLowerCase() + ".png",
+          "assets/images/" + snapshot["CoinInfo"]["Name"].toLowerCase() + ".png",
           height: 28.0);
     } else {
       return new Container();
@@ -21,16 +21,18 @@ class CoinListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    snapshot.forEach((k, v) {
-      if (v == null) {
-        snapshot[k] = "0";
-      }
-    });
-    snapshot["quotes"]["USD"].forEach((k, v) {
-      if (v == null) {
-        snapshot["quotes"]["USD"][k] = 0;
-      }
-    });
+    // snapshot.forEach((k, v) {
+    //   if (v == null) {
+    //     snapshot[k] = "0";
+    //   }
+    // });
+    // snapshot["RAW"]["USD"].forEach((k, v) {
+    //   if (v == null) {
+    //     snapshot["RAW"]["USD"][k] = 0;
+    //   }
+    // });;
+    // print("snapshot: ");
+    // print(snapshot);
 
     return new InkWell(
         onTap: () {
@@ -57,7 +59,7 @@ class CoinListItem extends StatelessWidget {
                     new Padding(padding: const EdgeInsets.only(right: 7.0)),
                     _getImage(),
                     new Padding(padding: const EdgeInsets.only(right: 7.0)),
-                    new Text(snapshot["symbol"],
+                    new Text(snapshot["CoinInfo"]["Name"],
                         style: Theme.of(context).textTheme.body2),
                   ],
                 ),
@@ -71,13 +73,13 @@ class CoinListItem extends StatelessWidget {
                       new Text(
                           "\$" +
                               normalizeNum(
-                                  snapshot["quotes"]["USD"]["market_cap"]),
+                                  snapshot["RAW"]["USD"]["MKTCAP"]),
                           style: Theme.of(context).textTheme.body2),
                       new Padding(padding: const EdgeInsets.only(bottom: 4.0)),
                       new Text(
                           "\$" +
                               normalizeNum(
-                                  snapshot["quotes"]["USD"]["volume_24h"]),
+                                  snapshot["RAW"]["USD"]["TOTALVOLUME24H"]),
                           style: Theme.of(context)
                               .textTheme
                               .body2
@@ -92,16 +94,16 @@ class CoinListItem extends StatelessWidget {
                   children: <Widget>[
                     new Text("\$" +
                         normalizeNumNoCommas(
-                            snapshot["quotes"]["USD"]["price"])),
+                            snapshot["RAW"]["USD"]["PRICE"])),
                     new Padding(padding: const EdgeInsets.only(bottom: 4.0)),
                     new Text(
-                        (snapshot["quotes"]["USD"]["percent_change_24h"] ?? 0) >= 0
-                            ? "+" + (snapshot["quotes"]["USD"]["percent_change_24h"] ?? 0)
+                        (snapshot["RAW"]["USD"]["CHANGEPCT24HOUR"] ?? 0) >= 0
+                            ? "+" + (snapshot["RAW"]["USD"]["CHANGEPCT24HOUR"] ?? 0)
                                     .toStringAsFixed(2) + "%"
-                            : (snapshot["quotes"]["USD"]["percent_change_24h"] ?? 0)
+                            : (snapshot["RAW"]["USD"]["CHANGEPCT24HOUR"] ?? 0)
                                     .toStringAsFixed(2) + "%",
                         style: Theme.of(context).primaryTextTheme.body1.apply(
-                            color: (snapshot["quotes"]["USD"]["percent_change_24h"] ?? 0) >= 0
+                            color: (snapshot["RAW"]["USD"]["CHANGEPCT24HOUR"] ?? 0) >= 0
                                 ? Colors.green
                                 : Colors.red)),
                   ],

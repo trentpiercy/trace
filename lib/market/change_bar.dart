@@ -83,11 +83,11 @@ class QuickPercentChangeBar extends StatelessWidget {
                       .apply(color: Theme.of(context).hintColor)),
               new Padding(padding: const EdgeInsets.only(right: 3.0)),
               new Text(
-                  snapshot["percent_change_1h"] >= 0
-                      ? "+" + snapshot["percent_change_1h"].toString() + "%"
-                      : snapshot["percent_change_1h"].toString() + "%",
+                  snapshot["CHANGEPCTHOUR"] >= 0
+                      ? "+" + snapshot["CHANGEPCTHOUR"].toString() + "%"
+                      : snapshot["CHANGEPCTHOUR"].toString() + "%",
                   style: Theme.of(context).primaryTextTheme.body2.apply(
-                      color: snapshot["percent_change_1h"] >= 0
+                      color: snapshot["CHANGEPCTHOUR"] >= 0
                           ? Colors.green
                           : Colors.red))
             ],
@@ -102,34 +102,34 @@ class QuickPercentChangeBar extends StatelessWidget {
                       .apply(color: Theme.of(context).hintColor)),
               new Padding(padding: const EdgeInsets.only(right: 3.0)),
               new Text(
-                  snapshot["percent_change_24h"] >= 0
-                      ? "+" + snapshot["percent_change_24h"].toString() + "%"
-                      : snapshot["percent_change_24h"].toString() + "%",
+                  snapshot["CHANGEPCT24HOUR"] >= 0
+                      ? "+" + snapshot["CHANGEPCT24HOUR"].toString() + "%"
+                      : snapshot["CHANGEPCT24HOUR"].toString() + "%",
                   style: Theme.of(context).primaryTextTheme.body2.apply(
-                      color: snapshot["percent_change_24h"] >= 0
+                      color: snapshot["CHANGEPCT24HOUR"] >= 0
                           ? Colors.green
                           : Colors.red))
             ],
           ),
-          new Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              new Text("7D",
-                  style: Theme.of(context)
-                      .textTheme
-                      .body1
-                      .apply(color: Theme.of(context).hintColor)),
-              new Padding(padding: const EdgeInsets.only(right: 3.0)),
-              new Text(
-                  snapshot["percent_change_7d"] >= 0
-                      ? "+" + snapshot["percent_change_7d"].toString() + "%"
-                      : snapshot["percent_change_7d"].toString() + "%",
-                  style: Theme.of(context).primaryTextTheme.body2.apply(
-                      color: snapshot["percent_change_7d"] >= 0
-                          ? Colors.green
-                          : Colors.red)),
-            ],
-          )
+          // new Row(
+          //   mainAxisSize: MainAxisSize.min,
+          //   children: <Widget>[
+          //     new Text("7D",
+          //         style: Theme.of(context)
+          //             .textTheme
+          //             .body1
+          //             .apply(color: Theme.of(context).hintColor)),
+          //     new Padding(padding: const EdgeInsets.only(right: 3.0)),
+          //     new Text(
+          //         snapshot["percent_change_7d"] >= 0
+          //             ? "+" + snapshot["percent_change_7d"].toString() + "%"
+          //             : snapshot["percent_change_7d"].toString() + "%",
+          //         style: Theme.of(context).primaryTextTheme.body2.apply(
+          //             color: snapshot["percent_change_7d"] >= 0
+          //                 ? Colors.green
+          //                 : Colors.red)),
+          //   ],
+          // )
         ],
       ),
     );

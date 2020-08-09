@@ -248,8 +248,8 @@ class PortfolioTabsState extends State<PortfolioTabs>
     portfolioMap.forEach((symbol, transactions) {
       num currentPrice;
       for (Map coin in marketListData) {
-        if (coin["symbol"] == symbol) {
-          currentPrice = coin["quotes"]["USD"]["price"];
+        if (coin["CoinInfo"]["Name"] == symbol) {
+          currentPrice = coin["RAW"]["USD"]["PRICE"];
           break;
         }
       }

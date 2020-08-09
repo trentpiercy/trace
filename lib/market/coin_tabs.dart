@@ -56,7 +56,7 @@ class CoinDetailsState extends State<CoinDetails>
     _makeTabs();
     _tabController = new TabController(length: _tabAmt, vsync: this);
 
-    symbol = widget.snapshot["symbol"];
+    symbol = widget.snapshot["CoinInfo"]["Name"];
 
     _makeGeneralStats();
     if (historyOHLCV == null) {
@@ -79,7 +79,7 @@ class CoinDetailsState extends State<CoinDetails>
             backgroundColor: Theme.of(context).primaryColor,
             titleSpacing: 2.0,
             elevation: appBarElevation,
-            title: new Text(widget.snapshot["name"],
+            title: new Text(widget.snapshot["CoinInfo"]["FullName"],
                 style: Theme.of(context).textTheme.title),
             bottom: new PreferredSize(
                 preferredSize: const Size.fromHeight(25.0),
@@ -145,8 +145,8 @@ class CoinDetailsState extends State<CoinDetails>
 
   _makeGeneralStats() {
     for (Map coin in marketListData) {
-      if (coin["symbol"] == symbol) {
-        generalStats = coin["quotes"]["USD"];
+      if (coin["CoinInfo"]["Name"] == symbol) {
+        generalStats = coin["RAW"]["USD"];
         break;
       }
     }
@@ -237,7 +237,7 @@ class CoinDetailsState extends State<CoinDetails>
                               "\$" +
                                   (generalStats != null
                                       ? normalizeNumNoCommas(
-                                          generalStats["price"])
+                                          generalStats["PRICE"])
                                       : "0"),
                               style: Theme.of(context)
                                   .textTheme
@@ -279,7 +279,7 @@ class CoinDetailsState extends State<CoinDetails>
                                       generalStats != null
                                           ? "\$" +
                                               normalizeNum(
-                                                  generalStats["market_cap"])
+                                                  generalStats["MKTCAP"])
                                           : "0",
                                       style: Theme.of(context)
                                           .textTheme
@@ -291,7 +291,7 @@ class CoinDetailsState extends State<CoinDetails>
                                       generalStats != null
                                           ? "\$" +
                                               normalizeNum(
-                                                  generalStats["volume_24h"])
+                                                  generalStats["TOTALVOLUME24H"])
                                           : "0",
                                       style: Theme.of(context)
                                           .textTheme
@@ -827,7 +827,7 @@ class CoinDetailsState extends State<CoinDetails>
 
     for (Map transaction in transactionList) {
       cost += transaction["quantity"] * transaction["price_usd"];
-      value += transaction["quantity"] * generalStats["price"];
+      value += transaction["quantity"] * generalStats["PRICE"];
       holdings += transaction["quantity"];
     }
 
@@ -917,7 +917,7 @@ class CoinDetailsState extends State<CoinDetails>
             delegate: new SliverChildBuilderDelegate(
                 (context, index) => new TransactionItem(
                       snapshot: transactionList[index],
-                      currentPrice: generalStats["price"],
+                      currentPrice: generalStats["PRICE"],
                       symbol: symbol,
                       refreshPage: () {
                         setState(() {
