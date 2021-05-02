@@ -387,7 +387,7 @@ class ImportPageState extends State<ImportPage> {
   void initState() {
     super.initState();
     marketListData.forEach((coin) {
-      validSymbols.add(coin["symbol"]);
+      validSymbols.add(coin["CoinInfo"]["Name"]);
     });
   }
 

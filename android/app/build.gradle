@@ -21,7 +21,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
 
     lintOptions {
         disable 'InvalidPackage'
@@ -30,9 +30,9 @@ android {
     defaultConfig {
         applicationId "com.trentpiercy.trace"
         minSdkVersion 21
-        targetSdkVersion 28
-        versionCode 9
-        versionName "1.0.8"
+        targetSdkVersion 29
+        versionCode 10
+        versionName "1.0.9"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
